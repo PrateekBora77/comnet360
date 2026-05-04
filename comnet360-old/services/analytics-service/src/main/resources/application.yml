@@ -1,0 +1,93 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: analytics-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/analytics_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: "${DB_PASSWORD:root}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  # WebClient ? calls other microservices to aggregate data
+  webflux:
+    base-path: /
+
+jwt:
+  secret: "${JWT_SECRET:3a7f9c2b8e1d4f6a0c5b9e3d7f2a8c1b4e6f0a3d9c7b2e5f8a1d4c6b0e3f7a2d}"
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+  show-actuator: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    instance-id: ${spring.application.name}:${server.port}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-NOCORR}] [user=%X{userId:-anon}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-NOCORR}] [user=%X{userId:-anon}] %logger{36} - %msg%n"
+  file:
+    name: logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+      total-size-cap: 100MB
+  level:
+    com.comnet360.analytics: DEBUG
+
+# Resilience4j circuit breakers — one per downstream service
+# slidingWindowSize: last N calls are used to compute failure rate
+# failureRateThreshold: open circuit if >50% of calls fail
+# waitDurationInOpenState: stay OPEN for 30s before trying HALF-OPEN
+# permittedNumberOfCallsInHalfOpenState: allow 2 test calls in HALF-OPEN
+resilience4j:
+  circuitbreaker:
+    instances:
+      usageSlaService:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+      incidentService:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true

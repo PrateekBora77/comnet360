@@ -1,0 +1,316 @@
+2026-05-02 09:21:57.122 [main] INFO  [NOCORR] [user=anon] c.c.n.NotificationServiceApplication - Starting NotificationServiceApplication using Java 17.0.18 with PID 11600 (C:\Users\2484891\Desktop\comnet360\services\notification-service\target\classes started by 2484891 in C:\Users\2484891\Desktop\comnet360)
+2026-05-02 09:21:57.122 [main] DEBUG [NOCORR] [user=anon] c.c.n.NotificationServiceApplication - Running with Spring Boot v3.2.5, Spring v6.1.6
+2026-05-02 09:21:57.122 [main] INFO  [NOCORR] [user=anon] c.c.n.NotificationServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-02 09:21:59.537 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-02 09:22:00.382 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 801 ms. Found 3 JPA repository interfaces.
+2026-05-02 09:22:02.005 [main] INFO  [NOCORR] [user=anon] o.s.cloud.context.scope.GenericScope - BeanFactory id=497accb1-2d4f-3c1e-bc57-1c2c4eacbd2d
+2026-05-02 09:22:03.373 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-02 09:22:03.389 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-05-02 09:22:04.739 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8086 (http)
+2026-05-02 09:22:04.803 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-02 09:22:04.803 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-05-02 09:22:05.296 [main] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-02 09:22:05.296 [main] INFO  [NOCORR] [user=anon] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 8103 ms
+2026-05-02 09:22:06.394 [main] DEBUG [NOCORR] [user=anon] c.c.n.filter.RequestLoggingFilter - Filter 'requestLoggingFilter' configured for use
+2026-05-02 09:22:06.394 [main] DEBUG [NOCORR] [user=anon] c.c.n.filter.JwtAuthFilter - Filter 'jwtAuthFilter' configured for use
+2026-05-02 09:22:06.941 [main] INFO  [NOCORR] [user=anon] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-02 09:22:07.190 [main] INFO  [NOCORR] [user=anon] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-02 09:22:07.336 [main] INFO  [NOCORR] [user=anon] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-02 09:22:08.383 [main] INFO  [NOCORR] [user=anon] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-02 09:22:08.494 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-02 09:22:09.133 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7c9512c6
+2026-05-02 09:22:09.141 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-02 09:22:09.360 [main] WARN  [NOCORR] [user=anon] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-02 09:22:10.834 [main] INFO  [NOCORR] [user=anon] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-02 09:22:10.904 [main] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 09:22:11.725 [main] WARN  [NOCORR] [user=anon] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-02 09:22:11.785 [main] WARN  [NOCORR] [user=anon] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 302d48a1-f29b-4d5f-a50b-c23b97f74a7a
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-05-02 09:22:12.735 [main] INFO  [NOCORR] [user=anon] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-05-02 09:22:12.842 [main] INFO  [NOCORR] [user=anon] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@547d3e8e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6f823df7, org.springframework.security.web.context.SecurityContextHolderFilter@76737130, org.springframework.security.web.header.HeaderWriterFilter@4420f4d4, org.springframework.web.filter.CorsFilter@4afdcdf6, org.springframework.security.web.authentication.logout.LogoutFilter@76a41af0, com.comnet360.notification.filter.JwtAuthFilter@534d0e20, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@61cf142f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@10f7bc42, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@75364777, org.springframework.security.web.session.SessionManagementFilter@181909f0, org.springframework.security.web.access.ExceptionTranslationFilter@3c251258, org.springframework.security.web.access.intercept.AuthorizationFilter@7f5ba1bf]
+2026-05-02 09:22:13.092 [main] WARN  [NOCORR] [user=anon] o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-05-02 09:22:13.654 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-05-02 09:22:13.716 [main] WARN  [NOCORR] [user=anon] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-02 09:22:13.797 [main] INFO  [NOCORR] [user=anon] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-05-02 09:22:13.859 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-05-02 09:22:13.864 [main] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-05-02 09:22:13.888 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-05-02 09:22:14.249 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-05-02 09:22:14.252 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 10
+2026-05-02 09:22:14.254 [main] INFO  [NOCORR] [user=anon] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-02 09:22:14.258 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1777693934258 with initial instances count: 6
+2026-05-02 09:22:14.265 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Registering application NOTIFICATION-SERVICE with eureka with status UP
+2026-05-02 09:22:14.266 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777693934266, current=UP, previous=STARTING]
+2026-05-02 09:22:14.268 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_NOTIFICATION-SERVICE/notification-service:8086: registering service...
+2026-05-02 09:22:14.295 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8086 (http) with context path ''
+2026-05-02 09:22:14.295 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8086
+2026-05-02 09:22:14.309 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_NOTIFICATION-SERVICE/notification-service:8086 - registration status: 204
+2026-05-02 09:22:14.450 [main] INFO  [NOCORR] [user=anon] c.c.n.NotificationServiceApplication - Started NotificationServiceApplication in 18.258 seconds (process running for 18.804)
+2026-05-02 09:23:30.273 [http-nio-8086-exec-1] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-02 09:23:30.273 [http-nio-8086-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-02 09:23:30.282 [http-nio-8086-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Completed initialization in 9 ms
+2026-05-02 09:23:30.303 [http-nio-8086-exec-1] INFO  [394d4743-44d1-4fb6-a877-b9433b4040fb] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/index.html
+2026-05-02 09:23:30.571 [http-nio-8086-exec-1] INFO  [394d4743-44d1-4fb6-a877-b9433b4040fb] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/index.html | status=200 | 271ms
+2026-05-02 09:23:30.621 [http-nio-8086-exec-2] INFO  [ab1eaf39-72d7-467e-b058-fb972326f6c8] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui.css
+2026-05-02 09:23:30.632 [http-nio-8086-exec-3] INFO  [edaeec55-f8b4-4afa-a13e-aeec0ac67678] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/index.css
+2026-05-02 09:23:30.632 [http-nio-8086-exec-6] INFO  [1a3485ef-bf9a-4001-aa8f-d2f7796b4b1c] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-initializer.js
+2026-05-02 09:23:30.632 [http-nio-8086-exec-4] INFO  [bac529d9-4e56-4419-8d0a-2842f7aa27d8] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-bundle.js
+2026-05-02 09:23:30.632 [http-nio-8086-exec-5] INFO  [14cdcac7-248a-49ad-9b94-9216a0a16bcb] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-standalone-preset.js
+2026-05-02 09:23:30.690 [http-nio-8086-exec-2] INFO  [ab1eaf39-72d7-467e-b058-fb972326f6c8] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui.css | status=200 | 69ms
+2026-05-02 09:23:30.696 [http-nio-8086-exec-3] INFO  [edaeec55-f8b4-4afa-a13e-aeec0ac67678] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/index.css | status=200 | 64ms
+2026-05-02 09:23:30.721 [http-nio-8086-exec-6] INFO  [1a3485ef-bf9a-4001-aa8f-d2f7796b4b1c] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-initializer.js | status=200 | 89ms
+2026-05-02 09:23:30.721 [http-nio-8086-exec-5] INFO  [14cdcac7-248a-49ad-9b94-9216a0a16bcb] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-standalone-preset.js | status=200 | 89ms
+2026-05-02 09:23:30.758 [http-nio-8086-exec-4] INFO  [bac529d9-4e56-4419-8d0a-2842f7aa27d8] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-bundle.js | status=200 | 126ms
+2026-05-02 09:23:30.899 [http-nio-8086-exec-7] INFO  [04ad7de4-b00f-4e92-a0ba-33cd1efa53b4] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /v3/api-docs/swagger-config
+2026-05-02 09:23:30.904 [http-nio-8086-exec-9] INFO  [93ce7c63-e370-48c5-8cba-81418e7ad440] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /swagger-ui/favicon-32x32.png
+2026-05-02 09:23:30.923 [http-nio-8086-exec-9] INFO  [93ce7c63-e370-48c5-8cba-81418e7ad440] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /swagger-ui/favicon-32x32.png | status=200 | 19ms
+2026-05-02 09:23:30.981 [http-nio-8086-exec-7] INFO  [04ad7de4-b00f-4e92-a0ba-33cd1efa53b4] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /v3/api-docs/swagger-config | status=200 | 82ms
+2026-05-02 09:23:30.998 [http-nio-8086-exec-10] INFO  [e8654351-02a4-45cd-a5e8-cf88a0096c2f] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /v3/api-docs
+2026-05-02 09:23:34.509 [http-nio-8086-exec-10] INFO  [e8654351-02a4-45cd-a5e8-cf88a0096c2f] [user=anon] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 3467 ms
+2026-05-02 09:23:34.604 [http-nio-8086-exec-10] INFO  [e8654351-02a4-45cd-a5e8-cf88a0096c2f] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /v3/api-docs | status=200 | 3606ms
+2026-05-02 09:27:13.893 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:32:13.902 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:37:13.911 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:42:13.918 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:47:13.936 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:52:13.943 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:57:13.960 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:02:13.962 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:07:13.979 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:12:13.993 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:13:53.476 [http-nio-8086-exec-5] INFO  [31bc0082-7007-4a83-8691-aff07e125e4c] [user=anon] c.c.n.filter.RequestLoggingFilter - → POST /api/notifications
+2026-05-02 10:13:54.806 [http-nio-8086-exec-5] DEBUG [31bc0082-7007-4a83-8691-aff07e125e4c] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 10:13:56.821 [http-nio-8086-exec-5] INFO  [31bc0082-7007-4a83-8691-aff07e125e4c] [user=anon] c.c.n.service.NotificationService - Notification saved: id=1 userId=3 category=SLA_BREACH
+2026-05-02 10:13:56.917 [http-nio-8086-exec-5] INFO  [31bc0082-7007-4a83-8691-aff07e125e4c] [user=anon] c.c.n.filter.RequestLoggingFilter - ← POST /api/notifications | status=201 | 3441ms
+2026-05-02 10:14:44.958 [http-nio-8086-exec-4] INFO  [b02ca390-477f-4a99-8c6b-ae16d59708a3] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/user/3/count
+2026-05-02 10:14:44.972 [http-nio-8086-exec-4] DEBUG [b02ca390-477f-4a99-8c6b-ae16d59708a3] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:14:45.039 [http-nio-8086-exec-4] INFO  [b02ca390-477f-4a99-8c6b-ae16d59708a3] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/user/3/count | status=200 | 81ms
+2026-05-02 10:14:59.135 [http-nio-8086-exec-9] INFO  [52149b26-9f78-4d67-8800-f6159f8684d3] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/user/3/unread
+2026-05-02 10:14:59.156 [http-nio-8086-exec-9] DEBUG [52149b26-9f78-4d67-8800-f6159f8684d3] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:14:59.218 [http-nio-8086-exec-9] INFO  [52149b26-9f78-4d67-8800-f6159f8684d3] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/user/3/unread | status=200 | 83ms
+2026-05-02 10:15:24.188 [http-nio-8086-exec-7] INFO  [709d12de-6ffe-4bb2-bc16-0f8afd650c64] [user=anon] c.c.n.filter.RequestLoggingFilter - → PUT /api/notifications/1/read
+2026-05-02 10:15:24.204 [http-nio-8086-exec-7] DEBUG [709d12de-6ffe-4bb2-bc16-0f8afd650c64] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:15:24.338 [http-nio-8086-exec-7] INFO  [709d12de-6ffe-4bb2-bc16-0f8afd650c64] [user=anon] c.c.n.filter.RequestLoggingFilter - ← PUT /api/notifications/1/read | status=200 | 150ms
+2026-05-02 10:16:19.416 [http-nio-8086-exec-10] INFO  [0aef00cb-b518-42a6-b8aa-5723a94c8d7d] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/user/3/unread
+2026-05-02 10:16:19.426 [http-nio-8086-exec-10] DEBUG [0aef00cb-b518-42a6-b8aa-5723a94c8d7d] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: alice@comnet360.com role: ENTERPRISE_USER
+2026-05-02 10:16:19.476 [http-nio-8086-exec-10] INFO  [0aef00cb-b518-42a6-b8aa-5723a94c8d7d] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/user/3/unread | status=403 | 60ms
+2026-05-02 10:17:14.007 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:20:06.372 [HikariPool-1 housekeeper] WARN  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=56s243ms959µs300ns).
+2026-05-02 10:34:22.285 [HikariPool-1 housekeeper] WARN  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=14m15s915ms179µs900ns).
+2026-05-02 10:36:26.134 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:41:26.137 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:46:26.138 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:51:26.142 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:56:26.156 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:01:26.168 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:04:20.849 [http-nio-8086-exec-1] INFO  [4c3a8bf3-30e8-4dd3-9c81-fd2be3bd5441] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/email-logs/failed
+2026-05-02 11:04:20.876 [http-nio-8086-exec-1] DEBUG [4c3a8bf3-30e8-4dd3-9c81-fd2be3bd5441] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: lisa@comnet360.com role: COMPLIANCE_OFFICER
+2026-05-02 11:04:20.982 [http-nio-8086-exec-1] INFO  [4c3a8bf3-30e8-4dd3-9c81-fd2be3bd5441] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/email-logs/failed | status=200 | 133ms
+2026-05-02 11:04:29.368 [http-nio-8086-exec-8] INFO  [68d362a6-c407-46d6-a5e3-6f2545d98621] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/email-logs
+2026-05-02 11:04:29.382 [http-nio-8086-exec-8] DEBUG [68d362a6-c407-46d6-a5e3-6f2545d98621] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: lisa@comnet360.com role: COMPLIANCE_OFFICER
+2026-05-02 11:04:29.449 [http-nio-8086-exec-8] INFO  [68d362a6-c407-46d6-a5e3-6f2545d98621] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/email-logs | status=200 | 81ms
+2026-05-02 11:06:26.176 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:07:36.936 [http-nio-8086-exec-6] INFO  [902db448-e8ee-4f96-aca4-d6778d885e22] [user=anon] c.c.n.filter.RequestLoggingFilter - → GET /api/notifications/preferences/3
+2026-05-02 11:07:36.949 [http-nio-8086-exec-6] DEBUG [902db448-e8ee-4f96-aca4-d6778d885e22] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 11:07:37.029 [http-nio-8086-exec-6] INFO  [902db448-e8ee-4f96-aca4-d6778d885e22] [user=anon] c.c.n.filter.RequestLoggingFilter - ← GET /api/notifications/preferences/3 | status=200 | 93ms
+2026-05-02 11:08:25.441 [http-nio-8086-exec-5] INFO  [ab923a06-6461-4e36-91af-f6b0f8477e4c] [user=anon] c.c.n.filter.RequestLoggingFilter - → PUT /api/notifications/preferences/3
+2026-05-02 11:08:25.447 [http-nio-8086-exec-5] DEBUG [ab923a06-6461-4e36-91af-f6b0f8477e4c] [user=anon] c.c.n.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 11:08:25.481 [http-nio-8086-exec-5] INFO  [ab923a06-6461-4e36-91af-f6b0f8477e4c] [user=anon] c.c.n.service.PreferenceService - Preferences updated for userId=3
+2026-05-02 11:08:25.506 [http-nio-8086-exec-5] INFO  [ab923a06-6461-4e36-91af-f6b0f8477e4c] [user=anon] c.c.n.filter.RequestLoggingFilter - ← PUT /api/notifications/preferences/3 | status=200 | 65ms
+2026-05-02 11:11:26.182 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:16:26.200 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:19:33.525 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Unregistering application NOTIFICATION-SERVICE with eureka with status DOWN
+2026-05-02 11:19:33.526 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777700973526, current=DOWN, previous=UP]
+2026-05-02 11:19:33.526 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_NOTIFICATION-SERVICE/notification-service:8086: registering service...
+2026-05-02 11:19:33.532 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_NOTIFICATION-SERVICE/notification-service:8086 - registration status: 204
+2026-05-02 11:19:33.570 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 11:19:33.578 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-02 11:19:33.582 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-02 11:19:33.583 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2026-05-02 11:19:36.590 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Unregistering ...
+2026-05-02 11:19:36.614 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/} exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:91)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 11:19:36.615 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 11:19:36.619 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}, exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:121)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:80)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 11:19:36.619 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 11:19:36.620 [SpringApplicationShutdownHook] ERROR [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_NOTIFICATION-SERVICE/notification-service:8086 - de-registration failedCannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-05-02 11:19:36.642 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient
