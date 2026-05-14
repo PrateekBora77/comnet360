@@ -1,0 +1,457 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║              COMNET360 — SYSTEM ARCHITECTURE DOCUMENT                       ║
+║              Version 3.0  |  Spring Boot 3.2.5 Microservices               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+══════════════════════════════════════════════════════════════════════════════
+1. OVERVIEW
+══════════════════════════════════════════════════════════════════════════════
+
+ComNet360 is a Network Service Management Platform built on a microservices
+architecture. Organizations use it to provision network services, track usage
+against SLA thresholds, manage incidents, generate KPI reports, and send
+notifications — all secured by JWT-based role access control.
+
+  Architecture Style  : Microservices
+  Framework           : Spring Boot 3.2.5 / Java 17
+  Service Discovery   : Netflix Eureka
+  API Gateway         : Spring Cloud Gateway (WebFlux / Reactive)
+  Database            : MySQL 8  (one schema per service)
+  Inter-service Calls : Spring WebClient  (lb:// via Eureka)
+  Resilience          : Resilience4j Circuit Breaker
+  Security            : JWT  (HMAC-SHA512) + Spring Security 6
+  Build               : Maven (multi-module parent POM)
+  Frontend            : React + Vite  (port 5173)
+
+
+══════════════════════════════════════════════════════════════════════════════
+2. SERVICE CATALOGUE
+══════════════════════════════════════════════════════════════════════════════
+
+  ┌──────────────────────┬────────┬──────────────┬──────────────────────────┐
+  │ Service              │  Port  │  Database    │  Responsibility          │
+  ├──────────────────────┼────────┼──────────────┼──────────────────────────┤
+  │ eureka-server        │  8761  │  —           │  Service registry        │
+  │ gateway              │  8080  │  —           │  JWT auth, routing, CORS │
+  │ iam-service          │  8081  │  iam_db      │  Users, auth, roles      │
+  │ provisioning-service │  8082  │  prov_db     │  Services, lifecycle     │
+  │ usage-sla-service    │  8083  │  usage_db    │  Usage metrics, SLA      │
+  │ incident-service     │  8084  │  incident_db │  Incidents, actions      │
+  │ analytics-service    │  8085  │  analytics_db│  KPI reports, dashboards │
+  │ notification-service │  8086  │  notif_db    │  Notifications, prefs    │
+  └──────────────────────┴────────┴──────────────┴──────────────────────────┘
+
+
+══════════════════════════════════════════════════════════════════════════════
+3. HIGH-LEVEL ARCHITECTURE
+══════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────┐
+  │     React Frontend      │
+  │    localhost:5173        │
+  └────────────┬────────────┘
+               │  HTTP/REST  (CORS allowed)
+               ▼
+  ┌─────────────────────────────────────────────────────┐
+  │                  API Gateway  :8080                  │
+  │                                                      │
+  │   ┌─────────────────────────────────────────────┐   │
+  │   │  CorrelationIdFilter  →  adds x-correlation-id│  │
+  │   │  JwtAuthFilter        →  validates JWT        │  │
+  │   │                          injects X-User-Email │  │
+  │   │                                  X-User-Role  │  │
+  │   │                                  X-User-Id    │  │
+  │   └─────────────────────────────────────────────┘   │
+  │                                                      │
+  │   Routes  (lb:// via Eureka)                         │
+  │   /api/auth/**          →  iam-service               │
+  │   /api/users/**         →  iam-service               │
+  │   /api/audit-logs/**    →  iam-service               │
+  │   /api/services/**      →  provisioning-service      │
+  │   /api/configurations/**→  provisioning-service      │
+  │   /api/usage/**         →  usage-sla-service         │
+  │   /api/sla/**           →  usage-sla-service         │
+  │   /api/incidents/**     →  incident-service          │
+  │   /api/actions/**       →  incident-service          │
+  │   /api/reports/**       →  analytics-service         │
+  │   /api/notifications/** →  notification-service      │
+  └───────────────────────────┬─────────────────────────┘
+                              │  Forwards enriched request
+           ┌──────────────────┼──────────────────────────┐
+           │                  │                           │
+           ▼                  ▼                           ▼
+  ┌────────────────┐ ┌────────────────┐ ┌────────────────────┐
+  │  IAM Service   │ │  Provisioning  │ │  Usage-SLA Service │
+  │    :8081       │ │  Service :8082 │ │      :8083         │
+  │  iam_db        │ │  prov_db       │ │  usage_db          │
+  └────────────────┘ └────────────────┘ └────────────┬───────┘
+                                                      │ ▲
+  ┌────────────────┐ ┌────────────────┐ ┌────────────┴───────┐
+  │Incident Service│ │  Analytics     │ │  Notification      │
+  │    :8084       │ │  Service :8085 │ │  Service :8086     │
+  │  incident_db   │ │  analytics_db  │ │  notif_db          │
+  └───────┬────────┘ └───────┬────────┘ └────────────────────┘
+          │ ▲                │
+          └─────────────────┘
+           WebClient calls
+           (see Section 5)
+
+  All services register with and discover each other through:
+  ┌───────────────────────────┐
+  │     Eureka Server :8761   │
+  │  (service registry)       │
+  └───────────────────────────┘
+
+
+══════════════════════════════════════════════════════════════════════════════
+4. APPLICATION FLOW  (Request Journey)
+══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────
+4.1  STARTUP — EUREKA REGISTRATION
+────────────────────────────────────────────────────────
+
+  Every service (gateway + all 6 microservices) performs this on startup:
+
+  Service boots
+      │
+      ├─▶  Reads eureka.client.service-url.defaultZone
+      │     = http://localhost:8761/eureka/
+      │
+      ├─▶  Registers itself with:
+      │      app name  (e.g. "iam-service")
+      │      host:port (e.g. localhost:8081)
+      │      instance-id
+      │
+      ├─▶  Starts sending heartbeats every 10 seconds
+      │
+      └─▶  Fetches registry to discover other services
+            (gateway uses lb://service-name in its route URIs)
+
+  After all services are up, the gateway can resolve lb://iam-service,
+  lb://provisioning-service, etc. to their actual addresses at request time.
+
+
+────────────────────────────────────────────────────────
+4.2  PUBLIC REQUEST — Login  (no token required)
+────────────────────────────────────────────────────────
+
+  Client                  Gateway                 IAM Service
+    │                        │                        │
+    ├─ POST /api/auth/login ─▶│                        │
+    │   { email, password }   │  (route: no JWT check) │
+    │                         ├──────────────────────▶ │
+    │                         │                        ├─ authenticate user
+    │                         │                        ├─ generate access token (24h)
+    │                         │                        ├─ generate refresh token (7d)
+    │                         │                        ├─ write audit log
+    │                         │◀──────────────────────┤
+    │◀────────────────────────┤                        │
+    │  { accessToken,         │                        │
+    │    refreshToken,        │                        │
+    │    role, userId, ... }  │                        │
+
+
+────────────────────────────────────────────────────────
+4.3  AUTHENTICATED REQUEST — General Flow
+────────────────────────────────────────────────────────
+
+  Client                 Gateway                     Microservice
+    │                       │                              │
+    ├─ GET /api/services ──▶│                              │
+    │  Authorization:        │                              │
+    │  Bearer <token>        │                              │
+    │                        │                              │
+    │              ┌─────────┴──────────┐                  │
+    │              │  CorrelationFilter  │                  │
+    │              │  • generate UUID    │                  │
+    │              │  • add to headers   │                  │
+    │              └─────────┬──────────┘                  │
+    │              ┌─────────┴──────────┐                  │
+    │              │   JwtAuthFilter     │                  │
+    │              │  • validate token   │                  │
+    │              │  • 401 if invalid   │                  │
+    │              │  • inject headers:  │                  │
+    │              │    X-User-Email     │                  │
+    │              │    X-User-Role      │                  │
+    │              │    X-User-Id        │                  │
+    │              └─────────┬──────────┘                  │
+    │                        │                              │
+    │                        ├─ route to provisioning ─────▶│
+    │                        │  (lb://provisioning-service) │
+    │                        │                              │
+    │                        │                   ┌──────────┴──────────┐
+    │                        │                   │  JwtAuthFilter       │
+    │                        │                   │  Path 1: headers     │
+    │                        │                   │  present → set auth  │
+    │                        │                   │  from X-User-Role    │
+    │                        │                   └──────────┬──────────┘
+    │                        │                   ┌──────────┴──────────┐
+    │                        │                   │  @PreAuthorize      │
+    │                        │                   │  check role access  │
+    │                        │                   │  403 if denied      │
+    │                        │                   └──────────┬──────────┘
+    │                        │                   ┌──────────┴──────────┐
+    │                        │                   │  Service + JPA       │
+    │                        │                   │  reads/writes MySQL  │
+    │                        │                   └──────────┬──────────┘
+    │◀───────────────────────────────────────────────────── │
+    │   200 + JSON response   │                              │
+
+
+────────────────────────────────────────────────────────
+4.4  SLA BREACH AUTO-DETECTION  (internal, no HTTP call)
+────────────────────────────────────────────────────────
+
+  This loop runs entirely inside the Usage-SLA Service every 60 seconds.
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │               Usage-SLA Service  :8083                      │
+  │                                                             │
+  │   SlaScheduler  (@Scheduled every 60s)                      │
+  │        │                                                    │
+  │        ├─▶  fetch all ACTIVE SLA definitions               │
+  │        │                                                    │
+  │        └─▶  for each SLA:                                  │
+  │               │                                             │
+  │               ├─▶  fetch latest usage_record               │
+  │               │      (matching serviceId + metricType)     │
+  │               │                                             │
+  │               ├─▶  evaluate: does value breach threshold?  │
+  │               │                                             │
+  │               ├─▶  BREACH detected + no open breach        │
+  │               │      → INSERT sla_breach_event             │
+  │               │                                             │
+  │               └─▶  no breach + open breach exists          │
+  │                      → auto-resolve breach event            │
+  └─────────────────────────────────────────────────────────────┘
+
+
+══════════════════════════════════════════════════════════════════════════════
+5. INTER-SERVICE COMMUNICATION  (WebClient)
+══════════════════════════════════════════════════════════════════════════════
+
+  Only the Analytics Service makes cross-service HTTP calls.
+  All other services are self-contained and do not call each other.
+
+  ┌──────────────────────────────────────────────────────────────────┐
+  │                    Analytics Service  :8085                      │
+  │                                                                  │
+  │  When generating a KPI report, Analytics calls:                  │
+  │                                                                  │
+  │  WebClient (lb://usage-sla-service)                              │
+  │    ──▶  GET /api/sla/breaches/service/{id}   ┐                   │
+  │    ──▶  GET /api/sla/service/{id}            ├─ SLA_COMPLIANCE   │
+  │                                              ┘  report type      │
+  │  WebClient (lb://incident-service)                               │
+  │    ──▶  GET /api/incidents                   ─── INCIDENT_SUMMARY│
+  │                                                  report type     │
+  │  All WebClient calls carry internal identity headers:            │
+  │    X-User-Email : analytics@comnet360.internal                   │
+  │    X-User-Role  : ADMIN                                          │
+  │    X-User-Id    : 0                                              │
+  └──────────────────────────────────────────────────────────────────┘
+
+  Resilience4j Circuit Breaker (per downstream):
+  ┌───────────────────────────────────────────────────────────────┐
+  │  CLOSED   → calls pass through normally                       │
+  │  OPEN     → downstream unavailable; fallback fires            │
+  │             (returns report with metric values = -1)          │
+  │  HALF-OPEN→ 2 test calls after 30s to check recovery          │
+  │                                                               │
+  │  Threshold: opens when >50% of last 5 calls fail             │
+  └───────────────────────────────────────────────────────────────┘
+
+  Full picture with WebClient arrows:
+
+         ┌─────────────────┐
+         │  IAM Service    │
+         │    :8081        │
+         └─────────────────┘
+
+         ┌─────────────────┐
+         │  Provisioning   │
+         │  Service :8082  │
+         └─────────────────┘
+
+         ┌─────────────────┐        WebClient (SLA data)
+         │ Usage-SLA       │◀─────────────────────────────┐
+         │ Service :8083   │                               │
+         └─────────────────┘                               │
+                                                           │
+         ┌─────────────────┐        WebClient (incidents)  │
+         │ Incident Service│◀──────────────────────────┐  │
+         │    :8084        │                           │  │
+         └─────────────────┘                           │  │
+                                                       │  │
+         ┌─────────────────────────────────────────────┴──┴┐
+         │           Analytics Service  :8085              │
+         │  (only service that calls other services)       │
+         └─────────────────────────────────────────────────┘
+
+         ┌─────────────────┐
+         │  Notification   │
+         │  Service :8086  │
+         └─────────────────┘
+
+
+══════════════════════════════════════════════════════════════════════════════
+6. SECURITY ARCHITECTURE
+══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────
+6.1  JWT  (HMAC-SHA512)
+────────────────────────────────────────────────────────
+
+  Issued by  : IAM Service on login/register
+  Claims     : sub (email), userId, role, name, iat, exp
+  Access TTL : 24 hours
+  Refresh TTL: 7 days  (UUID stored in DB, revocable)
+  Secret     : shared across all services via ${JWT_SECRET} env var
+               → any service can validate without calling IAM
+
+────────────────────────────────────────────────────────
+6.2  JwtAuthFilter — Two-Path Design
+────────────────────────────────────────────────────────
+
+  Every microservice has a JwtAuthFilter that works in two modes:
+
+  PATH 1 — Via Gateway (production traffic on port 8080)
+    Gateway has already validated the token and injected
+    X-User-Email, X-User-Role, X-User-Id headers.
+    Service reads those headers and sets the security context directly.
+
+  PATH 2 — Direct JWT (Swagger/dev testing on ports 8081–8086)
+    No gateway headers present.
+    Service validates the Bearer token itself, extracts claims,
+    and wraps the request with the missing X-User-* headers
+    so controller parameters are satisfied identically.
+
+────────────────────────────────────────────────────────
+6.3  Role-Based Access Control (RBAC)
+────────────────────────────────────────────────────────
+
+  Role                Capabilities
+  ─────────────────── ────────────────────────────────────────────────
+  ADMIN               Full access to all endpoints across all services
+  SERVICE_MANAGER     Manage services, SLAs, incidents, reports
+  NETWORK_ENGINEER    Record/read usage, view SLA, create/resolve incidents
+  OPERATIONS_HEAD     Read-only on services, usage, SLA, incidents, reports
+  COMPLIANCE_OFFICER  Read audit logs, generate and view KPI reports
+  ENTERPRISE_USER     View own provisioned services only
+
+  Enforcement: @PreAuthorize on each controller method (method-level security)
+  Bootstrap  : First registered user is automatically assigned ADMIN role
+
+
+══════════════════════════════════════════════════════════════════════════════
+7. DATA ARCHITECTURE
+══════════════════════════════════════════════════════════════════════════════
+
+  Database-per-service — each service owns its own MySQL schema.
+  No shared tables or cross-service foreign keys.
+  Cross-service references use plain Long IDs only.
+
+  ┌──────────────────────┬─────────────────────────────────────────────┐
+  │ Database             │ Tables                                      │
+  ├──────────────────────┼─────────────────────────────────────────────┤
+  │ iam_db               │ users, refresh_tokens, audit_logs           │
+  │ prov_db              │ services, configurations,                   │
+  │                      │ service_lifecycle_events                    │
+  │ usage_db             │ usage_records, sla_definitions,             │
+  │                      │ sla_breach_events                           │
+  │ incident_db          │ incidents, resolution_actions,              │
+  │                      │ incident_comments                           │
+  │ analytics_db         │ kpi_reports, dashboard_snapshots            │
+  │ notif_db             │ notifications, email_logs,                  │
+  │                      │ notification_preferences                    │
+  └──────────────────────┴─────────────────────────────────────────────┘
+
+
+══════════════════════════════════════════════════════════════════════════════
+8. CROSS-CUTTING CONCERNS
+══════════════════════════════════════════════════════════════════════════════
+
+  Correlation ID Tracing
+    Gateway assigns a UUID (x-correlation-id) to every request.
+    Each service reads it into MDC — every log line includes it.
+    A single request chain can be traced across all service logs.
+
+  Logging
+    Format : timestamp [thread] level [correlationId] [userId] logger - msg
+    Output : console + rolling file (logs/<service>.log, 10 MB / 7 days)
+
+  Exception Handling
+    Every service has a @RestControllerAdvice with consistent error shape:
+      { timestamp, status, error, message }
+    HTTP codes: 400 validation | 401 unauthorized | 403 forbidden |
+                404 not found  | 409 conflict     | 500 server error
+
+  API Documentation
+    Each service exposes Swagger UI on its own port:
+      IAM           → http://localhost:8081/swagger-ui.html
+      Provisioning  → http://localhost:8082/swagger-ui.html
+      Usage / SLA   → http://localhost:8083/swagger-ui.html
+      Incident      → http://localhost:8084/swagger-ui.html
+      Analytics     → http://localhost:8085/swagger-ui.html
+      Notification  → http://localhost:8086/swagger-ui.html
+
+
+══════════════════════════════════════════════════════════════════════════════
+9. TECHNOLOGY STACK
+══════════════════════════════════════════════════════════════════════════════
+
+  Category              Technology                         Version
+  ─────────────────── ── ─────────────────────────────── ── ───────
+  Language               Java                               17
+  Framework              Spring Boot                        3.2.5
+  Gateway                Spring Cloud Gateway (WebFlux)     2023.0.1
+  Service Discovery      Spring Cloud Netflix Eureka         2023.0.1
+  Security               Spring Security                    6.x
+  JWT                    JJWT  (io.jsonwebtoken)            0.12.5
+  ORM                    Spring Data JPA / Hibernate        3.2.5
+  Database               MySQL                              8.3.0
+  HTTP Client            Spring WebClient                   3.2.5
+  Circuit Breaker        Resilience4j                       3.x
+  API Docs               SpringDoc OpenAPI  (Swagger UI)    2.5.0
+  Build                  Apache Maven  (multi-module)       3.x
+  Logging                Logback  (via Spring Boot)         1.4.x
+  Utilities              Lombok                             1.18.32
+  Frontend               React + Vite                       (port 5173)
+
+
+══════════════════════════════════════════════════════════════════════════════
+10. KEY DESIGN DECISIONS
+══════════════════════════════════════════════════════════════════════════════
+
+  1. DATABASE PER SERVICE
+     Each service has its own schema — independently deployable and scalable.
+     No cross-service joins; references use logical Long IDs only.
+
+  2. SHARED JWT SECRET
+     All services share one JWT secret so any service can validate a token
+     without calling IAM. Secret is externalized via ${JWT_SECRET} env var.
+
+  3. GATEWAY AS SINGLE AUTH POINT
+     JWT is validated once at the gateway; downstream services trust the
+     injected X-User-* headers. JwtAuthFilter Path 2 allows Swagger testing
+     to bypass the gateway without losing any security enforcement.
+
+  4. ANALYTICS AS DATA AGGREGATOR
+     Analytics does not store raw data. It calls other services on demand via
+     WebClient and aggregates results. Circuit breakers prevent cascading
+     failures when downstream services are unavailable.
+
+  5. SLA SCHEDULER (POLL-BASED)
+     Breach detection runs on a 60-second schedule rather than being event-
+     driven. This avoids a message broker dependency at the cost of up to
+     60 seconds of detection lag.
+
+  6. FIRST-USER AUTO-ADMIN
+     The first registered user is automatically promoted to ADMIN.
+     No manual SQL bootstrap step is required.
+
+  7. STATELESS SESSIONS
+     All services use STATELESS session management. Every request is fully
+     authenticated from the JWT or gateway-injected headers alone.

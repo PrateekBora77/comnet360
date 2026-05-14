@@ -1,0 +1,93 @@
+# ============================================================
+#  ComNet360 — .gitignore
+#  Multi-module Maven / Spring Boot 3 microservices project
+# ============================================================
+
+
+# ── Maven build output ───────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
+# ── Compiled / packaged artifacts ────────────────────────────
+*.jar
+*.war
+*.ear
+*.class
+
+
+# ── Application log files ────────────────────────────────────
+logs/
+*.log
+*.log.*
+
+
+# ── Secrets & environment overrides ──────────────────────────
+# Never commit real credentials or local env overrides
+.env
+.env.*
+application-local.yml
+application-local.properties
+**/application-local.yml
+**/application-local.properties
+**/application-secret.yml
+**/application-secret.properties
+
+
+# ── IntelliJ IDEA ────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+
+# ── Eclipse / STS ────────────────────────────────────────────
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+
+# ── NetBeans ─────────────────────────────────────────────────
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+
+# ── VS Code ──────────────────────────────────────────────────
+.vscode/
+
+
+# ── OS generated files ───────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+
+# ── Temporary / misc ─────────────────────────────────────────
+*.tmp
+*.swp
+*.bak
+*.orig

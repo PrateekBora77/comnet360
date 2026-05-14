@@ -1,0 +1,1822 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║              COMNET360 — COMPLETE SWAGGER TEST GUIDE                    ║
+║              Base URL: http://localhost:8080  (Gateway)                 ║
+║              Swagger UI per service (direct access for token setup):    ║
+║                IAM Service      → http://localhost:8081/swagger-ui.html ║
+║                Provisioning     → http://localhost:8082/swagger-ui.html ║
+║                Usage/SLA        → http://localhost:8083/swagger-ui.html ║
+║                Incident         → http://localhost:8084/swagger-ui.html ║
+║                Analytics        → http://localhost:8085/swagger-ui.html ║
+║                Notification     → http://localhost:8086/swagger-ui.html ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+HOW TO USE THIS GUIDE
+─────────────────────
+• Use each service's Swagger UI directly (ports 8081-8086) — pick the server
+  that matches the service under test (e.g. http://localhost:8081 for IAM).
+• In Swagger UI: click "Authorize" → paste just the token (no "Bearer " prefix).
+  Swagger adds "Bearer " automatically.
+• Replace <ADMIN_TOKEN>, <SM_TOKEN>, etc. with the actual JWT you receive
+  from the login/register response.
+• IDs (userId, serviceId, slaId, etc.) are assigned by the DB starting at 1.
+  Adjust if your DB already has existing rows.
+• Tests are numbered and ordered — run them sequentially.
+• "PREDICTED OUTPUT" shows the HTTP status and the key fields to verify.
+• X-User-Id / X-User-Email / X-User-Role headers are injected automatically
+  by the JWT filter — you will NOT see them as input fields in Swagger UI.
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 1 — ADMIN BOOTSTRAP  (no token needed)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 1 — Register Admin user
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "Admin User",
+  "email":    "admin@comnet360.com",
+  "password": "Admin@1234",
+  "phone":    "+911234567890"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId":       1,
+  "name":         "Admin User",
+  "email":        "admin@comnet360.com",
+  "role":         "ADMIN",              ← first registered user is auto-promoted to ADMIN
+  "accessToken":  "eyJhbG...",          ← save this directly as <ADMIN_TOKEN>
+  "refreshToken": "xxxxxxxx-xxxx-..."
+}
+
+NOTE: No SQL needed. The first user to register is automatically ADMIN.
+      Save the accessToken from this response as <ADMIN_TOKEN> right away
+      — no need to re-login in Test 2 (though Test 2 is kept for clarity).
+
+
+─────────────────────────────────────────────
+TEST 2 — Admin login (get ADMIN token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "admin@comnet360.com",
+  "password": "Admin@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":       1,
+  "role":         "ADMIN",
+  "accessToken":  "eyJhbG...",          ← save this as <ADMIN_TOKEN>
+  "refreshToken": "xxxxxxxx-xxxx-..."   ← save this as <ADMIN_REFRESH>
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 2 — REGISTER ALL USERS  (no token needed)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 3 — Register Sarah (will become SERVICE_MANAGER)
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "Sarah Smith",
+  "email":    "sarah@comnet360.com",
+  "password": "Sarah@1234",
+  "phone":    "+911234567891"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId": 2,
+  "role":   "ENTERPRISE_USER"
+}
+
+
+─────────────────────────────────────────────
+TEST 4 — Register John (will become NETWORK_ENGINEER)
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "John Doe",
+  "email":    "john@comnet360.com",
+  "password": "John@1234",
+  "phone":    "+911234567892"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId": 3,
+  "role":   "ENTERPRISE_USER"
+}
+
+
+─────────────────────────────────────────────
+TEST 5 — Register Mike (will become OPERATIONS_HEAD)
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "Mike Johnson",
+  "email":    "mike@comnet360.com",
+  "password": "Mike@1234",
+  "phone":    "+911234567893"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId": 4,
+  "role":   "ENTERPRISE_USER"
+}
+
+
+─────────────────────────────────────────────
+TEST 6 — Register Lisa (will become COMPLIANCE_OFFICER)
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "Lisa Brown",
+  "email":    "lisa@comnet360.com",
+  "password": "Lisa@1234",
+  "phone":    "+911234567894"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId": 5,
+  "role":   "ENTERPRISE_USER"
+}
+
+
+─────────────────────────────────────────────
+TEST 7 — Register Alice (stays ENTERPRISE_USER)
+─────────────────────────────────────────────
+POST   /api/auth/register
+
+Body:
+{
+  "name":     "Alice Green",
+  "email":    "alice@comnet360.com",
+  "password": "Alice@1234",
+  "phone":    "+911234567895"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "userId": 6,
+  "role":   "ENTERPRISE_USER"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 3 — ADMIN ASSIGNS ROLES
+Token: <ADMIN_TOKEN>
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 8 — Assign SERVICE_MANAGER to Sarah (userId=2)
+─────────────────────────────────────────────
+PUT   /api/users/2/role
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "role": "SERVICE_MANAGER"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 2,
+  "role":   "SERVICE_MANAGER"
+}
+
+
+─────────────────────────────────────────────
+TEST 9 — Assign NETWORK_ENGINEER to John (userId=3)
+─────────────────────────────────────────────
+PUT   /api/users/3/role
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "role": "NETWORK_ENGINEER"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 3,
+  "role":   "NETWORK_ENGINEER"
+}
+
+
+─────────────────────────────────────────────
+TEST 10 — Assign OPERATIONS_HEAD to Mike (userId=4)
+─────────────────────────────────────────────
+PUT   /api/users/4/role
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "role": "OPERATIONS_HEAD"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 4,
+  "role":   "OPERATIONS_HEAD"
+}
+
+
+─────────────────────────────────────────────
+TEST 11 — Assign COMPLIANCE_OFFICER to Lisa (userId=5)
+─────────────────────────────────────────────
+PUT   /api/users/5/role
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "role": "COMPLIANCE_OFFICER"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 5,
+  "role":   "COMPLIANCE_OFFICER"
+}
+
+
+─────────────────────────────────────────────
+TEST 12 — Verify all users (Admin view)
+─────────────────────────────────────────────
+GET   /api/users
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array of 6 users with correct roles
+[
+  { "userId":1, "role":"ADMIN" },
+  { "userId":2, "role":"SERVICE_MANAGER" },
+  { "userId":3, "role":"NETWORK_ENGINEER" },
+  { "userId":4, "role":"OPERATIONS_HEAD" },
+  { "userId":5, "role":"COMPLIANCE_OFFICER" },
+  { "userId":6, "role":"ENTERPRISE_USER" }
+]
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 4 — USERS RE-LOGIN TO GET TOKENS WITH NEW ROLES
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 13 — Sarah logs in (SERVICE_MANAGER token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "sarah@comnet360.com",
+  "password": "Sarah@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":      2,
+  "role":        "SERVICE_MANAGER",
+  "accessToken": "eyJhbG..."    ← save as <SM_TOKEN>
+}
+
+
+─────────────────────────────────────────────
+TEST 14 — John logs in (NETWORK_ENGINEER token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "john@comnet360.com",
+  "password": "John@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":      3,
+  "role":        "NETWORK_ENGINEER",
+  "accessToken": "eyJhbG..."    ← save as <NE_TOKEN>
+}
+
+
+─────────────────────────────────────────────
+TEST 15 — Mike logs in (OPERATIONS_HEAD token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "mike@comnet360.com",
+  "password": "Mike@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":      4,
+  "role":        "OPERATIONS_HEAD",
+  "accessToken": "eyJhbG..."    ← save as <OH_TOKEN>
+}
+
+
+─────────────────────────────────────────────
+TEST 16 — Lisa logs in (COMPLIANCE_OFFICER token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "lisa@comnet360.com",
+  "password": "Lisa@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":      5,
+  "role":        "COMPLIANCE_OFFICER",
+  "accessToken": "eyJhbG..."    ← save as <CO_TOKEN>
+}
+
+
+─────────────────────────────────────────────
+TEST 17 — Alice logs in (ENTERPRISE_USER token)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "alice@comnet360.com",
+  "password": "Alice@1234"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":      6,
+  "role":        "ENTERPRISE_USER",
+  "accessToken": "eyJhbG..."    ← save as <EU_TOKEN>
+}
+
+
+──────────────────────────────────────────────
+TEST 18 — Each user can view their own profile
+──────────────────────────────────────────────
+GET   /api/users/me
+Authorization: Bearer <SM_TOKEN>   (test with any token)
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 2,
+  "name":   "Sarah Smith",
+  "email":  "sarah@comnet360.com",
+  "role":   "SERVICE_MANAGER"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 5 — RBAC BOUNDARY TESTS
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 19 — ENTERPRISE_USER cannot list all users (expect 403)
+─────────────────────────────────────────────
+GET   /api/users
+Authorization: Bearer <EU_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  403 Forbidden
+{
+  "error":   "Forbidden",
+  "message": "Access denied"
+}
+
+
+─────────────────────────────────────────────
+TEST 20 — ENTERPRISE_USER cannot assign roles (expect 403)
+─────────────────────────────────────────────
+PUT   /api/users/3/role
+Authorization: Bearer <EU_TOKEN>
+
+Body:
+{
+  "role": "ADMIN"
+}
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+─────────────────────────────────────────────
+TEST 21 — No token returns 401
+─────────────────────────────────────────────
+GET   /api/users
+(No Authorization header)
+
+PREDICTED OUTPUT:  401 Unauthorized
+{
+  "error": "Missing or invalid Authorization header"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 6 — SERVICE PROVISIONING
+Token: <SM_TOKEN>  (SERVICE_MANAGER)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 22 — Create HQ Voice Service
+─────────────────────────────────────────────
+POST   /api/services
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "name":        "HQ Voice Service",
+  "type":        "VOICE",
+  "description": "Primary voice communication service for HQ"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "serviceId": 1,
+  "name":      "HQ Voice Service",
+  "type":      "VOICE",
+  "status":    "DRAFT",
+  "createdBy": 2
+}
+
+
+─────────────────────────────────────────────
+TEST 23 — Create Branch Video Conferencing Service
+─────────────────────────────────────────────
+POST   /api/services
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "name":        "Branch Video Conferencing",
+  "type":        "VIDEO",
+  "description": "Video conferencing for branch offices"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "serviceId": 2,
+  "type":      "VIDEO",
+  "status":    "DRAFT"
+}
+
+
+─────────────────────────────────────────────
+TEST 24 — Create Enterprise Messaging Service
+─────────────────────────────────────────────
+POST   /api/services
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "name":        "Enterprise Messaging",
+  "type":        "MESSAGING",
+  "description": "Internal messaging platform"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "serviceId": 3,
+  "type":      "MESSAGING",
+  "status":    "DRAFT"
+}
+
+
+─────────────────────────────────────────────
+TEST 25 — Activate HQ Voice Service
+─────────────────────────────────────────────
+PUT   /api/services/1/activate
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "reason": "Ready for production"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId": 1,
+  "status":    "ACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 26 — Activate Branch Video Conferencing
+─────────────────────────────────────────────
+PUT   /api/services/2/activate
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "reason": "Video infra ready"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId": 2,
+  "status":    "ACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 27 — Activate Enterprise Messaging
+─────────────────────────────────────────────
+PUT   /api/services/3/activate
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "reason": "Messaging platform online"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId": 3,
+  "status":    "ACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 28 — Add configuration to HQ Voice Service
+─────────────────────────────────────────────
+POST   /api/configurations/1
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "parameter":     "max_concurrent_calls",
+  "value":         "500",
+  "effectiveDate": "2025-01-01"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "configId":      1,
+  "serviceId":     1,
+  "parameter":     "max_concurrent_calls",
+  "value":         "500",
+  "effectiveDate": "2025-01-01"
+}
+
+
+─────────────────────────────────────────────
+TEST 29 — List all active services (NETWORK_ENGINEER view)
+─────────────────────────────────────────────
+GET   /api/services?status=ACTIVE
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array of 3 ACTIVE services
+[
+  { "serviceId":1, "name":"HQ Voice Service",          "status":"ACTIVE" },
+  { "serviceId":2, "name":"Branch Video Conferencing",  "status":"ACTIVE" },
+  { "serviceId":3, "name":"Enterprise Messaging",       "status":"ACTIVE" }
+]
+
+
+─────────────────────────────────────────────
+TEST 30 — ENTERPRISE_USER cannot create services (expect 403)
+─────────────────────────────────────────────
+POST   /api/services
+Authorization: Bearer <EU_TOKEN>
+
+Body:
+{
+  "name": "Unauthorized Service",
+  "type": "VOICE"
+}
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 7 — SLA SETUP
+Token: <SM_TOKEN>  (SERVICE_MANAGER)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 31 — Create SLA for HQ Voice Service (CALL_DURATION < 500)
+─────────────────────────────────────────────
+POST   /api/sla
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "serviceId":   1,
+  "metric":      "CALL_DURATION",
+  "threshold":   500,
+  "unit":        "seconds",
+  "operator":    "LESS_THAN",
+  "description": "Total call duration per day must stay under 500 seconds"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "slaId":     1,
+  "serviceId": 1,
+  "metric":    "CALL_DURATION",
+  "threshold": 500.0000,
+  "operator":  "LESS_THAN",
+  "status":    "ACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 32 — Create SLA for Branch Video Conferencing (VIDEO_MINUTES < 100)
+─────────────────────────────────────────────
+POST   /api/sla
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "serviceId":   2,
+  "metric":      "VIDEO_MINUTES",
+  "threshold":   100,
+  "unit":        "minutes",
+  "operator":    "LESS_THAN",
+  "description": "Total video minutes per day must stay under 100"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "slaId":     2,
+  "serviceId": 2,
+  "metric":    "VIDEO_MINUTES",
+  "threshold": 100.0000,
+  "status":    "ACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 33 — List all SLAs
+─────────────────────────────────────────────
+GET   /api/sla
+Authorization: Bearer <SM_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array with 2 SLAs, both ACTIVE
+
+
+─────────────────────────────────────────────
+TEST 34 — Patch SLA threshold (lower it to trigger breach)
+─────────────────────────────────────────────
+PATCH  /api/sla/1
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "threshold":   450,
+  "description": "Lowered threshold for stricter monitoring"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "slaId":       1,
+  "threshold":   450.0000,
+  "description": "Lowered threshold for stricter monitoring"
+}
+
+
+─────────────────────────────────────────────
+TEST 35 — Invalid status update (expect 400)
+─────────────────────────────────────────────
+PUT   /api/sla/1/status
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "status": "INVALID_VALUE"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Invalid status 'INVALID_VALUE'. Valid values: ACTIVE, INACTIVE"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 8 — RECORD USAGE  (triggers SLA breach)
+Token: <NE_TOKEN>  (NETWORK_ENGINEER)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 36 — Record first usage batch (150 seconds)
+─────────────────────────────────────────────
+POST   /api/usage
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "serviceId":  1,
+  "metricType": "CALL_DURATION",
+  "value":      150,
+  "unit":       "seconds"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "usageId":   1,
+  "serviceId": 1,
+  "userId":    3,
+  "value":     150.0000
+}
+
+
+─────────────────────────────────────────────
+TEST 37 — Record second usage batch (150 seconds)
+─────────────────────────────────────────────
+POST   /api/usage
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "serviceId":  1,
+  "metricType": "CALL_DURATION",
+  "value":      150,
+  "unit":       "seconds"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "usageId": 2,
+  "value":   150.0000
+}
+
+
+─────────────────────────────────────────────
+TEST 38 — Record third usage batch (220 seconds — pushes total to 520, above 450 threshold)
+─────────────────────────────────────────────
+POST   /api/usage
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "serviceId":  1,
+  "metricType": "CALL_DURATION",
+  "value":      220,
+  "unit":       "seconds"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "usageId": 3,
+  "value":   220.0000
+}
+
+NOTE: Total CALL_DURATION = 520 seconds. Threshold is 450.
+      The SLA scheduler fires every 60 seconds. Within the next 60 seconds
+      you will see this in the service console:
+        *** NEW SLA BREACH! slaId=1 serviceId=1 actual=520.0 threshold=450.0
+
+
+─────────────────────────────────────────────
+TEST 39 — Query usage for service 1
+─────────────────────────────────────────────
+GET   /api/usage/service/1
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array of 3 usage records for serviceId=1
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 9 — BREACH RESPONSE
+(Wait 60s after Test 38 for the scheduler to fire before running these)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 40 — Check unresolved breaches (SERVICE_MANAGER)
+─────────────────────────────────────────────
+GET   /api/sla/breaches/unresolved
+Authorization: Bearer <SM_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array with 1 breach
+[
+  {
+    "breachId":       1,
+    "slaId":          1,
+    "serviceId":      1,
+    "actualValue":    520.0000,
+    "thresholdValue": 450.0000,
+    "resolved":       false,
+    "resolvedAt":     null
+  }
+]
+
+
+─────────────────────────────────────────────
+TEST 41 — Get all breaches for service 1
+─────────────────────────────────────────────
+GET   /api/sla/breaches/service/1
+Authorization: Bearer <SM_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — same breach as above
+
+
+─────────────────────────────────────────────
+TEST 42 — Send SLA breach notification to NETWORK_ENGINEER (John, userId=3)
+─────────────────────────────────────────────
+POST   /api/notifications
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "userId":        3,
+  "title":         "SLA Breach — HQ Voice Service",
+  "message":       "Call duration SLA breached. Actual: 520s, Threshold: 450s. Please investigate.",
+  "category":      "SLA_BREACH",
+  "channel":       "IN_APP",
+  "referenceId":   1,
+  "referenceType": "SLA_BREACH"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "notificationId": 1,
+  "userId":         3,
+  "title":          "SLA Breach — HQ Voice Service",
+  "status":         "UNREAD"
+}
+
+
+─────────────────────────────────────────────
+TEST 43 — John checks unread count
+─────────────────────────────────────────────
+GET   /api/notifications/user/3/count
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "unreadCount": 1
+}
+
+
+─────────────────────────────────────────────
+TEST 44 — John reads unread notifications
+─────────────────────────────────────────────
+GET   /api/notifications/user/3/unread
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+[
+  {
+    "notificationId": 1,
+    "title":          "SLA Breach — HQ Voice Service",
+    "status":         "UNREAD"
+  }
+]
+
+
+─────────────────────────────────────────────
+TEST 45 — John marks notification as read
+─────────────────────────────────────────────
+PUT   /api/notifications/1/read
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "notificationId": 1,
+  "status":         "READ"
+}
+
+
+─────────────────────────────────────────────
+TEST 46 — RBAC: Alice cannot read John's notification (expect 403)
+─────────────────────────────────────────────
+GET   /api/notifications/user/3/unread
+Authorization: Bearer <EU_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+─────────────────────────────────────────────
+TEST 47 — Resolve breach manually (NETWORK_ENGINEER)
+─────────────────────────────────────────────
+PUT   /api/sla/breaches/1/resolve
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "breachId":   1,
+  "resolved":   true,
+  "resolvedAt": "2025-..."
+}
+
+
+─────────────────────────────────────────────
+TEST 48 — Try to resolve the same breach again (expect 400)
+─────────────────────────────────────────────
+PUT   /api/sla/breaches/1/resolve
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Breach event 1 is already resolved"
+}
+
+
+─────────────────────────────────────────────
+TEST 49 — Try to delete SLA that still has breach history
+         First recreate an unresolved breach by recording more usage,
+         OR skip this and test delete on a clean SLA.
+         Here we test deleting slaId=2 which has no breaches yet.
+─────────────────────────────────────────────
+DELETE  /api/sla/2
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "message": "SLA deleted successfully"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 10 — INCIDENT LIFECYCLE
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 50 — NETWORK_ENGINEER reports a voice outage
+─────────────────────────────────────────────
+POST   /api/incidents
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "serviceId":   1,
+  "title":       "Voice Outage — HQ",
+  "description": "Complete loss of voice service at HQ building. No outbound calls possible.",
+  "severity":    "CRITICAL"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "incidentId":    1,
+  "serviceId":     1,
+  "title":         "Voice Outage — HQ",
+  "severity":      "CRITICAL",
+  "status":        "OPEN",
+  "reportedBy":    3,
+  "detectedDate":  "2025-...",
+  "resolvedDate":  null
+}
+
+
+─────────────────────────────────────────────
+TEST 51 — SERVICE_MANAGER assigns incident to John (userId=3)
+─────────────────────────────────────────────
+PUT   /api/incidents/1/assign
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "assignedTo": 3
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "incidentId": 1,
+  "status":     "IN_PROGRESS",    ← auto-transitions OPEN → IN_PROGRESS
+  "assignedTo": 3
+}
+
+
+─────────────────────────────────────────────
+TEST 52 — NETWORK_ENGINEER creates a resolution action
+─────────────────────────────────────────────
+POST   /api/actions/incident/1
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "ownerId":            3,
+  "actionDescription":  "Check gateway configuration for voice routing",
+  "dueDate":            "2025-12-31T18:00:00"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "actionId":           1,
+  "incidentId":         1,
+  "ownerId":            3,
+  "actionDescription":  "Check gateway configuration for voice routing",
+  "status":             "PENDING"
+}
+
+
+─────────────────────────────────────────────
+TEST 53 — Start working on the action
+─────────────────────────────────────────────
+PUT   /api/actions/1/status
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "status": "IN_PROGRESS"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "actionId": 1,
+  "status":   "IN_PROGRESS"
+}
+
+
+─────────────────────────────────────────────
+TEST 54 — NETWORK_ENGINEER adds a comment
+─────────────────────────────────────────────
+POST   /api/incidents/1/comments
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "comment": "Found corrupted routing config in gateway. Fixing now."
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "commentId":  1,
+  "incidentId": 1,
+  "authorId":   3,
+  "comment":    "Found corrupted routing config in gateway. Fixing now."
+}
+
+
+─────────────────────────────────────────────
+TEST 55 — OPERATIONS_HEAD adds a management comment
+─────────────────────────────────────────────
+POST   /api/incidents/1/comments
+Authorization: Bearer <OH_TOKEN>
+
+Body:
+{
+  "comment": "Management has been notified. Please continue updates every 30 minutes."
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "commentId":  2,
+  "incidentId": 1,
+  "authorId":   4,
+  "comment":    "Management has been notified..."
+}
+
+
+─────────────────────────────────────────────
+TEST 56 — Complete the resolution action
+─────────────────────────────────────────────
+PUT   /api/actions/1/status
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "status": "COMPLETED"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "actionId":    1,
+  "status":      "COMPLETED",
+  "completedAt": "2025-..."
+}
+
+
+─────────────────────────────────────────────
+TEST 57 — Try invalid action status update (expect 400)
+─────────────────────────────────────────────
+PUT   /api/actions/1/status
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "status": "UNKNOWN"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Invalid status 'UNKNOWN'. Valid values: PENDING, IN_PROGRESS, COMPLETED, CANCELLED"
+}
+
+
+─────────────────────────────────────────────
+TEST 58 — Try to update a COMPLETED action (expect 400)
+─────────────────────────────────────────────
+PUT   /api/actions/1/status
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "status": "IN_PROGRESS"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Cannot update a completed action"
+}
+
+
+─────────────────────────────────────────────
+TEST 59 — NETWORK_ENGINEER resolves the incident
+─────────────────────────────────────────────
+PUT   /api/incidents/1/resolve
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "incidentId":   1,
+  "status":       "RESOLVED",
+  "resolvedDate": "2025-..."    ← used in MTTR calculation in analytics
+}
+
+
+─────────────────────────────────────────────
+TEST 60 — Try to re-resolve already resolved incident (expect 400)
+─────────────────────────────────────────────
+PUT   /api/incidents/1/resolve
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Invalid status transition from RESOLVED to RESOLVED"
+}
+
+
+─────────────────────────────────────────────
+TEST 61 — SERVICE_MANAGER closes the incident
+─────────────────────────────────────────────
+PUT   /api/incidents/1/close
+Authorization: Bearer <SM_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "incidentId": 1,
+  "status":     "CLOSED"
+}
+
+
+─────────────────────────────────────────────
+TEST 62 — Try to update a closed incident (expect 400)
+─────────────────────────────────────────────
+PUT   /api/incidents/1
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "title": "Attempting update on closed incident"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "Cannot update a closed incident"
+}
+
+
+─────────────────────────────────────────────
+TEST 63 — Read incident comments (any authorized role)
+─────────────────────────────────────────────
+GET   /api/incidents/1/comments
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array of 2 comments in chronological order
+[
+  { "commentId":1, "authorId":3, "comment":"Found corrupted routing config..." },
+  { "commentId":2, "authorId":4, "comment":"Management has been notified..." }
+]
+
+
+─────────────────────────────────────────────
+TEST 64 — Filter incidents by severity
+─────────────────────────────────────────────
+GET   /api/incidents?severity=CRITICAL
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+[
+  { "incidentId":1, "severity":"CRITICAL", "status":"CLOSED" }
+]
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 11 — ANALYTICS & REPORTING
+Token: <OH_TOKEN>  (OPERATIONS_HEAD) or <CO_TOKEN> (COMPLIANCE_OFFICER)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 65 — Live incident summary (calls incident-service via WebClient)
+─────────────────────────────────────────────
+GET   /api/reports/incident-summary?from=2025-01-01&to=2025-12-31
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "totalIncidents":      1,
+  "openIncidents":       0,
+  "inProgressIncidents": 0,
+  "resolvedIncidents":   0,
+  "closedIncidents":     1,
+  "criticalIncidents":   1,
+  "highIncidents":       0,
+  "mediumIncidents":     0,
+  "lowIncidents":        0,
+  "averageMttrMinutes":  <calculated from detectedDate to resolvedDate>,
+  "fromDate":            "2025-01-01",
+  "toDate":              "2025-12-31"
+}
+
+
+─────────────────────────────────────────────
+TEST 66 — Live SLA compliance (calls usage-sla-service via WebClient)
+─────────────────────────────────────────────
+GET   /api/reports/sla-compliance?serviceId=1&from=2025-01-01&to=2025-12-31
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId":           1,
+  "metric":              "CALL_DURATION",
+  "totalBreaches":       1,
+  "resolvedBreaches":    1,
+  "unresolvedBreaches":  0,
+  "compliancePercentage": 100.0,
+  "fromDate":            "2025-01-01",
+  "toDate":              "2025-12-31"
+}
+
+
+─────────────────────────────────────────────
+TEST 67 — Generate and PERSIST an INCIDENT_SUMMARY report
+─────────────────────────────────────────────
+POST   /api/reports/generate
+Authorization: Bearer <OH_TOKEN>
+
+Body:
+{
+  "title":      "Q4 Incident Summary Report",
+  "scope":      "All Services",
+  "reportType": "INCIDENT_SUMMARY",
+  "fromDate":   "2025-01-01",
+  "toDate":     "2025-12-31"
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "reportId":   1,
+  "reportType": "INCIDENT_SUMMARY",
+  "metrics":    "{\"reportType\":\"INCIDENT_SUMMARY\",\"totalIncidents\":1,\"closedIncidents\":1,\"criticalIncidents\":1,\"averageMttrMinutes\":...}",
+  "generatedBy": 4
+}
+
+NOTE: Unlike before the fix, 'metrics' now contains real computed data,
+      not just the request parameters.
+
+
+─────────────────────────────────────────────
+TEST 68 — Generate and PERSIST an SLA_COMPLIANCE report
+─────────────────────────────────────────────
+POST   /api/reports/generate
+Authorization: Bearer <CO_TOKEN>
+
+Body:
+{
+  "title":      "HQ Voice SLA Compliance — Q4",
+  "scope":      "HQ Voice Service",
+  "reportType": "SLA_COMPLIANCE",
+  "fromDate":   "2025-01-01",
+  "toDate":     "2025-12-31",
+  "serviceId":  1
+}
+
+PREDICTED OUTPUT:  201 Created
+{
+  "reportId":   2,
+  "reportType": "SLA_COMPLIANCE",
+  "metrics":    "{\"reportType\":\"SLA_COMPLIANCE\",\"totalBreaches\":1,\"resolvedBreaches\":1,\"compliancePercentage\":100.0,...}"
+}
+
+
+─────────────────────────────────────────────
+TEST 69 — SLA_COMPLIANCE report without serviceId (expect 400)
+─────────────────────────────────────────────
+POST   /api/reports/generate
+Authorization: Bearer <CO_TOKEN>
+
+Body:
+{
+  "title":      "Bad SLA Report",
+  "scope":      "All",
+  "reportType": "SLA_COMPLIANCE",
+  "fromDate":   "2025-01-01",
+  "toDate":     "2025-12-31"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "serviceId is required for SLA_COMPLIANCE reports"
+}
+
+
+─────────────────────────────────────────────
+TEST 70 — Invalid date range (expect 400)
+─────────────────────────────────────────────
+POST   /api/reports/generate
+Authorization: Bearer <OH_TOKEN>
+
+Body:
+{
+  "title":      "Bad Date Report",
+  "scope":      "All",
+  "reportType": "INCIDENT_SUMMARY",
+  "fromDate":   "2025-12-31",
+  "toDate":     "2025-01-01"
+}
+
+PREDICTED OUTPUT:  400 Bad Request
+{
+  "message": "fromDate must be before toDate"
+}
+
+
+─────────────────────────────────────────────
+TEST 71 — Retrieve stored report by ID
+─────────────────────────────────────────────
+GET   /api/reports/1
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "reportId":   1,
+  "reportType": "INCIDENT_SUMMARY",
+  "metrics":    "{ ... real computed data ... }"
+}
+
+
+─────────────────────────────────────────────
+TEST 72 — List my reports (reports generated by current user)
+─────────────────────────────────────────────
+GET   /api/reports/my
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array with reportId=1 only (generated by userId=4)
+
+
+─────────────────────────────────────────────
+TEST 73 — Generate operations dashboard snapshot
+─────────────────────────────────────────────
+POST   /api/reports/snapshots/operations
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "snapshotId":   1,
+  "snapshotType": "OPERATIONS_DASHBOARD",
+  "data":         "{\"incidents\":{\"total\":1,\"closed\":1,\"critical\":1,...}}"
+}
+
+
+─────────────────────────────────────────────
+TEST 74 — Retrieve the latest operations snapshot
+─────────────────────────────────────────────
+GET   /api/reports/snapshots/OPERATIONS_DASHBOARD
+Authorization: Bearer <OH_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — same snapshot saved in Test 73
+
+
+──────────────────────────────────────────────
+TEST 75 — ENTERPRISE_USER cannot access reports (expect 403)
+──────────────────────────────────────────────
+GET   /api/reports
+Authorization: Bearer <EU_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 12 — COMPLIANCE AUDIT
+Token: <CO_TOKEN>  (COMPLIANCE_OFFICER)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 76 — Get all audit logs
+─────────────────────────────────────────────
+GET   /api/audit-logs
+Authorization: Bearer <CO_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — array containing audit events:
+  USER_REGISTERED  (x6 users)
+  USER_LOGIN       (multiple)
+  USER_ROLE_UPDATED (x4 — Sarah, John, Mike, Lisa)
+  SERVICE_ACTIVATED (x2 remaining, since slaId=2 deleted)
+  USER_PROFILE_UPDATED (if profile patches were tested)
+
+
+─────────────────────────────────────────────
+TEST 77 — Get audit logs for Admin (userId=1)
+─────────────────────────────────────────────
+GET   /api/audit-logs/user/1
+Authorization: Bearer <CO_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — all actions performed by admin
+  (USER_REGISTERED, USER_LOGIN, USER_ROLE_UPDATED for all 4 users)
+
+
+─────────────────────────────────────────────
+TEST 78 — Get audit logs for a date range
+─────────────────────────────────────────────
+GET   /api/audit-logs/range?from=2025-01-01T00:00:00&to=2025-12-31T23:59:59
+Authorization: Bearer <CO_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK  — all logs within the date range
+
+
+─────────────────────────────────────────────
+TEST 79 — Get all email delivery logs
+─────────────────────────────────────────────
+GET   /api/notifications/email-logs
+Authorization: Bearer <CO_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+  (Empty array if channel=IN_APP was used in all tests above,
+   or entries if EMAIL channel was used)
+
+
+─────────────────────────────────────────────
+TEST 80 — Get failed email deliveries
+─────────────────────────────────────────────
+GET   /api/notifications/email-logs/failed
+Authorization: Bearer <CO_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+  (Empty array if no emails failed, or failed entries if SMTP was misconfigured)
+
+
+─────────────────────────────────────────────
+TEST 81 — NETWORK_ENGINEER cannot access audit logs (expect 403)
+─────────────────────────────────────────────
+GET   /api/audit-logs
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 13 — USER PROFILE MANAGEMENT
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 82 — User updates own profile
+─────────────────────────────────────────────
+PATCH  /api/users/3/profile
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "name":  "John D. Doe",
+  "phone": "+919876543210"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId": 3,
+  "name":   "John D. Doe",
+  "phone":  "+919876543210"
+}
+
+
+─────────────────────────────────────────────
+TEST 83 — User cannot update another user's profile (expect 403)
+─────────────────────────────────────────────
+PATCH  /api/users/2/profile
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "name": "Hacked Name"
+}
+
+PREDICTED OUTPUT:  403 Forbidden
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 14 — NOTIFICATION PREFERENCES
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 84 — Get notification preferences for John
+─────────────────────────────────────────────
+GET   /api/notifications/preferences/3
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":            3,
+  "emailEnabled":      true,
+  "inAppEnabled":      true,
+  "notifyOnBreach":    true,
+  "notifyOnIncident":  true
+}
+
+
+─────────────────────────────────────────────
+TEST 85 — Update preferences (disable email notifications)
+─────────────────────────────────────────────
+PUT   /api/notifications/preferences/3
+Authorization: Bearer <NE_TOKEN>
+
+Body:
+{
+  "emailEnabled":     false,
+  "inAppEnabled":     true,
+  "notifyOnBreach":   true,
+  "notifyOnIncident": true
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":        3,
+  "emailEnabled":  false,
+  "inAppEnabled":  true
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 15 — TOKEN LIFECYCLE
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 86 — Refresh token (get new access token without re-login)
+─────────────────────────────────────────────
+POST   /api/auth/refresh
+
+Body:
+{
+  "refreshToken": "<NE_REFRESH>"    ← the refreshToken from John's login response
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "accessToken":  "eyJhbG..."    ← new token
+  "refreshToken": "xxxxxxx..."   ← new refresh token; old one is now invalid
+}
+
+
+─────────────────────────────────────────────
+TEST 87 — Use expired/invalid refresh token (expect 401)
+─────────────────────────────────────────────
+POST   /api/auth/refresh
+
+Body:
+{
+  "refreshToken": "invalid-token-value"
+}
+
+PREDICTED OUTPUT:  401 Unauthorized
+{
+  "message": "Invalid or expired refresh token"
+}
+
+
+─────────────────────────────────────────────
+TEST 88 — Logout (invalidates refresh token)
+─────────────────────────────────────────────
+POST   /api/auth/logout
+Authorization: Bearer <NE_TOKEN>
+
+Body:  (none)
+
+PREDICTED OUTPUT:  200 OK
+{
+  "message": "Logged out successfully"
+}
+
+
+─────────────────────────────────────────────
+TEST 89 — After logout, refresh token no longer works (expect 401)
+─────────────────────────────────────────────
+POST   /api/auth/refresh
+
+Body:
+{
+  "refreshToken": "<NE_REFRESH>"    ← same token used before — now revoked
+}
+
+PREDICTED OUTPUT:  401 Unauthorized
+
+
+─────────────────────────────────────────────
+TEST 90 — Admin deactivates Alice's account
+─────────────────────────────────────────────
+PUT   /api/users/6/status
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "isActive": false
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "userId":   6,
+  "isActive": false
+}
+
+
+─────────────────────────────────────────────
+TEST 91 — Deactivated Alice cannot login (expect 401)
+─────────────────────────────────────────────
+POST   /api/auth/login
+
+Body:
+{
+  "email":    "alice@comnet360.com",
+  "password": "Alice@1234"
+}
+
+PREDICTED OUTPUT:  401 Unauthorized
+{
+  "message": "Account is deactivated"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+STAGE 16 — SERVICE DECOMMISSION  (Admin only)
+══════════════════════════════════════════════════════════════════════════
+
+─────────────────────────────────────────────
+TEST 92 — Deactivate Enterprise Messaging before decommission
+─────────────────────────────────────────────
+PUT   /api/services/3/deactivate
+Authorization: Bearer <SM_TOKEN>
+
+Body:
+{
+  "reason": "Scheduled maintenance — migrating to new platform"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId": 3,
+  "status":    "INACTIVE"
+}
+
+
+─────────────────────────────────────────────
+TEST 93 — Admin decommissions the service (terminal state)
+─────────────────────────────────────────────
+PUT   /api/services/3/decommission
+Authorization: Bearer <ADMIN_TOKEN>
+
+Body:
+{
+  "reason": "Service retired — migration complete"
+}
+
+PREDICTED OUTPUT:  200 OK
+{
+  "serviceId": 3,
+  "status":    "DECOMMISSIONED"
+}
+
+
+══════════════════════════════════════════════════════════════════════════
+WORKFLOW DIAGRAM CORRECTION
+══════════════════════════════════════════════════════════════════════════
+
+The workflow diagram provided is CORRECT with the following two notes:
+
+1. STAGE 4 — SLA metric field changed:
+   The 'metric' field in POST /api/sla now accepts the MetricType ENUM, not
+   a free-text string. Valid values are:
+     CALL_DURATION, DATA_TRANSFER, MESSAGE_COUNT,
+     VIDEO_MINUTES, API_CALLS, BANDWIDTH
+   Using any other string now returns 400 Bad Request at request validation.
+
+2. STAGE 12 — Gateway header flow updated:
+   The flow now shows:
+     Gateway → injects X-User-Email, X-User-Role, X-User-Id headers
+     Microservice JwtAuthFilter → Path 1 (gateway headers): reads all 3 headers
+     Microservice JwtAuthFilter → Path 2 (Swagger/direct): extracts all 3
+       values from JWT and wraps the request so controllers can read them.
+   Previously Path 2 was missing the header injection, causing 400 errors
+   when testing services directly via Swagger.
+
+
+══════════════════════════════════════════════════════════════════════════
+QUICK REFERENCE — TOKENS AND USER MAP
+══════════════════════════════════════════════════════════════════════════
+
+  userId | Name          | Role               | Token Variable
+  -------|---------------|--------------------|----------------
+  1      | Admin User    | ADMIN              | <ADMIN_TOKEN>
+  2      | Sarah Smith   | SERVICE_MANAGER    | <SM_TOKEN>
+  3      | John Doe      | NETWORK_ENGINEER   | <NE_TOKEN>
+  4      | Mike Johnson  | OPERATIONS_HEAD    | <OH_TOKEN>
+  5      | Lisa Brown    | COMPLIANCE_OFFICER | <CO_TOKEN>
+  6      | Alice Green   | ENTERPRISE_USER    | <EU_TOKEN>
+
+ENDPOINT PERMISSION MATRIX
+  Endpoint group          | ADMIN | SM  | NE  | OH  | CO  | EU
+  ------------------------|-------|-----|-----|-----|-----|----
+  POST /api/auth/*        |  All  | All | All | All | All | All
+  GET  /api/users         |  ✓   |  ✓  |  ✗  |  ✗  |  ✗  |  ✗
+  PUT  /api/users/*/role  |  ✓   |  ✗  |  ✗  |  ✗  |  ✗  |  ✗
+  /api/services (write)   |  ✓   |  ✓  |  ✗  |  ✗  |  ✗  |  ✗
+  /api/services (read)    |  ✓   |  ✓  |  ✓  |  ✓  |  ✗  |  ✓*
+  /api/sla (write)        |  ✓   |  ✓  |  ✗  |  ✗  |  ✗  |  ✗
+  /api/sla (read)         |  ✓   |  ✓  |  ✗  |  ✓  |  ✗  |  ✗
+  /api/usage (write)      |  ✓   |  ✓  |  ✓  |  ✗  |  ✗  |  ✗
+  /api/incidents (write)  |  ✓   |  ✓  |  ✓  |  ✗  |  ✗  |  ✗
+  /api/incidents (read)   |  ✓   |  ✓  |  ✓  |  ✓  |  ✗  |  ✗
+  /api/reports (write)    |  ✓   |  ✓  |  ✗  |  ✓  |  ✓  |  ✗
+  /api/reports (read)     |  ✓   |  ✓  |  ✗  |  ✓  |  ✓  |  ✗
+  /api/notifications(send)|  ✓   |  ✓  |  ✓  |  ✗  |  ✗  |  ✗
+  /api/audit-logs         |  ✓   |  ✗  |  ✗  |  ✗  |  ✓  |  ✗
+  /api/notifications/
+    email-logs            |  ✓   |  ✗  |  ✗  |  ✗  |  ✓  |  ✗
+
+  * ENTERPRISE_USER can read own services via GET /api/services/my
