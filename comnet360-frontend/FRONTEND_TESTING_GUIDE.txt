@@ -1,0 +1,1365 @@
+
+╔══════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                          ║
+║        ComNet360 — Enterprise Communications & Service Management Platform               ║
+║                                                                                          ║
+║                    COMPLETE END-TO-END FRONTEND TESTING GUIDE                            ║
+║                   Covers All 6 Microservices × All 6 User Roles                          ║
+║                                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════════════════════╝
+
+  Frontend URL  : http://localhost:5173
+  Gateway URL   : http://localhost:8001
+  Eureka URL    : http://localhost:8761
+  IAM Service   : http://localhost:8081/swagger-ui.html
+  Provisioning  : http://localhost:8082/swagger-ui.html
+  Usage SLA     : http://localhost:8083/swagger-ui.html
+  Incident      : http://localhost:8084/swagger-ui.html
+  Analytics     : http://localhost:8085/swagger-ui.html
+  Notification  : http://localhost:8086/swagger-ui.html
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  PRE-REQUISITES — START EVERYTHING IN THIS ORDER
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  STEP 1: Start MySQL 8.0
+  ───────────────────────
+  Make sure MySQL is running on port 3306.
+  Open MySQL Workbench → connect → verify these databases exist:
+    iam_db, provisioning_db, usage_db, incident_db, analytics_db, notification_db
+  If missing → run: source C:/Users/2484896/Downloads/comnet360-backendf/comnet360/database/00_init_all.sql
+
+  STEP 2: Start Backend Services (in IntelliJ, in this exact order)
+  ──────────────────────────────────────────────────────────────────
+  1. Run EurekaServerApplication    → wait for: "Started EurekaServerApplication"   → Port 8761
+  2. Run IamServiceApplication      → wait for: "Started IamServiceApplication"     → Port 8081
+  3. Run ProvisioningApplication    → wait for: "Started"                            → Port 8082
+  4. Run UsageSlaApplication        → wait for: "Started"                            → Port 8083
+  5. Run IncidentApplication        → wait for: "Started"                            → Port 8084
+  6. Run AnalyticsApplication       → wait for: "Started"                            → Port 8085
+  7. Run NotificationApplication    → wait for: "Started"                            → Port 8086
+  8. Run GatewayApplication         → wait for: "Started GatewayApplication"        → Port 8001
+
+  Verify: Open http://localhost:8761 → All 6 services must show UP in Eureka dashboard
+
+  STEP 3: Start Frontend
+  ──────────────────────
+  Open terminal in: comnet360-frontend folder
+  TYPE: npm run dev
+  Wait for: "Local: http://localhost:5173/"
+  Open browser → go to: http://localhost:5173
+
+  STEP 4: Create Test Users (do this ONCE)
+  ─────────────────────────────────────────
+  Go to http://localhost:5173/register and create each user below.
+  After creating each, run the MySQL UPDATE to assign the correct role.
+
+  ┌─────────────────────────────────┬──────────────────────────────────┬─────────────────┬──────────────────────┐
+  │ Name                            │ Email                            │ Password        │ Role (set in MySQL)  │
+  ├─────────────────────────────────┼──────────────────────────────────┼─────────────────┼──────────────────────┤
+  │ System Admin                    │ admin@comnet360.com               │ Admin@123       │ ADMIN                │
+  │ Test Manager                    │ manager@comnet360.com             │ Manager@123     │ SERVICE_MANAGER      │
+  │ Test Engineer                   │ engineer@comnet360.com            │ Engineer@123    │ NETWORK_ENGINEER     │
+  │ Test Ops                        │ ops@comnet360.com                 │ OpsHead@123     │ OPERATIONS_HEAD      │
+  │ Test Compliance                 │ compliance@comnet360.com          │ Comply@123      │ COMPLIANCE_OFFICER   │
+  │ Basic User                      │ user@comnet360.com                │ UserPass@123    │ ENTERPRISE_USER      │
+  └─────────────────────────────────┴──────────────────────────────────┴─────────────────┴──────────────────────┘
+
+  MySQL queries to set roles:
+    USE iam_db;
+    UPDATE users SET role = 'ADMIN'               WHERE email = 'admin@comnet360.com';
+    UPDATE users SET role = 'SERVICE_MANAGER'     WHERE email = 'manager@comnet360.com';
+    UPDATE users SET role = 'NETWORK_ENGINEER'    WHERE email = 'engineer@comnet360.com';
+    UPDATE users SET role = 'OPERATIONS_HEAD'     WHERE email = 'ops@comnet360.com';
+    UPDATE users SET role = 'COMPLIANCE_OFFICER'  WHERE email = 'compliance@comnet360.com';
+    UPDATE users SET role = 'ENTERPRISE_USER'     WHERE email = 'user@comnet360.com';
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 1 — IAM SERVICE (Authentication & User Management)
+  Backend Port: 8081   |   Swagger: http://localhost:8081/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.1 — REGISTER A NEW USER                                                     │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/register
+
+  STEP 1 → CLICK "Register" link on the login page
+  STEP 2 → In "Full name"        field → TYPE:   System Admin
+  STEP 3 → In "Email address"    field → TYPE:   admin@comnet360.com
+  STEP 4 → In "Password"         field → TYPE:   Admin@123
+  STEP 5 → In "Confirm password" field → TYPE:   Admin@123
+  STEP 6 → CLICK "Create account" button
+
+  ✓ EXPECTED: Green toast at bottom-right → "Account created!"
+  ✓ EXPECTED: Automatically redirected to → http://localhost:5173/dashboard
+  ✓ EXPECTED: Sidebar visible on left with navigation items
+  ✓ EXPECTED: Top bar shows bell icon, user icon, logout icon
+
+  ✗ TEST VALIDATION ERRORS (do this before correct submission):
+  - Leave "Full name" blank → CLICK Create account → see "Name is required" error
+  - Type invalid email (no @) → see "Valid email required"
+  - Type password with 5 chars → see "Minimum 8 characters"
+  - Type different confirm password → see "Passwords do not match"
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.2 — LOGIN                                                                   │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/login
+
+  STEP 1 → CLICK logout icon in top-right corner (arrow pointing right)
+           → Redirected to /login
+
+  STEP 2 → In "Email address" field → TYPE: admin@comnet360.com
+  STEP 3 → In "Password"      field → TYPE: Admin@123
+  STEP 4 → CLICK blue "Sign in" button
+
+  ✓ EXPECTED: Redirected to /dashboard
+  ✓ EXPECTED: Dashboard loads with stats cards
+
+  ✗ TEST WRONG PASSWORD:
+  STEP 1 → Logout first
+  STEP 2 → Email → TYPE: admin@comnet360.com
+  STEP 3 → Password → TYPE: WrongPass999
+  STEP 4 → CLICK Sign in
+  ✓ EXPECTED: Red error box → "Invalid credentials"
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.3 — PROTECTED ROUTE GUARD                                                   │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout from the app
+  STEP 2 → In browser address bar → TYPE: http://localhost:5173/dashboard → press ENTER
+  ✓ EXPECTED: Redirected to /login (cannot access without token)
+
+  STEP 3 → TYPE: http://localhost:5173/services → ENTER
+  ✓ EXPECTED: Redirected to /login
+
+  STEP 4 → TYPE: http://localhost:5173/admin/users → ENTER
+  ✓ EXPECTED: Redirected to /login
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.4 — USER MANAGEMENT (Admin only)                                            │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  Login as: admin@comnet360.com / Admin@123
+  URL: http://localhost:5173/admin/users
+
+  STEP 1 → CLICK "Users" in the left sidebar
+
+  ✓ EXPECTED: Table with columns: Name | Email | Role | Status | Joined | Actions
+  ✓ EXPECTED: Your own row (admin) shows "You" blue badge next to name
+  ✓ EXPECTED: Your own row has NO action buttons (cannot edit yourself)
+
+  ── Change Role ──
+  STEP 2 → Find row: Test Manager (manager@comnet360.com)
+  STEP 3 → In the role dropdown (Actions column) → SELECT: Network Engineer
+  ✓ EXPECTED: Toast → "Role updated"
+  ✓ EXPECTED: Role badge changes to orange "NETWORK ENGINEER"
+
+  STEP 4 → Same row → SELECT back: Service Manager
+  ✓ EXPECTED: Role badge changes back to purple "SERVICE MANAGER"
+
+  ── Deactivate User ──
+  STEP 5 → Find row: Basic User (user@comnet360.com)
+  STEP 6 → CLICK red "Deactivate" button
+  ✓ EXPECTED: Toast → "Status updated"
+  ✓ EXPECTED: Status badge → red INACTIVE
+  ✓ EXPECTED: Button changes to green "Activate"
+
+  STEP 7 → CLICK green "Activate"
+  ✓ EXPECTED: Status badge → green ACTIVE
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.5 — AUDIT LOGS (Admin / Compliance Officer only)                            │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  Login as: admin@comnet360.com / Admin@123
+  URL: http://localhost:5173/admin/audit-logs
+
+  STEP 1 → CLICK "Audit Logs" in the left sidebar
+
+  ✓ EXPECTED: Table with columns: Timestamp | User | Action | Resource | Resource ID | IP Address
+  ✓ EXPECTED: Login actions visible (from your earlier logins)
+  ✓ EXPECTED: Action badges colour-coded:
+              CREATE = green badge
+              UPDATE = yellow badge
+              DELETE = red badge
+              LOGIN  = grey badge
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 1.6 — PROFILE PAGE                                                            │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/profile
+
+  STEP 1 → CLICK your name at the bottom of the sidebar
+           OR CLICK the user icon in the top-right bar
+
+  ✓ EXPECTED: Profile card with large avatar (first letter of your name)
+  ✓ EXPECTED: Name: System Admin
+  ✓ EXPECTED: Role badge: red "ADMIN"
+  ✓ EXPECTED: Info rows: Full Name | Email Address | Role | Member Since
+
+  STEP 2 → CLICK red "Sign out" button
+  ✓ EXPECTED: Toast → "Logged out"
+  ✓ EXPECTED: Redirected to /login
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 2 — PROVISIONING SERVICE (Service Lifecycle Management)
+  Backend Port: 8082   |   Swagger: http://localhost:8082/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 2.1 — CREATE SERVICES                                                         │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/services
+
+  STEP 1 → CLICK "Services" in the left sidebar
+  STEP 2 → CLICK blue "New Service" button (top-right corner)
+           → Modal popup opens with title "Create New Service"
+
+  ── Create Service 1 ──
+  STEP 3 → In "Service Name" field → TYPE: Corporate Voice Gateway
+  STEP 4 → In "Description"  field → TYPE: Main voice communication hub for all enterprise calls
+  STEP 5 → In "Service Type" dropdown → SELECT: Voice
+  STEP 6 → CLICK blue "Create Service" button
+  ✓ EXPECTED: Modal closes
+  ✓ EXPECTED: Green toast → "Service created"
+  ✓ EXPECTED: Row appears in table: Corporate Voice Gateway | VOICE (blue) | DRAFT (grey) | your email
+
+  ── Create Service 2 ──
+  STEP 7 → CLICK "New Service" again
+  STEP 8 → Name → TYPE:        Video Conference Hub
+  STEP 9 → Description → TYPE: HD video conferencing for internal and external meetings
+  STEP 10→ Type → SELECT:      Video
+  STEP 11→ CLICK "Create Service"
+  ✓ EXPECTED: "Video Conference Hub" row appears
+
+  ── Create Service 3 ──
+  STEP 12→ CLICK "New Service" again
+  STEP 13→ Name → TYPE:        Enterprise Messaging Platform
+  STEP 14→ Description → TYPE: Real-time messaging and chat for all departments
+  STEP 15→ Type → SELECT:      Messaging
+  STEP 16→ CLICK "Create Service"
+  ✓ EXPECTED: "Enterprise Messaging Platform" row appears
+
+  ── Create Service 4 ──
+  STEP 17→ CLICK "New Service" again
+  STEP 18→ Name → TYPE:        Branch Office Voice Network
+  STEP 19→ Description → TYPE: Voice gateway for all regional branch offices
+  STEP 20→ Type → SELECT:      Voice
+  STEP 21→ CLICK "Create Service"
+  ✓ EXPECTED: 4 services now in the table
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 2.2 — SEARCH AND FILTER SERVICES                                              │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → In the search bar → TYPE: Voice
+  ✓ EXPECTED: Only "Corporate Voice Gateway" and "Branch Office Voice Network" shown
+
+  STEP 2 → CLEAR the search bar (delete all text)
+  ✓ EXPECTED: All 4 services shown
+
+  STEP 3 → In "All types" dropdown → SELECT: Video
+  ✓ EXPECTED: Only "Video Conference Hub" shown
+
+  STEP 4 → In "All types" dropdown → SELECT back to: (All types - blank option)
+
+  STEP 5 → In "All statuses" dropdown → SELECT: DRAFT
+  ✓ EXPECTED: All 4 services shown (all are DRAFT since just created)
+
+  STEP 6 → In "All statuses" dropdown → SELECT back to: (All statuses)
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 2.3 — SERVICE DETAIL & LIFECYCLE MANAGEMENT                                   │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → CLICK "Details →" on "Corporate Voice Gateway"
+  → URL changes to: http://localhost:5173/services/1 (or whatever ID)
+
+  ✓ EXPECTED: Page shows:
+    - Service name "Corporate Voice Gateway" as heading
+    - Blue "VOICE" badge
+    - Grey "DRAFT" badge
+    - Description text below heading
+    - 4 info cards: Service ID | Owner | Created | Last Updated
+    - Green "Activate" button visible (top-right)
+    - "Configurations" section at bottom (empty)
+
+  ── Activate Service ──
+  STEP 2 → CLICK green "Activate" button
+  ✓ EXPECTED: Toast → "Service activated"
+  ✓ EXPECTED: Status badge changes from grey "DRAFT" → green "ACTIVE"
+  ✓ EXPECTED: "Activate" button disappears
+  ✓ EXPECTED: "Deactivate" button appears
+
+  ── Deactivate Service ──
+  STEP 3 → CLICK "Deactivate" button
+  ✓ EXPECTED: Toast → "Service deactivated"
+  ✓ EXPECTED: Status badge → red "INACTIVE"
+
+  ── Re-Activate ──
+  STEP 4 → CLICK "Activate" again
+  ✓ EXPECTED: Status badge → green "ACTIVE"
+
+  ── Decommission Service (Admin only) ──
+  STEP 5 → CLICK red "Decommission" button
+  ✓ EXPECTED: Browser confirmation popup → "Decommission this service?"
+  STEP 6 → CLICK "OK" / "Confirm" in browser popup
+  ✓ EXPECTED: Toast → "Service decommissioned"
+  ✓ EXPECTED: Status badge → grey "DECOMMISSIONED"
+  ✓ EXPECTED: All action buttons disappear
+
+  STEP 7 → CLICK "← Back to services" link
+  STEP 8 → CLICK "Details →" on "Video Conference Hub" → Activate it
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 2.4 — SERVICE CONFIGURATIONS                                                  │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  Navigate to: Video Conference Hub detail page
+
+  ── Add Configuration 1 ──
+  STEP 1 → In "Configurations" section → CLICK "Add Config" button
+           → Modal opens with title "Add Configuration"
+
+  STEP 2 → In "Key"         field → TYPE: max_participants
+  STEP 3 → In "Value"       field → TYPE: 250
+  STEP 4 → In "Description" field → TYPE: Maximum participants per video conference session
+  STEP 5 → CLICK "Save"
+  ✓ EXPECTED: Toast → "Configuration added"
+  ✓ EXPECTED: Row appears: max_participants | 250 | Maximum participants per video...
+
+  ── Add Configuration 2 ──
+  STEP 6 → CLICK "Add Config" again
+  STEP 7 → Key → TYPE:         video_resolution
+  STEP 8 → Value → TYPE:       1080p
+  STEP 9 → Description → TYPE: Default video quality for all calls
+  STEP 10→ CLICK "Save"
+  ✓ EXPECTED: Second config row appears
+
+  ── Add Configuration 3 ──
+  STEP 11→ CLICK "Add Config" again
+  STEP 12→ Key → TYPE:         recording_enabled
+  STEP 13→ Value → TYPE:       true
+  STEP 14→ Description → TYPE: Enable automatic call recording
+  STEP 15→ CLICK "Save"
+  ✓ EXPECTED: Third config row appears
+
+  ── Delete Configuration ──
+  STEP 16→ On "video_resolution" row → CLICK the red trash icon
+  ✓ EXPECTED: Toast → "Deleted"
+  ✓ EXPECTED: video_resolution row removed from table
+
+  ── Go back and activate remaining services ──
+  STEP 17→ CLICK "← Back to services"
+  STEP 18→ CLICK "Details →" on "Enterprise Messaging Platform" → CLICK Activate
+  STEP 19→ CLICK "← Back to services"
+  STEP 20→ CLICK "Details →" on "Branch Office Voice Network" → CLICK Activate
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 3 — INCIDENT SERVICE (Incident Management)
+  Backend Port: 8084   |   Swagger: http://localhost:8084/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 3.1 — CREATE INCIDENTS                                                        │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/incidents
+
+  STEP 1 → CLICK "Incidents" in the left sidebar
+  STEP 2 → CLICK red "New Incident" button (top-right)
+           → Modal opens
+
+  ── Create Incident 1 (CRITICAL) ──
+  STEP 3 → In "Title"            → TYPE:   Voice Gateway Complete Outage
+  STEP 4 → In "Description"      → TYPE:   The Corporate Voice Gateway is completely down. All inbound and outbound calls are failing. Affecting 500+ users across HQ.
+  STEP 5 → In "Severity"         → SELECT: Critical
+  STEP 6 → In "Affected Service" → SELECT: Corporate Voice Gateway
+  STEP 7 → CLICK "Create Incident"
+  ✓ EXPECTED: Toast → "Incident created"
+  ✓ EXPECTED: Row with red "CRITICAL" badge and red "Open" dot badge
+
+  ── Create Incident 2 (HIGH) ──
+  STEP 8 → CLICK "New Incident"
+  STEP 9 → Title → TYPE:        Video Call Quality Degradation
+  STEP 10→ Description → TYPE:  Users reporting pixelation and audio drops in video calls. Issue started at 2:00 PM. Approximately 150 users affected.
+  STEP 11→ Severity → SELECT:   High
+  STEP 12→ Service → SELECT:    Video Conference Hub
+  STEP 13→ CLICK "Create Incident"
+  ✓ EXPECTED: Row with orange "HIGH" badge
+
+  ── Create Incident 3 (MEDIUM) ──
+  STEP 14→ CLICK "New Incident"
+  STEP 15→ Title → TYPE:        Message Delivery Delays
+  STEP 16→ Description → TYPE:  Messages in the enterprise messaging platform are delayed by 3-5 minutes. Not all users affected - seems to be specific departments only.
+  STEP 17→ Severity → SELECT:   Medium
+  STEP 18→ Service → SELECT:    Enterprise Messaging Platform
+  STEP 19→ CLICK "Create Incident"
+  ✓ EXPECTED: Row with yellow "MEDIUM" badge
+
+  ── Create Incident 4 (LOW) ──
+  STEP 20→ CLICK "New Incident"
+  STEP 21→ Title → TYPE:        Branch Office Voicemail Not Working
+  STEP 22→ Description → TYPE:  Voicemail service in the Branch Office Voice Network is not recording messages. Calls go through fine but voicemail fails to activate.
+  STEP 23→ Severity → SELECT:   Low
+  STEP 24→ Service → SELECT:    Branch Office Voice Network
+  STEP 25→ CLICK "Create Incident"
+  ✓ EXPECTED: Row with blue "LOW" badge
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 3.2 — FILTER AND SEARCH INCIDENTS                                             │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → In search bar → TYPE: Voice
+  ✓ EXPECTED: Shows "Voice Gateway Complete Outage" and "Branch Office Voicemail..."
+
+  STEP 2 → CLEAR search bar
+
+  STEP 3 → In "All severities" → SELECT: Critical
+  ✓ EXPECTED: Only the CRITICAL incident shown
+
+  STEP 4 → SELECT back to All severities
+
+  STEP 5 → In "All statuses" → SELECT: Open
+  ✓ EXPECTED: All 4 incidents shown (all are OPEN)
+
+  STEP 6 → SELECT back to All statuses
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 3.3 — INCIDENT DETAIL: FULL WORKFLOW                                          │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → CLICK "View →" on "Voice Gateway Complete Outage"
+  → URL: http://localhost:5173/incidents/1
+
+  ✓ EXPECTED: Page shows:
+    - Title with red "CRITICAL" and red "OPEN" badges
+    - Description paragraph
+    - 4 meta cards: Incident # | Service | Reported by | Assigned to (Unassigned)
+    - "Resolution Actions" section (empty)
+    - "Assign" button (top-right)
+    - "Resolve" button (green)
+    - Discussion section at the bottom
+
+  ── Assign the Incident ──
+  STEP 2 → CLICK "Assign" button
+           → Modal opens
+
+  STEP 3 → In "Assign to user" dropdown → SELECT: Test Engineer
+  STEP 4 → CLICK "Assign"
+  ✓ EXPECTED: Toast → "Assigned"
+  ✓ EXPECTED: "Assigned to" card now shows: engineer@comnet360.com
+
+  ── Add Resolution Actions ──
+  STEP 5 → CLICK "Add Action" button (Resolution Actions section)
+           → Modal opens
+
+  STEP 6 → In "Title"       → TYPE: Check gateway server health
+  STEP 7 → In "Description" → TYPE: SSH into the voice gateway server and check CPU, memory, and process status
+  STEP 8 → In "Owner"       → SELECT: Test Engineer
+  STEP 9 → CLICK "Create"
+  ✓ EXPECTED: Toast → "Action created"
+  ✓ EXPECTED: Action row: "Check gateway server health" | PENDING status
+
+  STEP 10→ CLICK "Add Action" again
+  STEP 11→ Title → TYPE:       Restart voice daemon service
+  STEP 12→ Description → TYPE: Run: sudo systemctl restart voice-gateway.service
+  STEP 13→ Owner → SELECT:     Test Engineer
+  STEP 14→ CLICK "Create"
+  ✓ EXPECTED: Second action appears
+
+  STEP 15→ CLICK "Add Action" again
+  STEP 16→ Title → TYPE:       Notify affected users
+  STEP 17→ Description → TYPE: Send email blast to all affected users about the outage and ETA for resolution
+  STEP 18→ Owner → SELECT:     Test Manager
+  STEP 19→ CLICK "Create"
+  ✓ EXPECTED: Third action appears
+
+  ── Update Action Statuses ──
+  STEP 20→ On "Check gateway server health" → CLICK status dropdown → SELECT: In Progress
+  ✓ EXPECTED: Status updates immediately
+
+  STEP 21→ On "Restart voice daemon service" → SELECT: In Progress
+
+  STEP 22→ On "Check gateway server health" → SELECT: Completed
+  ✓ EXPECTED: Status → COMPLETED
+
+  ── Add Discussion Comments ──
+  STEP 23→ In the comment input box at the bottom → CLICK it
+  STEP 24→ TYPE: Initial investigation started. Gateway server appears to be unresponsive.
+  STEP 25→ CLICK "Post" button
+  ✓ EXPECTED: Comment appears with your name and timestamp
+
+  STEP 26→ TYPE: Gateway process found crashed. Restarting now.
+  STEP 27→ CLICK "Post"
+  ✓ EXPECTED: Second comment appears below first
+
+  STEP 28→ TYPE: Gateway restarted successfully. Calls are coming through. Monitoring for 10 minutes.
+  STEP 29→ CLICK "Post"
+  ✓ EXPECTED: Third comment visible in thread
+
+  ── Mark remaining actions complete ──
+  STEP 30→ On "Restart voice daemon service" → SELECT: Completed
+  STEP 31→ On "Notify affected users" → SELECT: Completed
+
+  ── Resolve the Incident ──
+  STEP 32→ CLICK green "Resolve" button (top-right)
+  ✓ EXPECTED: Toast → "Incident resolved"
+  ✓ EXPECTED: Status badge changes to green "RESOLVED"
+  ✓ EXPECTED: "Resolve" button disappears
+  ✓ EXPECTED: Grey "Close" button appears
+
+  ── Close the Incident ──
+  STEP 33→ CLICK "Close" button
+  ✓ EXPECTED: Toast → "Incident closed"
+  ✓ EXPECTED: Status badge → grey "CLOSED"
+  ✓ EXPECTED: All action buttons disappear
+
+  ── Go back and partially resolve another incident ──
+  STEP 34→ CLICK "← Back to incidents"
+  STEP 35→ CLICK "View →" on "Video Call Quality Degradation"
+  STEP 36→ Add comment → TYPE: Investigating network congestion on video servers
+           CLICK "Post"
+  STEP 37→ CLICK "Resolve"
+  ✓ EXPECTED: Status → RESOLVED (leave it here, don't close)
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 4 — USAGE & SLA SERVICE (Metrics & SLA Monitoring)
+  Backend Port: 8083   |   Swagger: http://localhost:8083/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 4.1 — VIEW USAGE CHART                                                        │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/usage
+
+  STEP 1 → CLICK "Usage & SLA" in the left sidebar
+
+  STEP 2 → In "Select a service" dropdown → SELECT: Video Conference Hub
+  ✓ EXPECTED: Line chart area appears
+  ✓ NOTE: Chart may show "No usage data" if no metrics recorded yet (that's normal)
+
+  STEP 3 → SELECT: Corporate Voice Gateway
+  ✓ EXPECTED: Chart updates for that service
+
+  STEP 4 → SELECT: Enterprise Messaging Platform
+  ✓ EXPECTED: Chart updates again
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 4.2 — CREATE SLA DEFINITIONS                                                  │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  ── SLA 1 ──
+  STEP 1 → In "SLA Definitions" section → CLICK "New SLA" button
+           → Modal opens
+
+  STEP 2 → In "Service"     → SELECT: Video Conference Hub
+  STEP 3 → In "Metric Type" → SELECT: Active Connections
+  STEP 4 → In "Operator"    → SELECT: Greater Than
+  STEP 5 → In "Threshold"   → TYPE:   10
+  STEP 6 → In "Description" → TYPE:   Must support more than 10 active video connections at all times
+  STEP 7 → CLICK "Create SLA"
+  ✓ EXPECTED: Toast → "SLA created"
+  ✓ EXPECTED: Row: #ID | ACTIVE_CONNECTIONS | GREATER THAN | 10 | ACTIVE (green)
+
+  ── SLA 2 ──
+  STEP 8  → CLICK "New SLA"
+  STEP 9  → Service → SELECT:    Corporate Voice Gateway
+  STEP 10 → Metric → SELECT:     Bandwidth
+  STEP 11 → Operator → SELECT:   Greater Than
+  STEP 12 → Threshold → TYPE:    500
+  STEP 13 → Description → TYPE:  Minimum bandwidth of 500 Mbps required for voice services
+  STEP 14 → CLICK "Create SLA"
+  ✓ EXPECTED: Second SLA row appears
+
+  ── SLA 3 ──
+  STEP 15 → CLICK "New SLA"
+  STEP 16 → Service → SELECT:    Enterprise Messaging Platform
+  STEP 17 → Metric → SELECT:     Message Count
+  STEP 18 → Operator → SELECT:   Greater Than
+  STEP 19 → Threshold → TYPE:    50
+  STEP 20 → Description → TYPE:  Minimum 50 messages per interval to confirm service is active
+  STEP 21 → CLICK "Create SLA"
+  ✓ EXPECTED: Third SLA row appears
+
+  ── SLA 4 ──
+  STEP 22 → CLICK "New SLA"
+  STEP 23 → Service → SELECT:    Branch Office Voice Network
+  STEP 24 → Metric → SELECT:     Call Count
+  STEP 25 → Operator → SELECT:   Greater Than
+  STEP 26 → Threshold → TYPE:    5
+  STEP 27 → Description → TYPE:  Branch office must process at least 5 calls per interval
+  STEP 28 → CLICK "Create SLA"
+  ✓ EXPECTED: Fourth SLA row appears
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 4.3 — ENABLE / DISABLE SLA                                                    │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → On the "Branch Office Voice Network" SLA row → CLICK "Disable"
+  ✓ EXPECTED: Status badge → grey INACTIVE
+
+  STEP 2 → CLICK "Enable" on the same row
+  ✓ EXPECTED: Status badge → green ACTIVE
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 4.4 — SLA BREACH EVENTS                                                       │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Scroll down to "SLA Breach Events" section
+  ✓ NOTE: Breaches are auto-detected every 60 seconds by the scheduler
+  ✓ If no breaches yet → section shows "No SLA breaches — all good!" with green icon
+  ✓ If breaches exist → rows show: Service | Metric | Actual | Threshold | Breached At | Resolved
+
+  ── Resolve a Breach (if any exist) ──
+  STEP 2 → On any unresolved breach row → CLICK "Resolve"
+           → Modal opens
+
+  STEP 3 → In textarea → TYPE: Issue identified and corrected. Bandwidth restored to normal levels after replacing faulty network switch.
+  STEP 4 → CLICK "Mark Resolved"
+  ✓ EXPECTED: Toast → "Breach resolved"
+  ✓ EXPECTED: Row "Resolved" column changes to green "Yes" badge
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 5 — ANALYTICS SERVICE (Reports & Dashboards)
+  Backend Port: 8085   |   Swagger: http://localhost:8085/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 5.1 — GENERATE KPI REPORTS                                                    │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/analytics
+
+  STEP 1 → CLICK "Analytics" in the left sidebar
+
+  ✓ EXPECTED: Page loads with:
+    - "Generate Report" button (blue, top-right)
+    - "Capture Snapshot" button (grey, next to it)
+    - Charts section (SLA Compliance pie + Incident Summary bar if data exists)
+    - Dashboard Snapshots section
+    - Generated Reports table
+
+  ── Generate Reports ──
+  STEP 2 → CLICK "Generate Report" button
+  ✓ EXPECTED: Toast → "Report generated"
+  ✓ EXPECTED: New row in "Generated Reports" table:
+              Title: KPI Report – [today's date] | Type: OPERATIONS | your email | date
+
+  STEP 3 → CLICK "Generate Report" again (2nd time)
+  ✓ EXPECTED: Second report row appears
+
+  STEP 4 → CLICK "Generate Report" again (3rd time)
+  ✓ EXPECTED: Three report rows in the table
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 5.2 — CAPTURE DASHBOARD SNAPSHOT                                              │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → CLICK "Capture Snapshot" button
+  ✓ EXPECTED: Toast → "Snapshot captured"
+  ✓ EXPECTED: "Dashboard Snapshots" section now shows a row:
+              OPERATIONS badge | timestamp | "X metrics" text
+
+  STEP 2 → CLICK "Capture Snapshot" again
+  ✓ EXPECTED: Second snapshot row appears
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 5.3 — DELETE REPORT (ADMIN only)                                              │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → In the Generated Reports table → find the LAST report row
+  STEP 2 → CLICK the red trash icon on that row
+  ✓ EXPECTED: Toast → "Deleted"
+  ✓ EXPECTED: That row disappears from the table
+  ✓ EXPECTED: Two report rows remain
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 6 — NOTIFICATION SERVICE (Alerts & Preferences)
+  Backend Port: 8086   |   Swagger: http://localhost:8086/swagger-ui.html
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 6.1 — NOTIFICATION BELL BADGE                                                 │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Look at the top-right bar → find the bell icon
+  ✓ EXPECTED: If unread notifications exist → small red badge with number appears
+  ✓ NOTE: Notifications are auto-generated by backend events (incidents, SLA breaches etc.)
+  ✓ NOTE: Badge refreshes every 30 seconds automatically
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 6.2 — VIEW AND READ NOTIFICATIONS                                             │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  URL: http://localhost:5173/notifications
+
+  STEP 1 → CLICK "Notifications" in the left sidebar
+
+  ✓ EXPECTED: List of notifications (if any exist from backend events)
+  ✓ EXPECTED: Unread notifications have blue tinted background + blue dot in title
+  ✓ EXPECTED: Each row shows:
+              - Blue/grey icon (Email = envelope | In-App = phone icon)
+              - Title with blue dot if unread
+              - Message text
+              - Date (top-right of row)
+              - Category badge (grey)
+              - Channel badge (EMAIL = purple | IN_APP = blue)
+              - "Mark read" link (only on unread)
+
+  ── Mark Single Notification Read ──
+  STEP 2 → Find any unread notification (blue background)
+  STEP 3 → CLICK "Mark read" link on the right side of that row
+  ✓ EXPECTED: Blue background disappears from that row
+  ✓ EXPECTED: "Mark read" link disappears
+  ✓ EXPECTED: Bell icon badge count decreases by 1
+
+  ── Mark All Notifications Read ──
+  STEP 4 → CLICK "Mark all read" button (top-right, only visible if unread exist)
+  ✓ EXPECTED: Toast → "All marked as read"
+  ✓ EXPECTED: All blue backgrounds removed from all rows
+  ✓ EXPECTED: Bell icon badge disappears completely
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST 6.3 — NOTIFICATION PREFERENCES                                                │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Scroll down on Notifications page
+           → See "Notification Preferences" card
+
+  ✓ EXPECTED: 5 toggle switches:
+              - Email notifications
+              - In-app notifications
+              - Incident alerts
+              - SLA breach alerts
+              - Service updates
+
+  ── Toggle Email Notifications OFF ──
+  STEP 2 → CLICK the toggle next to "Email notifications"
+  ✓ EXPECTED: Toggle slides to the LEFT → grey background (OFF state)
+
+  ── Toggle it back ON ──
+  STEP 3 → CLICK the same toggle again
+  ✓ EXPECTED: Toggle slides to the RIGHT → blue background (ON state)
+
+  ── Toggle SLA Breach Alerts OFF ──
+  STEP 4 → CLICK toggle next to "SLA breach alerts"
+  ✓ EXPECTED: Turns grey/OFF
+
+  ── Toggle Incident Alerts OFF ──
+  STEP 5 → CLICK toggle next to "Incident alerts"
+  ✓ EXPECTED: Turns grey/OFF
+
+  ── Turn everything back ON ──
+  STEP 6 → CLICK all grey toggles to turn them back to blue/ON
+  ✓ EXPECTED: All 5 toggles are blue (ON)
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  MODULE 7 — DASHBOARD (Overview of all services)
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  STEP 1 → CLICK "Dashboard" in the left sidebar
+  → URL: http://localhost:5173/dashboard
+
+  ✓ EXPECTED: Greeting message → "Good [morning/afternoon/evening], System Admin 👋"
+  ✓ EXPECTED: Sub-text → "Here's what's happening across your communications platform."
+
+  ── Check Stat Cards ──
+  STEP 2 → CHECK the 4 stat cards (top of page):
+
+  Card 1 → "Active Services"
+  ✓ Shows count of ACTIVE services (should be 3: Video Hub, Messaging, Branch Voice)
+  ✓ Sub-text shows total services count
+
+  Card 2 → "Open Incidents"
+  ✓ Shows count of OPEN incidents (should be 2: Message Delays + Voicemail)
+  ✓ Sub-text shows critical count
+
+  Card 3 → "SLA Breaches"
+  ✓ Shows count of unresolved SLA breaches
+  ✓ Sub-text → "Unresolved"
+
+  Card 4 → "Total Users" (Admin only)
+  ✓ Shows total registered users (should be 6)
+  ✓ Sub-text → "Platform users"
+
+  ── Check Charts ──
+  STEP 3 → CHECK the two charts side by side:
+
+  LEFT CHART → "Incidents by Severity" (bar chart)
+  ✓ 4 bars: CRITICAL (red) | HIGH (orange) | MEDIUM (yellow) | LOW (blue)
+  ✓ Each bar height matches count from the incidents you created
+  ✓ Hovering over a bar shows a tooltip with the exact count
+
+  RIGHT CHART → "Service Distribution" (pie chart)
+  ✓ Slices for VOICE, VIDEO, MESSAGING
+  ✓ Labels show service type and count
+  ✓ Legend visible below chart
+
+  ── Check Recent Incidents Table ──
+  STEP 4 → CHECK "Recent Incidents" table:
+  ✓ Shows last 5 incidents
+  ✓ Columns: Title | Service | Severity | Status
+  ✓ CLICK any incident title → navigates to that incident's detail page
+  ✓ CLICK "View all →" link → navigates to /incidents
+
+  ── Check Services Table ──
+  STEP 5 → CHECK "Services Overview" table:
+  ✓ Shows up to 5 services
+  ✓ Columns: Name | Type | Status | Owner
+  ✓ CLICK any service name → navigates to that service's detail page
+  ✓ CLICK "Manage →" link → navigates to /services
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION A — ROLE-WISE ACCESS TESTING
+  (Login with each user and verify correct access)
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  ROLE A.1 — SERVICE_MANAGER                                                         │
+  │  Login: manager@comnet360.com / Manager@123                                         │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout as admin → Login as manager@comnet360.com / Manager@123
+
+  ── Sidebar Check ──
+  ✓ VISIBLE:     Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Users
+  ✗ NOT VISIBLE: Audit Logs (hidden for this role)
+
+  ── Services ──
+  STEP 2 → CLICK "Services"
+  ✓ "New Service" button IS visible → CLICK it → CREATE a service called:
+    Name: Manager Test Service | Description: Created by manager | Type: Voice
+  ✓ Service created successfully
+
+  STEP 3 → CLICK "Details →" on any existing ACTIVE service
+  ✓ Activate / Deactivate buttons visible
+  ✗ "Decommission" button NOT visible
+  ✗ Trash icon on configs NOT visible
+
+  ── Analytics ──
+  STEP 4 → CLICK "Analytics"
+  ✓ Page loads
+  ✓ "Generate Report" button visible → CLICK it → report generates
+  ✗ Trash icon on reports NOT visible (cannot delete)
+
+  ── Users ──
+  STEP 5 → CLICK "Users"
+  ✓ User list visible (read-only view)
+  ✗ No role dropdown in Actions column
+  ✗ No Activate/Deactivate buttons
+
+  ── Restricted Access ──
+  STEP 6 → In browser address bar → TYPE: http://localhost:5173/admin/audit-logs → ENTER
+  ✓ EXPECTED: Redirected to /dashboard (access denied)
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  ROLE A.2 — NETWORK_ENGINEER                                                        │
+  │  Login: engineer@comnet360.com / Engineer@123                                       │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout → Login as engineer@comnet360.com / Engineer@123
+
+  ── Sidebar Check ──
+  ✓ VISIBLE:     Dashboard, Services, Incidents, Usage & SLA, Notifications
+  ✗ NOT VISIBLE: Analytics, Users, Audit Logs
+
+  ── Services ──
+  STEP 2 → CLICK "Services"
+  ✗ "New Service" button NOT visible
+
+  STEP 3 → CLICK "Details →" on any service
+  ✗ NO action buttons at all (Activate / Deactivate / Decommission all hidden)
+  ✗ "Add Config" button NOT visible
+
+  ── Incidents ──
+  STEP 4 → CLICK "Incidents"
+  ✓ "New Incident" button IS visible → CREATE one:
+    Title: Engineer Test Incident | Desc: Reported by engineer | Severity: Low | Service: any
+  ✓ Incident created
+
+  STEP 5 → CLICK "View →" on any OPEN incident
+  ✗ "Assign" button NOT visible
+  ✓ "Resolve" button IS visible → CLICK it → incident resolves
+  ✓ "Add Action" button IS visible
+
+  ── Restricted Access ──
+  STEP 6 → TYPE in browser: http://localhost:5173/analytics → ENTER
+  ✓ EXPECTED: Redirected to /dashboard
+
+  STEP 7 → TYPE: http://localhost:5173/admin/users → ENTER
+  ✓ EXPECTED: Redirected to /dashboard
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  ROLE A.3 — OPERATIONS_HEAD                                                         │
+  │  Login: ops@comnet360.com / OpsHead@123                                             │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout → Login as ops@comnet360.com / OpsHead@123
+
+  ── Sidebar Check ──
+  ✓ VISIBLE:     Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications
+  ✗ NOT VISIBLE: Users, Audit Logs
+
+  ── Incidents ──
+  STEP 2 → CLICK "Incidents"
+  STEP 3 → CLICK "View →" on "Message Delivery Delays" (OPEN incident)
+  ✓ "Assign" button IS visible → CLICK → ASSIGN to Test Engineer → CONFIRM
+  ✓ "Resolve" button IS visible → CLICK → resolves
+  ✓ "Add Action" IS visible
+
+  ── Analytics ──
+  STEP 4 → CLICK "Analytics"
+  ✓ Page accessible, reports visible
+  ✓ "Generate Report" visible
+  ✗ Trash icon NOT visible (cannot delete)
+
+  ── Restricted Access ──
+  STEP 5 → TYPE: http://localhost:5173/admin/users → ENTER
+  ✓ Redirected to /dashboard
+
+  STEP 6 → TYPE: http://localhost:5173/admin/audit-logs → ENTER
+  ✓ Redirected to /dashboard
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  ROLE A.4 — COMPLIANCE_OFFICER                                                      │
+  │  Login: compliance@comnet360.com / Comply@123                                       │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout → Login as compliance@comnet360.com / Comply@123
+
+  ── Sidebar Check ──
+  ✓ VISIBLE:     Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Audit Logs
+  ✗ NOT VISIBLE: Users
+
+  ── Audit Logs ──
+  STEP 2 → CLICK "Audit Logs"
+  ✓ Full audit log table visible with all events
+  ✓ Colour-coded action badges visible
+
+  ── Services ──
+  STEP 3 → CLICK "Services"
+  ✗ "New Service" button NOT visible (read-only)
+
+  STEP 4 → CLICK "Details →" on any service
+  ✗ No action buttons visible
+
+  ── Incidents ──
+  STEP 5 → CLICK "Incidents"
+  ✗ "New Incident" NOT visible
+
+  STEP 6 → CLICK "View →" on any incident
+  ✗ Assign / Resolve / Close buttons NOT visible
+  ✓ CAN add comments (discussion section visible)
+
+  ── Restricted Access ──
+  STEP 7 → TYPE: http://localhost:5173/admin/users → ENTER
+  ✓ Redirected to /dashboard
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  ROLE A.5 — ENTERPRISE_USER                                                         │
+  │  Login: user@comnet360.com / UserPass@123                                           │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Logout → Login as user@comnet360.com / UserPass@123
+
+  ── Sidebar Check ──
+  ✓ VISIBLE:     Dashboard, Services, Incidents, Usage & SLA, Notifications
+  ✗ NOT VISIBLE: Analytics, Users, Audit Logs
+
+  ── Dashboard ──
+  STEP 2 → CLICK "Dashboard"
+  ✗ "Total Users" card NOT visible (shows "Resolved" card instead)
+
+  ── Services ──
+  STEP 3 → CLICK "Services" → list is visible (read-only)
+  ✗ "New Service" button NOT visible
+
+  STEP 4 → CLICK "Details →" on any service
+  ✗ No Activate / Deactivate / Decommission buttons
+  ✗ No Add Config button
+
+  ── Incidents ──
+  STEP 5 → CLICK "Incidents"
+  ✓ "New Incident" IS visible → CREATE:
+    Title: User Reported Issue | Desc: I cannot send messages | Severity: Low | Service: Enterprise Messaging Platform
+  ✓ Incident created (Enterprise users can report)
+
+  STEP 6 → CLICK "View →" on the incident you just created
+  ✗ "Assign" button NOT visible
+  ✗ "Resolve" button NOT visible for incidents you did not create
+  ✓ CAN add comments
+
+  ── Restricted Access ──
+  STEP 7 → TYPE: http://localhost:5173/analytics → ENTER
+  ✓ Redirected to /dashboard
+
+  STEP 8 → TYPE: http://localhost:5173/admin/users → ENTER
+  ✓ Redirected to /dashboard
+
+  STEP 9 → TYPE: http://localhost:5173/admin/audit-logs → ENTER
+  ✓ Redirected to /dashboard
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION B — COMPLETE END-TO-END SCENARIO (Full Story Test)
+  (Login as ADMIN and run through the entire platform lifecycle)
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  This test simulates a real enterprise scenario from start to finish.
+
+  ── PHASE 1: Onboard New Service ──────────────────────────────────────────────────────
+
+  1. Go to /services → CLICK New Service
+     Name: Executive Video Suite | Type: Video | Desc: Private HD video for C-level executives
+  2. CLICK Details → on Executive Video Suite
+  3. CLICK Activate → status becomes ACTIVE
+  4. CLICK Add Config → Key: priority | Value: platinum | Desc: Highest priority tier
+  5. CLICK Add Config → Key: max_attendees | Value: 20 | Desc: Max attendees in executive calls
+
+  ── PHASE 2: Report an Incident ───────────────────────────────────────────────────────
+
+  6. Go to /incidents → CLICK New Incident
+     Title: Executive Video Suite Audio Echo
+     Desc: All participants in executive video calls are experiencing a severe audio echo. C-level meeting affected.
+     Severity: High
+     Service: Executive Video Suite
+  7. CLICK View → on the new incident
+  8. CLICK Assign → assign to Test Engineer
+  9. Add comment: Investigating audio processing settings on executive video servers
+  10. CLICK Add Action → Title: Check audio codec config | Desc: Review G.722 codec settings | Owner: Test Engineer
+  11. Update action status to: In Progress
+
+  ── PHASE 3: Set Up SLA Monitoring ────────────────────────────────────────────────────
+
+  12. Go to /usage → CLICK New SLA
+      Service: Executive Video Suite | Metric: Active Connections | Operator: Greater Than | Threshold: 1 | Desc: Must have at least 1 active connection during business hours
+
+  ── PHASE 4: Generate Analytics ───────────────────────────────────────────────────────
+
+  13. Go to /analytics → CLICK Generate Report
+  14. CLICK Capture Snapshot
+  ✓ Report and snapshot created with current platform state
+
+  ── PHASE 5: Resolve the Incident ─────────────────────────────────────────────────────
+
+  15. Go to /incidents → CLICK View → on Executive Video Suite Audio Echo
+  16. Add comment: Root cause found - audio processing module had corrupted config. Resetting now.
+  17. Update action to: Completed
+  18. CLICK Resolve → incident status → RESOLVED
+  19. Add comment: Issue fully resolved. Audio quality confirmed by executive team.
+  20. CLICK Close → incident status → CLOSED
+
+  ── PHASE 6: Check Audit Trail ────────────────────────────────────────────────────────
+
+  21. Go to /admin/audit-logs
+  ✓ See all the actions you just performed logged:
+     - Service created (CREATE - green)
+     - Incident created (CREATE - green)
+     - Incident assigned (UPDATE - yellow)
+     - Incident resolved (UPDATE - yellow)
+     - Incident closed (UPDATE - yellow)
+
+  ── PHASE 7: Check Dashboard ──────────────────────────────────────────────────────────
+
+  22. Go to /dashboard
+  ✓ Active Services count increased (Executive Video Suite is now active)
+  ✓ Open Incidents count reflects remaining open incidents
+  ✓ Charts updated with new data
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION C — ERROR HANDLING TESTS
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST C.1 — API ERRORS                                                              │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  ── Stop the Gateway and test error handling ──
+
+  STEP 1 → Stop the Gateway service in IntelliJ (click Stop button)
+  STEP 2 → Go to /services → CLICK New Service → fill form → CLICK Create
+  ✓ EXPECTED: Red toast → error message appears (network error / service unavailable)
+  ✓ EXPECTED: App does not crash
+
+  STEP 3 → Restart the Gateway service
+  STEP 4 → Refresh the services page
+  ✓ EXPECTED: Services load normally
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST C.2 — TOKEN EXPIRY (Simulate)                                                 │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Open browser DevTools (press F12)
+  STEP 2 → Go to Application tab → Local Storage → http://localhost:5173
+  STEP 3 → Find "accessToken" key → DOUBLE-CLICK the value → change to: "invalidtoken123"
+  STEP 4 → Close DevTools
+  STEP 5 → CLICK "Services" in sidebar
+  ✓ EXPECTED: App detects invalid token → auto-redirects to /login
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST C.3 — EMPTY STATES                                                            │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  ── Empty Notifications ──
+  STEP 1 → Mark all notifications as read
+  ✓ EXPECTED: Notification list shows empty state
+  ✓ EXPECTED: Bell icon has no badge
+
+  ── Empty Search ──
+  STEP 2 → Go to /services → search: "xyznotexist"
+  ✓ EXPECTED: Services table shows empty state icon + "No services found" message
+
+  ── Empty Incidents ──
+  STEP 3 → Go to /incidents → filter by Severity: Critical + Status: Closed
+  ✓ EXPECTED: Empty state icon + "No incidents found"
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION D — NAVIGATION TESTING
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as: admin@comnet360.com / Admin@123
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST D.1 — SIDEBAR NAVIGATION                                                      │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → CLICK each menu item and verify correct page loads:
+
+  CLICK "Dashboard"   → URL: /dashboard     ✓ Dashboard page
+  CLICK "Services"    → URL: /services      ✓ Services list
+  CLICK "Incidents"   → URL: /incidents     ✓ Incidents list
+  CLICK "Usage & SLA" → URL: /usage         ✓ Usage & SLA page
+  CLICK "Analytics"   → URL: /analytics     ✓ Analytics page
+  CLICK "Notifications"→ URL: /notifications ✓ Notifications list
+  CLICK "Users"       → URL: /admin/users   ✓ User management
+  CLICK "Audit Logs"  → URL: /admin/audit-logs ✓ Audit log table
+
+  ✓ EXPECTED: Active menu item highlighted in blue
+  ✓ EXPECTED: Right arrow (›) appears next to active item
+  ✓ EXPECTED: Page title in top bar updates to match the page
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST D.2 — BREADCRUMB / BACK NAVIGATION                                            │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → Go to /services → CLICK "Details →" on any service
+  STEP 2 → CLICK "← Back to services" link
+  ✓ EXPECTED: Returns to /services list
+
+  STEP 3 → Go to /incidents → CLICK "View →" on any incident
+  STEP 4 → CLICK "← Back to incidents" link
+  ✓ EXPECTED: Returns to /incidents list
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  TEST D.3 — TOP BAR ICONS                                                           │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  STEP 1 → CLICK bell icon (top-right) → navigates to /notifications
+  STEP 2 → CLICK user icon (person icon) → navigates to /profile
+  STEP 3 → CLICK logout icon (arrow-out icon) → logs out + redirects to /login
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION E — API SWAGGER TESTING (Backend Direct)
+  (Use these to verify backend independently from frontend)
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Open each Swagger UI in the browser to test backend directly:
+
+  IAM SERVICE        → http://localhost:8081/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  POST /api/auth/login         → Body: {"email":"admin@comnet360.com","password":"Admin@123"}
+  GET  /api/users              → Requires Bearer token in Authorize button
+  GET  /api/users/me           → Returns current user info
+  GET  /api/audit-logs         → Returns all audit entries
+
+  PROVISIONING SERVICE → http://localhost:8082/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  GET  /api/services           → Returns all services
+  POST /api/services           → Creates a service
+  PUT  /api/services/{id}/activate → Activates a service
+  GET  /api/configurations/{serviceId} → Get configs for a service
+
+  USAGE SLA SERVICE  → http://localhost:8083/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  GET  /api/sla                → Returns all SLA definitions
+  GET  /api/sla/breaches       → Returns all breach events
+  GET  /api/sla/breaches/unresolved → Unresolved breaches only
+
+  INCIDENT SERVICE   → http://localhost:8084/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  GET  /api/incidents          → Returns all incidents
+  GET  /api/incidents/{id}     → Get specific incident
+  GET  /api/incidents/{id}/comments → Get comments
+
+  ANALYTICS SERVICE  → http://localhost:8085/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  GET  /api/reports            → Returns all reports
+  GET  /api/reports/snapshots  → Returns all snapshots
+  GET  /api/reports/sla-compliance → SLA compliance data
+
+  NOTIFICATION SERVICE → http://localhost:8086/swagger-ui.html
+  ─────────────────────────────────────────────────────────────
+  GET  /api/notifications/user/{userId} → Get all for a user
+  GET  /api/notifications/user/{userId}/unread → Unread only
+  GET  /api/notifications/user/{userId}/count  → Unread count
+
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  SECTION F — FINAL SIGN-OFF CHECKLIST
+  (Tick each box after completing the test)
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  IAM SERVICE (Authentication & Users)
+  ──────────────────────────────────────────────────────
+  [ ] Register new user works
+  [ ] Validation errors shown (blank fields, short password, mismatch)
+  [ ] Login works with correct credentials
+  [ ] Login fails with wrong password (error shown)
+  [ ] Protected route redirects to /login when not authenticated
+  [ ] Token refresh works (automatic, tested via expiry simulation)
+  [ ] User management page loads (admin)
+  [ ] Change user role works
+  [ ] Deactivate / Activate user works
+  [ ] Cannot edit own account (no buttons on own row)
+  [ ] Audit logs page loads with colour-coded entries
+  [ ] Profile page shows correct info
+  [ ] Sign out works
+
+  PROVISIONING SERVICE (Services)
+  ──────────────────────────────────────────────────────
+  [ ] Create service (Voice / Video / Messaging) works
+  [ ] Search services live-filters results
+  [ ] Filter by status works
+  [ ] Filter by type works
+  [ ] Service detail page loads with all info
+  [ ] Activate service changes badge to ACTIVE
+  [ ] Deactivate service changes badge to INACTIVE
+  [ ] Decommission service works (admin only)
+  [ ] Add configuration works
+  [ ] Delete configuration works (admin only)
+  [ ] Config row appears with key / value / description
+
+  INCIDENT SERVICE
+  ──────────────────────────────────────────────────────
+  [ ] Create incident (CRITICAL/HIGH/MEDIUM/LOW) works
+  [ ] Filter by severity works
+  [ ] Filter by status works
+  [ ] Search incidents works
+  [ ] Assign incident to user works (admin / manager / ops)
+  [ ] Add resolution action works
+  [ ] Update action status (Pending → In Progress → Completed) works
+  [ ] Add comment works
+  [ ] Multiple comments appear in thread order
+  [ ] Resolve incident changes status to RESOLVED
+  [ ] Close incident changes status to CLOSED
+  [ ] Action buttons disappear after closing
+
+  USAGE & SLA SERVICE
+  ──────────────────────────────────────────────────────
+  [ ] Usage chart loads when service selected
+  [ ] Chart shows "No usage data" gracefully when empty
+  [ ] Create SLA definition works
+  [ ] All metric types available (Bandwidth / Active Connections / Call Count / Message Count)
+  [ ] All operators available (Less Than / Greater Than / Equals)
+  [ ] Disable SLA changes status to INACTIVE
+  [ ] Enable SLA changes status to ACTIVE
+  [ ] SLA breaches section visible
+  [ ] Resolve breach with notes works
+  [ ] Resolved breach shows green "Yes" badge
+
+  ANALYTICS SERVICE
+  ──────────────────────────────────────────────────────
+  [ ] Analytics page accessible (admin / manager / ops / compliance)
+  [ ] Analytics NOT accessible (engineer / basic user) → redirected
+  [ ] Generate report creates new row in table
+  [ ] Capture snapshot creates entry in snapshots section
+  [ ] Delete report works (admin only)
+  [ ] Trash icon NOT visible for non-admin roles
+
+  NOTIFICATION SERVICE
+  ──────────────────────────────────────────────────────
+  [ ] Bell icon shows unread badge count
+  [ ] Badge disappears when all notifications read
+  [ ] Unread notifications have blue background
+  [ ] Mark single notification read works
+  [ ] Mark all read works (toast + all highlights removed)
+  [ ] Email / In-App channel badges show correctly
+  [ ] Toggle Email notifications ON/OFF works
+  [ ] Toggle In-App notifications ON/OFF works
+  [ ] Toggle Incident alerts ON/OFF works
+  [ ] Toggle SLA alerts ON/OFF works
+  [ ] Toggle Service updates ON/OFF works
+  [ ] Preferences save immediately (no save button)
+
+  DASHBOARD
+  ──────────────────────────────────────────────────────
+  [ ] Stat cards show correct counts
+  [ ] "Total Users" card visible for ADMIN only
+  [ ] Incident severity bar chart renders
+  [ ] Service distribution pie chart renders
+  [ ] Hover tooltip on charts works
+  [ ] Recent incidents table shows up to 5 incidents
+  [ ] Clicking incident title goes to incident detail
+  [ ] Services overview table shows up to 5 services
+  [ ] Clicking service name goes to service detail
+
+  NAVIGATION & UI
+  ──────────────────────────────────────────────────────
+  [ ] All 8 sidebar items navigate to correct pages (admin)
+  [ ] Active menu item highlighted in blue
+  [ ] Top bar page title updates correctly
+  [ ] Bell icon navigates to /notifications
+  [ ] User icon navigates to /profile
+  [ ] Logout icon logs out and redirects
+  [ ] Back navigation works on detail pages
+  [ ] Empty state shown when no data
+
+  ROLE-BASED ACCESS
+  ──────────────────────────────────────────────────────
+  [ ] ADMIN — all features visible and working
+  [ ] SERVICE_MANAGER — no Audit Logs, no Decommission, no config delete
+  [ ] NETWORK_ENGINEER — no Analytics, no Users, no Assign, no New Service
+  [ ] OPERATIONS_HEAD — can Assign incidents, no Users, no Audit Logs
+  [ ] COMPLIANCE_OFFICER — Audit Logs visible, no Users, read-only incidents
+  [ ] ENTERPRISE_USER — most restricted, can only report incidents
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  END OF GUIDE — ComNet360 Frontend Testing
+  Microservices Covered: IAM (8081) | Provisioning (8082) | Usage-SLA (8083)
+                         Incident (8084) | Analytics (8085) | Notification (8086)
+  Frontend: React 19 + TypeScript + Vite | TailwindCSS | TanStack Query | React Router
+══════════════════════════════════════════════════════════════════════════════════════════

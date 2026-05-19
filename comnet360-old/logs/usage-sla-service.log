@@ -1,0 +1,1144 @@
+2026-05-02 09:20:40.058 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Starting UsageSlaServiceApplication using Java 17.0.18 with PID 25660 (C:\Users\2484891\Desktop\comnet360\services\usage-sla-service\target\classes started by 2484891 in C:\Users\2484891\Desktop\comnet360)
+2026-05-02 09:20:40.060 [main] DEBUG [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Running with Spring Boot v3.2.5, Spring v6.1.6
+2026-05-02 09:20:40.060 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-02 09:20:41.338 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-02 09:20:41.497 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 149 ms. Found 3 JPA repository interfaces.
+2026-05-02 09:20:41.753 [main] INFO  [NOCORR] [user=anon] o.s.cloud.context.scope.GenericScope - BeanFactory id=27351e38-272c-3c37-bec5-6a53a538a58e
+2026-05-02 09:20:42.119 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-02 09:20:42.119 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-05-02 09:20:42.430 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8083 (http)
+2026-05-02 09:20:42.436 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-02 09:20:42.436 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-05-02 09:20:42.538 [main] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-02 09:20:42.538 [main] INFO  [NOCORR] [user=anon] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2407 ms
+2026-05-02 09:20:42.778 [main] DEBUG [NOCORR] [user=anon] c.c.u.filter.RequestLoggingFilter - Filter 'requestLoggingFilter' configured for use
+2026-05-02 09:20:42.778 [main] DEBUG [NOCORR] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Filter 'jwtAuthFilter' configured for use
+2026-05-02 09:20:42.890 [main] INFO  [NOCORR] [user=anon] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-02 09:20:42.954 [main] INFO  [NOCORR] [user=anon] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-02 09:20:42.986 [main] INFO  [NOCORR] [user=anon] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-02 09:20:43.248 [main] INFO  [NOCORR] [user=anon] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-02 09:20:43.278 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-02 09:20:43.422 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@14d36bb2
+2026-05-02 09:20:43.422 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-02 09:20:43.473 [main] WARN  [NOCORR] [user=anon] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-02 09:20:44.407 [main] INFO  [NOCORR] [user=anon] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-02 09:20:44.476 [main] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 09:20:44.877 [main] INFO  [NOCORR] [user=anon] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-02 09:20:45.462 [main] WARN  [NOCORR] [user=anon] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-02 09:20:45.510 [main] WARN  [NOCORR] [user=anon] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 6ef73647-aa7a-4025-b31e-7769bddd55cb
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-05-02 09:20:46.180 [main] INFO  [NOCORR] [user=anon] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-05-02 09:20:46.275 [main] INFO  [NOCORR] [user=anon] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5fc444d0, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1f27b6fc, org.springframework.security.web.context.SecurityContextHolderFilter@13a34a70, org.springframework.security.web.header.HeaderWriterFilter@463bdee9, org.springframework.web.filter.CorsFilter@d866565, org.springframework.security.web.authentication.logout.LogoutFilter@3405202c, com.comnet360.usagesla.filter.JwtAuthFilter@2d38db6f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5da1f9b9, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@54ce2da8, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@302e3484, org.springframework.security.web.session.SessionManagementFilter@3c75fb73, org.springframework.security.web.access.ExceptionTranslationFilter@635ad140, org.springframework.security.web.access.intercept.AuthorizationFilter@508f2b78]
+2026-05-02 09:20:46.994 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-05-02 09:20:47.090 [main] WARN  [NOCORR] [user=anon] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-02 09:20:47.153 [main] INFO  [NOCORR] [user=anon] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-05-02 09:20:47.233 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-05-02 09:20:47.233 [main] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-05-02 09:20:47.250 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-05-02 09:20:47.616 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-05-02 09:20:47.616 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 10
+2026-05-02 09:20:47.616 [main] INFO  [NOCORR] [user=anon] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-02 09:20:47.616 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1777693847616 with initial instances count: 3
+2026-05-02 09:20:47.634 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Registering application USAGE-SLA-SERVICE with eureka with status UP
+2026-05-02 09:20:47.634 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777693847634, current=UP, previous=STARTING]
+2026-05-02 09:20:47.634 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083: registering service...
+2026-05-02 09:20:47.662 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8083 (http) with context path ''
+2026-05-02 09:20:47.662 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8083
+2026-05-02 09:20:47.683 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - registration status: 204
+2026-05-02 09:20:47.913 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Started UsageSlaServiceApplication in 8.688 seconds (process running for 9.386)
+2026-05-02 09:20:57.924 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:20:57.924435500
+2026-05-02 09:20:58.039 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:21:57.911 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:21:57.911842800
+2026-05-02 09:21:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:22:57.915 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:22:57.915415100
+2026-05-02 09:22:57.940 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:23:09.807 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-02 09:23:09.807 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-02 09:23:09.817 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Completed initialization in 10 ms
+2026-05-02 09:23:09.823 [http-nio-8083-exec-1] INFO  [ceeb6897-e0e8-4a35-8dcd-b593e06f7ac6] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/index.html
+2026-05-02 09:23:10.038 [http-nio-8083-exec-1] INFO  [ceeb6897-e0e8-4a35-8dcd-b593e06f7ac6] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/index.html | status=200 | 215ms
+2026-05-02 09:23:10.112 [http-nio-8083-exec-2] INFO  [27641208-2f97-4f0c-9a2f-27ccd429f6c0] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui.css
+2026-05-02 09:23:10.136 [http-nio-8083-exec-2] INFO  [27641208-2f97-4f0c-9a2f-27ccd429f6c0] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui.css | status=200 | 24ms
+2026-05-02 09:23:10.136 [http-nio-8083-exec-2] INFO  [c910e88c-cc7e-4c52-bf77-00c1721392fb] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/index.css
+2026-05-02 09:23:10.154 [http-nio-8083-exec-10] INFO  [d5c656c7-4227-40f2-b3f1-c455a374e76f] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-initializer.js
+2026-05-02 09:23:10.154 [http-nio-8083-exec-3] INFO  [6251b296-f3c9-4293-9cf6-f99d2c71575a] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-bundle.js
+2026-05-02 09:23:10.156 [http-nio-8083-exec-5] INFO  [fc98e5e2-ec4e-45f1-a845-f6edbc3a6648] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-standalone-preset.js
+2026-05-02 09:23:10.196 [http-nio-8083-exec-2] INFO  [c910e88c-cc7e-4c52-bf77-00c1721392fb] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/index.css | status=200 | 60ms
+2026-05-02 09:23:10.213 [http-nio-8083-exec-5] INFO  [fc98e5e2-ec4e-45f1-a845-f6edbc3a6648] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-standalone-preset.js | status=200 | 57ms
+2026-05-02 09:23:10.216 [http-nio-8083-exec-10] INFO  [d5c656c7-4227-40f2-b3f1-c455a374e76f] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-initializer.js | status=200 | 62ms
+2026-05-02 09:23:10.261 [http-nio-8083-exec-3] INFO  [6251b296-f3c9-4293-9cf6-f99d2c71575a] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-bundle.js | status=200 | 107ms
+2026-05-02 09:23:10.382 [http-nio-8083-exec-6] INFO  [acc17849-1095-4ddb-b845-e3cdfca3d452] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /v3/api-docs/swagger-config
+2026-05-02 09:23:10.384 [http-nio-8083-exec-7] INFO  [c2ec25f7-892b-4e22-96ba-ed7582d6ea4c] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/favicon-32x32.png
+2026-05-02 09:23:10.399 [http-nio-8083-exec-7] INFO  [c2ec25f7-892b-4e22-96ba-ed7582d6ea4c] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/favicon-32x32.png | status=200 | 15ms
+2026-05-02 09:23:10.448 [http-nio-8083-exec-6] INFO  [acc17849-1095-4ddb-b845-e3cdfca3d452] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /v3/api-docs/swagger-config | status=200 | 66ms
+2026-05-02 09:23:10.475 [http-nio-8083-exec-8] INFO  [1ee765ba-103b-458f-894b-942f72e01a5b] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /v3/api-docs
+2026-05-02 09:23:13.676 [http-nio-8083-exec-8] INFO  [1ee765ba-103b-458f-894b-942f72e01a5b] [user=anon] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 3154 ms
+2026-05-02 09:23:13.771 [http-nio-8083-exec-8] INFO  [1ee765ba-103b-458f-894b-942f72e01a5b] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /v3/api-docs | status=200 | 3296ms
+2026-05-02 09:23:57.920 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:23:57.920802400
+2026-05-02 09:23:57.922 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:24:57.924 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:24:57.924227500
+2026-05-02 09:24:57.935 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:25:47.264 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:25:57.914 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:25:57.914891200
+2026-05-02 09:25:57.930 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:26:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:26:57.925847100
+2026-05-02 09:26:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:27:57.914 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:27:57.914268100
+2026-05-02 09:27:57.914 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:28:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:28:57.919567300
+2026-05-02 09:28:57.932 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:29:57.911 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:29:57.911748200
+2026-05-02 09:29:57.928 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:30:47.279 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:30:57.915 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:30:57.915652200
+2026-05-02 09:30:57.931 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:31:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:31:57.917249600
+2026-05-02 09:31:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:32:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:32:57.919159600
+2026-05-02 09:32:57.928 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:33:57.923 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:33:57.923706600
+2026-05-02 09:33:57.923 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:34:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:34:57.925200200
+2026-05-02 09:34:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:35:47.287 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:35:57.914 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:35:57.914398900
+2026-05-02 09:35:57.930 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:36:57.916 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:36:57.916521800
+2026-05-02 09:36:57.924 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:37:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:37:57.917771
+2026-05-02 09:37:57.926 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:38:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:38:57.919391700
+2026-05-02 09:38:57.926 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:39:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:39:57.919152100
+2026-05-02 09:39:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:40:47.297 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:40:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:40:57.919657200
+2026-05-02 09:40:57.927 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:41:57.918 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:41:57.918425400
+2026-05-02 09:41:57.934 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:42:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:42:57.917868800
+2026-05-02 09:42:57.926 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:43:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:43:57.925832600
+2026-05-02 09:43:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:44:57.923 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:44:57.923282600
+2026-05-02 09:44:57.923 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:45:47.301 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:45:57.921 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:45:57.921127700
+2026-05-02 09:45:57.921 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:46:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:46:57.919780100
+2026-05-02 09:46:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:47:57.912 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:47:57.912805100
+2026-05-02 09:47:57.912 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:48:57.921 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:48:57.921590400
+2026-05-02 09:48:57.937 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:49:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:49:57.917027
+2026-05-02 09:49:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - No active SLAs to evaluate
+2026-05-02 09:50:37.814 [http-nio-8083-exec-5] INFO  [abdeeb62-362d-4deb-9b11-a786e92e125c] [user=anon] c.c.u.filter.RequestLoggingFilter - → POST /api/sla
+2026-05-02 09:50:38.499 [http-nio-8083-exec-5] DEBUG [abdeeb62-362d-4deb-9b11-a786e92e125c] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 09:50:39.179 [http-nio-8083-exec-5] INFO  [abdeeb62-362d-4deb-9b11-a786e92e125c] [user=anon] c.c.usagesla.service.SlaService - SLA created: serviceId=1 metric=CALL_DURATION threshold=500
+2026-05-02 09:50:39.242 [http-nio-8083-exec-5] INFO  [abdeeb62-362d-4deb-9b11-a786e92e125c] [user=anon] c.c.u.filter.RequestLoggingFilter - ← POST /api/sla | status=201 | 1428ms
+2026-05-02 09:50:47.315 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:50:57.613 [http-nio-8083-exec-10] INFO  [71ef426c-f714-456b-854d-8fdb657856a2] [user=anon] c.c.u.filter.RequestLoggingFilter - → POST /api/sla
+2026-05-02 09:50:57.628 [http-nio-8083-exec-10] DEBUG [71ef426c-f714-456b-854d-8fdb657856a2] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 09:50:57.647 [http-nio-8083-exec-10] INFO  [71ef426c-f714-456b-854d-8fdb657856a2] [user=anon] c.c.usagesla.service.SlaService - SLA created: serviceId=2 metric=VIDEO_MINUTES threshold=100
+2026-05-02 09:50:57.661 [http-nio-8083-exec-10] INFO  [71ef426c-f714-456b-854d-8fdb657856a2] [user=anon] c.c.u.filter.RequestLoggingFilter - ← POST /api/sla | status=201 | 48ms
+2026-05-02 09:50:57.912 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:50:57.912372
+2026-05-02 09:50:58.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=0.0000 threshold=500.0000 operator=LESS_THAN
+2026-05-02 09:50:58.082 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=0.0000 threshold=500.0000
+2026-05-02 09:50:58.094 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:50:58.099 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:50:58.103 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:51:10.186 [http-nio-8083-exec-3] INFO  [77c09558-bb21-4146-af33-24f0e4d1573b] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla
+2026-05-02 09:51:10.195 [http-nio-8083-exec-3] DEBUG [77c09558-bb21-4146-af33-24f0e4d1573b] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 09:51:10.245 [http-nio-8083-exec-3] INFO  [77c09558-bb21-4146-af33-24f0e4d1573b] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla | status=200 | 59ms
+2026-05-02 09:51:50.530 [http-nio-8083-exec-7] INFO  [7659fb4b-adb5-4ff4-bb30-6b4045250a85] [user=anon] c.c.u.filter.RequestLoggingFilter - → PATCH /api/sla/1
+2026-05-02 09:51:50.544 [http-nio-8083-exec-7] DEBUG [7659fb4b-adb5-4ff4-bb30-6b4045250a85] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 09:51:50.611 [http-nio-8083-exec-7] INFO  [7659fb4b-adb5-4ff4-bb30-6b4045250a85] [user=anon] c.c.usagesla.service.SlaService - SLA 1 patched — threshold=450 operator=LESS_THAN unit=seconds
+2026-05-02 09:51:50.671 [http-nio-8083-exec-7] INFO  [7659fb4b-adb5-4ff4-bb30-6b4045250a85] [user=anon] c.c.u.filter.RequestLoggingFilter - ← PATCH /api/sla/1 | status=200 | 141ms
+2026-05-02 09:51:57.927 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:51:57.927609700
+2026-05-02 09:51:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=0.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:51:57.957 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=0.0000 threshold=450.0000
+2026-05-02 09:51:57.963 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:51:57.973 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:51:57.977 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:52:20.816 [http-nio-8083-exec-6] INFO  [25468072-0249-4033-87a0-9101944e4bc2] [user=anon] c.c.u.filter.RequestLoggingFilter - → PUT /api/sla/1/status
+2026-05-02 09:52:20.839 [http-nio-8083-exec-6] DEBUG [25468072-0249-4033-87a0-9101944e4bc2] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 09:52:20.877 [http-nio-8083-exec-6] WARN  [25468072-0249-4033-87a0-9101944e4bc2] [user=anon] c.c.u.e.GlobalExceptionHandler - Bad request: Invalid status 'INVALID_VALUE'. Valid values: ACTIVE, INACTIVE
+2026-05-02 09:52:20.890 [http-nio-8083-exec-6] INFO  [25468072-0249-4033-87a0-9101944e4bc2] [user=anon] c.c.u.filter.RequestLoggingFilter - ← PUT /api/sla/1/status | status=400 | 74ms
+2026-05-02 09:52:57.919 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:52:57.919832900
+2026-05-02 09:52:57.943 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=0.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:52:57.951 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=0.0000 threshold=450.0000
+2026-05-02 09:52:57.951 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:52:57.968 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:52:57.968 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:53:57.918 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:53:57.918900400
+2026-05-02 09:53:57.933 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=0.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:53:57.944 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=0.0000 threshold=450.0000
+2026-05-02 09:53:57.944 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:53:57.964 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:53:57.964 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:54:57.920 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:54:57.920980800
+2026-05-02 09:54:57.936 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=0.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:54:57.941 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=0.0000 threshold=450.0000
+2026-05-02 09:54:57.953 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:54:57.961 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:54:57.961 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:55:47.257 [http-nio-8083-exec-8] INFO  [758753b7-1223-4229-8510-4dda8ebee3e0] [user=anon] c.c.u.filter.RequestLoggingFilter - → POST /api/usage
+2026-05-02 09:55:47.267 [http-nio-8083-exec-8] DEBUG [758753b7-1223-4229-8510-4dda8ebee3e0] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 09:55:47.308 [http-nio-8083-exec-8] DEBUG [758753b7-1223-4229-8510-4dda8ebee3e0] [user=anon] c.c.usagesla.service.UsageService - Usage recorded: serviceId=1 metric=CALL_DURATION value=150
+2026-05-02 09:55:47.321 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 09:55:47.324 [http-nio-8083-exec-8] INFO  [758753b7-1223-4229-8510-4dda8ebee3e0] [user=anon] c.c.u.filter.RequestLoggingFilter - ← POST /api/usage | status=201 | 67ms
+2026-05-02 09:55:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:55:57.917193100
+2026-05-02 09:55:57.940 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=150.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:55:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=1 actual=150.0000 threshold=450.0000
+2026-05-02 09:55:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:55:57.962 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:55:57.962 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:56:10.946 [http-nio-8083-exec-9] INFO  [b8d475aa-0e89-4889-a6a9-afe2598dd773] [user=anon] c.c.u.filter.RequestLoggingFilter - → POST /api/usage
+2026-05-02 09:56:10.956 [http-nio-8083-exec-9] DEBUG [b8d475aa-0e89-4889-a6a9-afe2598dd773] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 09:56:10.974 [http-nio-8083-exec-9] DEBUG [b8d475aa-0e89-4889-a6a9-afe2598dd773] [user=anon] c.c.usagesla.service.UsageService - Usage recorded: serviceId=1 metric=CALL_DURATION value=150
+2026-05-02 09:56:10.990 [http-nio-8083-exec-9] INFO  [b8d475aa-0e89-4889-a6a9-afe2598dd773] [user=anon] c.c.u.filter.RequestLoggingFilter - ← POST /api/usage | status=201 | 44ms
+2026-05-02 09:56:26.822 [http-nio-8083-exec-1] INFO  [7dbd1a69-b825-4791-b06e-f9c530032000] [user=anon] c.c.u.filter.RequestLoggingFilter - → POST /api/usage
+2026-05-02 09:56:26.823 [http-nio-8083-exec-1] DEBUG [7dbd1a69-b825-4791-b06e-f9c530032000] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 09:56:26.841 [http-nio-8083-exec-1] DEBUG [7dbd1a69-b825-4791-b06e-f9c530032000] [user=anon] c.c.usagesla.service.UsageService - Usage recorded: serviceId=1 metric=CALL_DURATION value=220
+2026-05-02 09:56:26.865 [http-nio-8083-exec-1] INFO  [7dbd1a69-b825-4791-b06e-f9c530032000] [user=anon] c.c.u.filter.RequestLoggingFilter - ← POST /api/usage | status=201 | 43ms
+2026-05-02 09:56:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:56:57.925635300
+2026-05-02 09:56:57.931 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:56:57.938 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - *** NEW SLA BREACH! slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:56:57.940 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:56:57.951 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:56:57.953 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 1 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 09:57:43.157 [http-nio-8083-exec-2] INFO  [dbaa1291-3ed1-45f5-8293-0e54263ad653] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/usage/service/1
+2026-05-02 09:57:43.171 [http-nio-8083-exec-2] DEBUG [dbaa1291-3ed1-45f5-8293-0e54263ad653] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 09:57:43.215 [http-nio-8083-exec-2] INFO  [dbaa1291-3ed1-45f5-8293-0e54263ad653] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/usage/service/1 | status=403 | 58ms
+2026-05-02 09:57:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:57:57.917048100
+2026-05-02 09:57:57.917 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:57:57.939 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 09:57:57.939 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:57:57.949 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:57:57.949 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 09:58:30.230 [http-nio-8083-exec-5] INFO  [e0f838c8-672a-49c4-9661-ef4b17de1ebf] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/usage/service/1
+2026-05-02 09:58:30.243 [http-nio-8083-exec-5] DEBUG [e0f838c8-672a-49c4-9661-ef4b17de1ebf] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 09:58:30.256 [http-nio-8083-exec-5] INFO  [e0f838c8-672a-49c4-9661-ef4b17de1ebf] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/usage/service/1 | status=403 | 28ms
+2026-05-02 09:58:57.911 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:58:57.911490200
+2026-05-02 09:58:57.927 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:58:57.950 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 09:58:57.958 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:58:57.974 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:58:57.974 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 09:59:57.914 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T09:59:57.914264100
+2026-05-02 09:59:57.935 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 09:59:57.946 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 09:59:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 09:59:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 09:59:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:00:47.335 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:00:57.925 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:00:57.925318800
+2026-05-02 10:00:57.965 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:00:57.989 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:00:58.011 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:00:58.041 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:00:58.049 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:01:57.915 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:01:57.915729300
+2026-05-02 10:01:57.932 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:01:57.948 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:01:57.948 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:01:57.965 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:01:57.965 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:02:57.918 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:02:57.918233400
+2026-05-02 10:02:57.935 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:02:57.942 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:02:57.951 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:02:57.959 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:02:57.959 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:03:57.913 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:03:57.913631400
+2026-05-02 10:03:57.930 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:03:57.930 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:03:57.945 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:03:57.950 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:03:57.950 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:04:57.920 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:04:57.920572
+2026-05-02 10:04:57.936 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:04:57.945 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:04:57.960 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:04:57.970 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:04:57.975 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:05:47.338 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:05:57.920 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:05:57.920571900
+2026-05-02 10:05:57.942 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:05:57.951 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:05:57.962 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:05:57.970 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:05:57.970 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:06:57.922 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:06:57.922228500
+2026-05-02 10:06:57.937 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:06:57.946 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:06:57.946 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:06:57.954 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:06:57.954 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:07:56.012 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Unregistering application USAGE-SLA-SERVICE with eureka with status DOWN
+2026-05-02 10:07:56.012 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777696676012, current=DOWN, previous=UP]
+2026-05-02 10:07:56.012 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083: registering service...
+2026-05-02 10:07:56.061 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - registration status: 204
+2026-05-02 10:07:56.087 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 10:07:56.102 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-02 10:07:56.107 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-02 10:07:56.111 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2026-05-02 10:07:59.115 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Unregistering ...
+2026-05-02 10:07:59.142 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/} exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:91)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 10:07:59.142 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 10:07:59.151 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}, exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:121)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:80)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 10:07:59.151 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 10:07:59.151 [SpringApplicationShutdownHook] ERROR [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - de-registration failedCannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-05-02 10:07:59.172 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient
+2026-05-02 10:08:11.151 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Starting UsageSlaServiceApplication using Java 17.0.18 with PID 21972 (C:\Users\2484891\Desktop\comnet360\services\usage-sla-service\target\classes started by 2484891 in C:\Users\2484891\Desktop\comnet360)
+2026-05-02 10:08:11.158 [main] DEBUG [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Running with Spring Boot v3.2.5, Spring v6.1.6
+2026-05-02 10:08:11.158 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-02 10:08:13.881 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-02 10:08:14.091 [main] INFO  [NOCORR] [user=anon] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 196 ms. Found 3 JPA repository interfaces.
+2026-05-02 10:08:14.421 [main] INFO  [NOCORR] [user=anon] o.s.cloud.context.scope.GenericScope - BeanFactory id=27351e38-272c-3c37-bec5-6a53a538a58e
+2026-05-02 10:08:14.971 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-02 10:08:14.973 [main] WARN  [NOCORR] [user=anon] o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-05-02 10:08:15.438 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8083 (http)
+2026-05-02 10:08:15.454 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-02 10:08:15.454 [main] INFO  [NOCORR] [user=anon] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-05-02 10:08:15.591 [main] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-02 10:08:15.593 [main] INFO  [NOCORR] [user=anon] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4379 ms
+2026-05-02 10:08:15.906 [main] DEBUG [NOCORR] [user=anon] c.c.u.filter.RequestLoggingFilter - Filter 'requestLoggingFilter' configured for use
+2026-05-02 10:08:15.906 [main] DEBUG [NOCORR] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Filter 'jwtAuthFilter' configured for use
+2026-05-02 10:08:16.094 [main] INFO  [NOCORR] [user=anon] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-02 10:08:16.223 [main] INFO  [NOCORR] [user=anon] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-05-02 10:08:16.281 [main] INFO  [NOCORR] [user=anon] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-02 10:08:16.736 [main] INFO  [NOCORR] [user=anon] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-02 10:08:16.781 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-02 10:08:16.951 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@12a9e864
+2026-05-02 10:08:16.956 [main] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-02 10:08:17.051 [main] WARN  [NOCORR] [user=anon] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-02 10:08:18.662 [main] INFO  [NOCORR] [user=anon] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-02 10:08:18.761 [main] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 10:08:19.263 [main] INFO  [NOCORR] [user=anon] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-02 10:08:20.231 [main] WARN  [NOCORR] [user=anon] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-02 10:08:20.291 [main] WARN  [NOCORR] [user=anon] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 3e6890df-2403-4ac3-a284-d09d25131ade
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-05-02 10:08:21.811 [main] INFO  [NOCORR] [user=anon] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-05-02 10:08:22.001 [main] INFO  [NOCORR] [user=anon] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@550b19d1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@24a5df6a, org.springframework.security.web.context.SecurityContextHolderFilter@6707ab9, org.springframework.security.web.header.HeaderWriterFilter@1ae2b0d0, org.springframework.web.filter.CorsFilter@74d74701, org.springframework.security.web.authentication.logout.LogoutFilter@2a794780, com.comnet360.usagesla.filter.JwtAuthFilter@2e1ba142, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3862381d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@76067600, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@39562fc2, org.springframework.security.web.session.SessionManagementFilter@54d8c998, org.springframework.security.web.access.ExceptionTranslationFilter@5b61d156, org.springframework.security.web.access.intercept.AuthorizationFilter@4db11495]
+2026-05-02 10:08:23.445 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-05-02 10:08:23.561 [main] WARN  [NOCORR] [user=anon] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-02 10:08:23.763 [main] INFO  [NOCORR] [user=anon] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-05-02 10:08:23.931 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-05-02 10:08:23.939 [main] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-05-02 10:08:24.003 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-05-02 10:08:24.690 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-05-02 10:08:24.694 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 10
+2026-05-02 10:08:24.697 [main] INFO  [NOCORR] [user=anon] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-02 10:08:24.703 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1777696704703 with initial instances count: 7
+2026-05-02 10:08:24.711 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Registering application USAGE-SLA-SERVICE with eureka with status UP
+2026-05-02 10:08:24.711 [main] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777696704711, current=UP, previous=STARTING]
+2026-05-02 10:08:24.723 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083: registering service...
+2026-05-02 10:08:24.781 [main] INFO  [NOCORR] [user=anon] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8083 (http) with context path ''
+2026-05-02 10:08:24.781 [main] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8083
+2026-05-02 10:08:24.811 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - registration status: 204
+2026-05-02 10:08:25.006 [main] INFO  [NOCORR] [user=anon] c.c.u.UsageSlaServiceApplication - Started UsageSlaServiceApplication in 15.514 seconds (process running for 16.555)
+2026-05-02 10:08:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:08:35.038348600
+2026-05-02 10:08:35.244 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:08:35.252 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:08:35.261 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:08:35.271 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:08:35.271 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:09:14.663 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-02 10:09:14.666 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-02 10:09:14.677 [http-nio-8083-exec-1] INFO  [NOCORR] [user=anon] o.s.web.servlet.DispatcherServlet - Completed initialization in 11 ms
+2026-05-02 10:09:14.694 [http-nio-8083-exec-1] INFO  [3d7a1acf-46d0-40b2-b7ca-643eb03b9a9d] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/index.html
+2026-05-02 10:09:14.941 [http-nio-8083-exec-1] INFO  [3d7a1acf-46d0-40b2-b7ca-643eb03b9a9d] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/index.html | status=200 | 247ms
+2026-05-02 10:09:15.071 [http-nio-8083-exec-3] INFO  [6109d30e-5177-4585-83f3-7ed44c33873a] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui.css
+2026-05-02 10:09:15.073 [http-nio-8083-exec-2] INFO  [c98cb71c-e668-4a2e-b5a3-971cf270061d] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/index.css
+2026-05-02 10:09:15.073 [http-nio-8083-exec-4] INFO  [24865bb8-83f2-472f-a86d-54deb539c346] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-bundle.js
+2026-05-02 10:09:15.073 [http-nio-8083-exec-5] INFO  [cde08b2e-3f27-4ac6-815a-e2115338c4fb] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-ui-standalone-preset.js
+2026-05-02 10:09:15.081 [http-nio-8083-exec-6] INFO  [1311589b-dc1e-4a06-ba9d-7db902b81368] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/swagger-initializer.js
+2026-05-02 10:09:15.121 [http-nio-8083-exec-2] INFO  [c98cb71c-e668-4a2e-b5a3-971cf270061d] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/index.css | status=200 | 50ms
+2026-05-02 10:09:15.143 [http-nio-8083-exec-5] INFO  [cde08b2e-3f27-4ac6-815a-e2115338c4fb] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-standalone-preset.js | status=200 | 70ms
+2026-05-02 10:09:15.143 [http-nio-8083-exec-3] INFO  [6109d30e-5177-4585-83f3-7ed44c33873a] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui.css | status=200 | 72ms
+2026-05-02 10:09:15.171 [http-nio-8083-exec-6] INFO  [1311589b-dc1e-4a06-ba9d-7db902b81368] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-initializer.js | status=200 | 98ms
+2026-05-02 10:09:15.257 [http-nio-8083-exec-4] INFO  [24865bb8-83f2-472f-a86d-54deb539c346] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/swagger-ui-bundle.js | status=200 | 184ms
+2026-05-02 10:09:15.401 [http-nio-8083-exec-7] INFO  [bf0f7948-e5de-4b02-91b1-b8450623fd89] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /v3/api-docs/swagger-config
+2026-05-02 10:09:15.416 [http-nio-8083-exec-8] INFO  [1958df89-028c-43cb-82f2-f744513f7b93] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /swagger-ui/favicon-32x32.png
+2026-05-02 10:09:15.451 [http-nio-8083-exec-8] INFO  [1958df89-028c-43cb-82f2-f744513f7b93] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /swagger-ui/favicon-32x32.png | status=200 | 35ms
+2026-05-02 10:09:15.506 [http-nio-8083-exec-7] INFO  [bf0f7948-e5de-4b02-91b1-b8450623fd89] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /v3/api-docs/swagger-config | status=200 | 105ms
+2026-05-02 10:09:15.543 [http-nio-8083-exec-9] INFO  [746909f8-8658-4491-ad07-5821bf96fc63] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /v3/api-docs
+2026-05-02 10:09:17.633 [http-nio-8083-exec-9] INFO  [746909f8-8658-4491-ad07-5821bf96fc63] [user=anon] o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 2037 ms
+2026-05-02 10:09:17.781 [http-nio-8083-exec-9] INFO  [746909f8-8658-4491-ad07-5821bf96fc63] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /v3/api-docs | status=200 | 2238ms
+2026-05-02 10:09:30.567 [http-nio-8083-exec-10] INFO  [76e93379-7aca-43db-8542-2c39e79a954b] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/usage/service/1
+2026-05-02 10:09:31.024 [http-nio-8083-exec-10] DEBUG [76e93379-7aca-43db-8542-2c39e79a954b] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:09:31.140 [http-nio-8083-exec-10] INFO  [76e93379-7aca-43db-8542-2c39e79a954b] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/usage/service/1 | status=200 | 573ms
+2026-05-02 10:09:35.012 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:09:35.012030600
+2026-05-02 10:09:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:09:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:09:35.052 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:09:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:09:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:10:10.195 [http-nio-8083-exec-1] INFO  [ac322f01-f70d-4080-b8ea-dce2691002fa] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/unresolved
+2026-05-02 10:10:10.211 [http-nio-8083-exec-1] DEBUG [ac322f01-f70d-4080-b8ea-dce2691002fa] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:10:10.245 [http-nio-8083-exec-1] INFO  [ac322f01-f70d-4080-b8ea-dce2691002fa] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/unresolved | status=200 | 50ms
+2026-05-02 10:10:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:10:35.021781100
+2026-05-02 10:10:35.041 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:10:35.061 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:10:35.071 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:10:35.082 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:10:35.082 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:10:53.635 [http-nio-8083-exec-4] INFO  [e8ef9376-5af4-4bd9-a7d3-377e10ae1f33] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/service/1
+2026-05-02 10:10:53.651 [http-nio-8083-exec-4] DEBUG [e8ef9376-5af4-4bd9-a7d3-377e10ae1f33] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:10:53.676 [http-nio-8083-exec-4] INFO  [e8ef9376-5af4-4bd9-a7d3-377e10ae1f33] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/service/1 | status=200 | 41ms
+2026-05-02 10:11:35.016 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:11:35.016858100
+2026-05-02 10:11:35.034 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:11:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:11:35.049 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:11:35.055 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:11:35.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:11:49.508 [http-nio-8083-exec-8] INFO  [694954dc-a777-4069-b2d1-a98e5f1e0c26] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/unresolved
+2026-05-02 10:11:49.526 [http-nio-8083-exec-8] DEBUG [694954dc-a777-4069-b2d1-a98e5f1e0c26] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 10:11:49.545 [http-nio-8083-exec-8] INFO  [694954dc-a777-4069-b2d1-a98e5f1e0c26] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/unresolved | status=200 | 37ms
+2026-05-02 10:12:02.348 [http-nio-8083-exec-7] INFO  [26a30e71-9c4a-4aaa-b7d9-3a3255bc5dc8] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/service/1
+2026-05-02 10:12:02.361 [http-nio-8083-exec-7] DEBUG [26a30e71-9c4a-4aaa-b7d9-3a3255bc5dc8] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: sarah@comnet360.com role: SERVICE_MANAGER
+2026-05-02 10:12:02.381 [http-nio-8083-exec-7] INFO  [26a30e71-9c4a-4aaa-b7d9-3a3255bc5dc8] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/service/1 | status=200 | 33ms
+2026-05-02 10:12:35.013 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:12:35.013679700
+2026-05-02 10:12:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:12:35.042 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:12:35.051 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:12:35.059 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:12:35.059 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:13:24.027 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:13:35.017 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:13:35.017241600
+2026-05-02 10:13:35.037 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:13:35.047 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:13:35.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:13:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:13:35.067 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:14:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:14:35.023277800
+2026-05-02 10:14:35.039 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:14:35.052 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:14:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:14:35.067 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:14:35.071 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:15:35.009 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:15:35.009892500
+2026-05-02 10:15:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:15:35.037 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:15:35.047 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:15:35.051 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:15:35.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:16:35.014 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:16:35.014509200
+2026-05-02 10:16:35.030 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:16:35.046 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:16:35.046 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:16:35.063 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:16:35.063 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:17:35.022 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:17:35.022580700
+2026-05-02 10:17:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:17:35.038 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:17:35.055 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:17:35.055 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:17:35.063 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:18:24.046 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:18:35.014 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:18:35.014336400
+2026-05-02 10:18:35.030 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:18:35.046 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:18:35.046 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:18:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:18:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:19:35.008 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:19:35.008625800
+2026-05-02 10:19:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:19:35.041 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:19:35.041 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:19:35.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:19:35.057 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:33:59.412 [HikariPool-1 housekeeper] WARN  [NOCORR] [user=anon] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=14m42s133ms878µs).
+2026-05-02 10:34:47.133 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.133987700
+2026-05-02 10:34:47.153 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.164 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.178 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.184 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.184 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.193 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.193927700
+2026-05-02 10:34:47.209 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.216 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.225 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.229 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.229 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.233 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.233930400
+2026-05-02 10:34:47.249 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.257 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.264 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.274 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.274 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.274 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.274111400
+2026-05-02 10:34:47.294 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.305 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.314 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.323 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.323 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.323 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.323895600
+2026-05-02 10:34:47.364 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.373 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.393 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.406 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.406 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.418 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.418270600
+2026-05-02 10:34:47.434 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.448 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.453 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.465 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.465 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.473 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.473960300
+2026-05-02 10:34:47.484 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.497 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.506 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.514 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.514 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.524 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.524011
+2026-05-02 10:34:47.543 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.553 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.564 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.573 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.573 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.580 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.580377200
+2026-05-02 10:34:47.596 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.607 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.614 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.627 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.633 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.633 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.633821200
+2026-05-02 10:34:47.653 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.663 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.663 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.675 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.675 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.683 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.683935600
+2026-05-02 10:34:47.693 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.708 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.714 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.723 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.723 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.723 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.723903300
+2026-05-02 10:34:47.744 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.744 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.763 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.773 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.773 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.773 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.773982900
+2026-05-02 10:34:47.823 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.835 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.848 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.854 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.854 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.864 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.864266600
+2026-05-02 10:34:47.879 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.883 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.893 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.904 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.904 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:34:47.908 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:34:47.908400
+2026-05-02 10:34:47.929 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:34:47.936 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:34:47.944 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:34:47.953 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:34:47.953 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:35:35.012 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:35:35.012633600
+2026-05-02 10:35:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:35:35.042 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:35:35.045 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:35:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:35:35.062 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:35:44.363 [http-nio-8083-exec-10] INFO  [6b4379ce-27ae-419f-bd6a-bff1e5de3aa1] [user=anon] c.c.u.filter.RequestLoggingFilter - → PUT /api/sla/breaches/1/resolve
+2026-05-02 10:35:44.374 [http-nio-8083-exec-10] DEBUG [6b4379ce-27ae-419f-bd6a-bff1e5de3aa1] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:35:44.478 [http-nio-8083-exec-10] INFO  [6b4379ce-27ae-419f-bd6a-bff1e5de3aa1] [user=anon] c.c.usagesla.service.SlaService - Breach event 1 resolved
+2026-05-02 10:35:44.612 [http-nio-8083-exec-10] INFO  [6b4379ce-27ae-419f-bd6a-bff1e5de3aa1] [user=anon] c.c.u.filter.RequestLoggingFilter - ← PUT /api/sla/breaches/1/resolve | status=200 | 249ms
+2026-05-02 10:35:55.982 [http-nio-8083-exec-1] INFO  [d5914f38-0469-4b33-b024-d8441eda14c5] [user=anon] c.c.u.filter.RequestLoggingFilter - → PUT /api/sla/breaches/1/resolve
+2026-05-02 10:35:55.993 [http-nio-8083-exec-1] DEBUG [d5914f38-0469-4b33-b024-d8441eda14c5] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:35:56.022 [http-nio-8083-exec-1] WARN  [d5914f38-0469-4b33-b024-d8441eda14c5] [user=anon] c.c.u.e.GlobalExceptionHandler - Bad request: Breach event 1 is already resolved
+2026-05-02 10:35:56.027 [http-nio-8083-exec-1] INFO  [d5914f38-0469-4b33-b024-d8441eda14c5] [user=anon] c.c.u.filter.RequestLoggingFilter - ← PUT /api/sla/breaches/1/resolve | status=400 | 45ms
+2026-05-02 10:36:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:36:35.029715200
+2026-05-02 10:36:35.052 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:36:35.063 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - *** NEW SLA BREACH! slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:36:35.175 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=2 serviceId=2 metric=VIDEO_MINUTES actual=0.0000 threshold=100.0000 operator=LESS_THAN
+2026-05-02 10:36:35.182 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA healthy — slaId=2 actual=0.0000 threshold=100.0000
+2026-05-02 10:36:35.182 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 2 | New breaches: 1 | Already breaching (skipped): 0 | Recovered: 0
+2026-05-02 10:36:46.299 [http-nio-8083-exec-2] INFO  [df0bb3a8-10a4-4e9f-ba0f-90a04a522e18] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla
+2026-05-02 10:36:46.302 [http-nio-8083-exec-2] DEBUG [df0bb3a8-10a4-4e9f-ba0f-90a04a522e18] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:36:46.340 [http-nio-8083-exec-2] INFO  [df0bb3a8-10a4-4e9f-ba0f-90a04a522e18] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla | status=200 | 41ms
+2026-05-02 10:36:52.812 [http-nio-8083-exec-3] INFO  [75c83955-8090-4029-890e-1bb97418ddbd] [user=anon] c.c.u.filter.RequestLoggingFilter - → DELETE /api/sla/2
+2026-05-02 10:36:52.831 [http-nio-8083-exec-3] DEBUG [75c83955-8090-4029-890e-1bb97418ddbd] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: john@comnet360.com role: NETWORK_ENGINEER
+2026-05-02 10:36:52.862 [http-nio-8083-exec-3] INFO  [75c83955-8090-4029-890e-1bb97418ddbd] [user=anon] c.c.u.filter.RequestLoggingFilter - ← DELETE /api/sla/2 | status=403 | 50ms
+2026-05-02 10:37:28.467 [http-nio-8083-exec-5] INFO  [4a4a71fe-aab4-4ad7-bd0a-9888203b1f4c] [user=anon] c.c.u.filter.RequestLoggingFilter - → DELETE /api/sla/2
+2026-05-02 10:37:28.492 [http-nio-8083-exec-5] DEBUG [4a4a71fe-aab4-4ad7-bd0a-9888203b1f4c] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: admin@comnet360.com role: ADMIN
+2026-05-02 10:37:28.593 [http-nio-8083-exec-5] INFO  [4a4a71fe-aab4-4ad7-bd0a-9888203b1f4c] [user=anon] c.c.usagesla.service.SlaService - SLA deleted: id=2
+2026-05-02 10:37:28.632 [http-nio-8083-exec-5] INFO  [4a4a71fe-aab4-4ad7-bd0a-9888203b1f4c] [user=anon] c.c.u.filter.RequestLoggingFilter - ← DELETE /api/sla/2 | status=200 | 165ms
+2026-05-02 10:37:35.012 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:37:35.012825600
+2026-05-02 10:37:35.025 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:37:35.032 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:37:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:37:36.170 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:38:35.022 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:38:35.022383700
+2026-05-02 10:38:35.040 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:38:35.042 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:38:35.042 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:39:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:39:35.021416100
+2026-05-02 10:39:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:39:35.041 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:39:35.041 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:40:35.023 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:40:35.023110100
+2026-05-02 10:40:35.040 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:40:35.047 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:40:35.047 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:41:35.023 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:41:35.023361600
+2026-05-02 10:41:35.039 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:41:35.046 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:41:35.046 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:42:35.022 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:42:35.022489300
+2026-05-02 10:42:35.040 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:42:35.040 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:42:35.050 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:42:36.180 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:43:35.010 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:43:35.010773800
+2026-05-02 10:43:35.026 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:43:35.035 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:43:35.035 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:44:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:44:35.018070
+2026-05-02 10:44:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:44:35.038 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:44:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:45:35.010 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:45:35.010284
+2026-05-02 10:45:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:45:35.026 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:45:35.026 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:46:35.020 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:46:35.020528800
+2026-05-02 10:46:35.036 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:46:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:46:35.044 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:47:35.011 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:47:35.011981600
+2026-05-02 10:47:35.026 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:47:35.037 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:47:35.037 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:47:36.184 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:48:35.015 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:48:35.015918800
+2026-05-02 10:48:35.030 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:48:35.032 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:48:35.039 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:49:35.020 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:49:35.020991800
+2026-05-02 10:49:35.030 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:49:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:49:35.044 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:50:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:50:35.021844
+2026-05-02 10:50:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:50:35.033 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:50:35.033 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:51:35.014 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:51:35.014170400
+2026-05-02 10:51:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:51:35.034 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:51:35.037 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:52:35.019 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:52:35.019591500
+2026-05-02 10:52:35.028 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:52:35.033 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:52:35.033 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:52:36.185 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:53:35.013 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:53:35.013806700
+2026-05-02 10:53:35.030 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:53:35.041 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:53:35.043 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:54:35.020 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:54:35.020306200
+2026-05-02 10:54:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:54:35.036 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:54:35.036 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:55:00.558 [http-nio-8083-exec-4] INFO  [12bba76d-0050-4b12-b5f6-015469b2f07b] [user=0] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/service/1
+2026-05-02 10:55:00.569 [http-nio-8083-exec-4] DEBUG [12bba76d-0050-4b12-b5f6-015469b2f07b] [user=0] c.c.usagesla.filter.JwtAuthFilter - Auth via gateway headers: analytics@comnet360.internal role: ADMIN
+2026-05-02 10:55:00.585 [http-nio-8083-exec-4] INFO  [12bba76d-0050-4b12-b5f6-015469b2f07b] [user=0] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/service/1 | status=200 | 27ms
+2026-05-02 10:55:00.599 [http-nio-8083-exec-8] INFO  [ab7da8eb-7b75-4f3f-b223-79911aa3fdc4] [user=0] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/service/1
+2026-05-02 10:55:00.599 [http-nio-8083-exec-8] DEBUG [ab7da8eb-7b75-4f3f-b223-79911aa3fdc4] [user=0] c.c.usagesla.filter.JwtAuthFilter - Auth via gateway headers: analytics@comnet360.internal role: ADMIN
+2026-05-02 10:55:00.624 [http-nio-8083-exec-8] INFO  [ab7da8eb-7b75-4f3f-b223-79911aa3fdc4] [user=0] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/service/1 | status=200 | 25ms
+2026-05-02 10:55:33.141 [http-nio-8083-exec-7] INFO  [d3f1d836-97fb-4d2c-8890-fcfd0b321219] [user=anon] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches
+2026-05-02 10:55:33.141 [http-nio-8083-exec-7] DEBUG [d3f1d836-97fb-4d2c-8890-fcfd0b321219] [user=anon] c.c.usagesla.filter.JwtAuthFilter - Auth via direct JWT: admin@comnet360.com role: ADMIN
+2026-05-02 10:55:33.148 [http-nio-8083-exec-7] INFO  [d3f1d836-97fb-4d2c-8890-fcfd0b321219] [user=anon] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches | status=200 | 7ms
+2026-05-02 10:55:35.019 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:55:35.019002200
+2026-05-02 10:55:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:55:35.029 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:55:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:56:35.026 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:56:35.026799200
+2026-05-02 10:56:35.035 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:56:35.038 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:56:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:57:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:57:35.024089700
+2026-05-02 10:57:35.037 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:57:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:57:35.045 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:57:36.196 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 10:58:35.017 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:58:35.017232900
+2026-05-02 10:58:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:58:35.029 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:58:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 10:58:40.425 [http-nio-8083-exec-1] INFO  [7949cd49-2fa1-4024-bf37-9151ee31dd7e] [user=0] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/breaches/service/1
+2026-05-02 10:58:40.425 [http-nio-8083-exec-1] DEBUG [7949cd49-2fa1-4024-bf37-9151ee31dd7e] [user=0] c.c.usagesla.filter.JwtAuthFilter - Auth via gateway headers: analytics@comnet360.internal role: ADMIN
+2026-05-02 10:58:40.448 [http-nio-8083-exec-1] INFO  [7949cd49-2fa1-4024-bf37-9151ee31dd7e] [user=0] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/breaches/service/1 | status=200 | 23ms
+2026-05-02 10:58:40.459 [http-nio-8083-exec-2] INFO  [313bcbe8-91bd-4457-81cd-1ccac1190cf3] [user=0] c.c.u.filter.RequestLoggingFilter - → GET /api/sla/service/1
+2026-05-02 10:58:40.465 [http-nio-8083-exec-2] DEBUG [313bcbe8-91bd-4457-81cd-1ccac1190cf3] [user=0] c.c.usagesla.filter.JwtAuthFilter - Auth via gateway headers: analytics@comnet360.internal role: ADMIN
+2026-05-02 10:58:40.482 [http-nio-8083-exec-2] INFO  [313bcbe8-91bd-4457-81cd-1ccac1190cf3] [user=0] c.c.u.filter.RequestLoggingFilter - ← GET /api/sla/service/1 | status=200 | 23ms
+2026-05-02 10:59:35.012 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T10:59:35.012873400
+2026-05-02 10:59:35.023 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 10:59:35.028 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 10:59:35.028 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:00:35.019 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:00:35.019936700
+2026-05-02 11:00:35.022 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:00:35.027 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:00:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:01:35.025 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:01:35.025521700
+2026-05-02 11:01:35.035 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:01:35.037 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:01:35.037 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:02:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:02:35.024741200
+2026-05-02 11:02:35.034 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:02:35.038 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:02:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:02:36.201 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:03:35.016 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:03:35.016915800
+2026-05-02 11:03:35.022 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:03:35.026 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:03:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:04:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:04:35.018705200
+2026-05-02 11:04:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:04:35.036 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:04:35.036 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:05:35.014 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:05:35.014756400
+2026-05-02 11:05:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:05:35.031 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:05:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:06:35.016 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:06:35.016762100
+2026-05-02 11:06:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:06:35.042 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:06:35.042 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:07:35.014 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:07:35.014337700
+2026-05-02 11:07:35.036 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:07:35.044 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:07:35.046 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:07:36.205 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:08:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:08:35.024342600
+2026-05-02 11:08:35.038 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:08:35.046 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:08:35.046 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:09:35.011 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:09:35.011191500
+2026-05-02 11:09:35.025 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:09:35.031 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:09:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:10:35.023 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:10:35.023152300
+2026-05-02 11:10:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:10:35.039 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:10:35.039 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:11:35.011 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:11:35.011622
+2026-05-02 11:11:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:11:35.018 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:11:35.026 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:12:35.016 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:12:35.016719500
+2026-05-02 11:12:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:12:35.023 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:12:35.023 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:12:36.212 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:13:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:13:35.018504500
+2026-05-02 11:13:35.024 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:13:35.028 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:13:35.028 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:14:35.018 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:14:35.018421
+2026-05-02 11:14:35.028 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:14:35.033 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:14:35.033 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:15:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:15:35.021555
+2026-05-02 11:15:35.028 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:15:35.032 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:15:35.033 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:16:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:16:35.021551300
+2026-05-02 11:16:35.025 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:16:35.032 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:16:35.032 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:17:35.019 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:17:35.019751400
+2026-05-02 11:17:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:17:35.029 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:17:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:17:36.217 [AsyncResolver-bootstrap-executor-0] INFO  [NOCORR] [user=anon] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-02 11:18:35.021 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:18:35.021867900
+2026-05-02 11:18:35.029 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:18:35.039 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:18:35.041 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:19:35.019 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation job started at 2026-05-02T11:19:35.019721200
+2026-05-02 11:19:35.027 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA eval → slaId=1 serviceId=1 metric=CALL_DURATION actual=520.0000 threshold=450.0000 operator=LESS_THAN
+2026-05-02 11:19:35.031 [scheduling-1] WARN  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA still breaching (open breach exists) — slaId=1 actual=520.0000 threshold=450.0000
+2026-05-02 11:19:35.031 [scheduling-1] INFO  [NOCORR] [user=anon] c.c.usagesla.scheduler.SlaScheduler - SLA evaluation complete — Evaluated: 1 | New breaches: 0 | Already breaching (skipped): 1 | Recovered: 0
+2026-05-02 11:19:40.355 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.c.n.e.s.EurekaServiceRegistry - Unregistering application USAGE-SLA-SERVICE with eureka with status DOWN
+2026-05-02 11:19:40.356 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1777700980356, current=DOWN, previous=UP]
+2026-05-02 11:19:40.356 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083: registering service...
+2026-05-02 11:19:40.372 [DiscoveryClient-InstanceInfoReplicator-0] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - registration status: 204
+2026-05-02 11:19:40.412 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-02 11:19:40.417 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-02 11:19:40.421 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-02 11:19:40.422 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Shutting down DiscoveryClient ...
+2026-05-02 11:19:43.441 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Unregistering ...
+2026-05-02 11:19:43.453 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/} exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:91)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 11:19:43.454 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 11:19:43.458 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.n.d.s.t.d.RedirectingEurekaHttpClient - Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}, exception=Connection pool shut down stacktrace=java.lang.IllegalStateException: Connection pool shut down
+	at org.apache.hc.core5.util.Asserts.check(Asserts.java:38)
+	at org.apache.hc.core5.pool.StrictConnPool.lease(StrictConnPool.java:176)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.lease(PoolingHttpClientConnectionManager.java:298)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.acquireEndpoint(InternalExecRuntime.java:103)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:125)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:96)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:115)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:95)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$0(RestTemplateTransportClientFactory.java:143)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.cancel(RestTemplateEurekaHttpClient.java:87)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:121)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:80)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+2026-05-02 11:19:43.458 [SpringApplicationShutdownHook] WARN  [NOCORR] [user=anon] c.n.d.s.t.d.RetryableEurekaHttpClient - Request execution failed with message: Connection pool shut down
+2026-05-02 11:19:43.458 [SpringApplicationShutdownHook] ERROR [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USAGE-SLA-SERVICE/usage-sla-service:8083 - de-registration failedCannot execute request on any known server
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$2.execute(EurekaHttpClientDecorator.java:74)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.cancel(EurekaHttpClientDecorator.java:71)
+	at com.netflix.discovery.DiscoveryClient.unregister(DiscoveryClient.java:916)
+	at com.netflix.discovery.DiscoveryClient.shutdown(DiscoveryClient.java:892)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeDestroyMethods(InitDestroyAnnotationBeanPostProcessor.java:415)
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeDestruction(InitDestroyAnnotationBeanPostProcessor.java:239)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:202)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.run(DisposableBeanAdapter.java:195)
+	at org.springframework.cloud.context.scope.GenericScope$BeanLifecycleWrapper.destroy(GenericScope.java:389)
+	at org.springframework.cloud.context.scope.GenericScope.destroy(GenericScope.java:136)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:211)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:587)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:559)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:520)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1195)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1186)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1147)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:174)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1093)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:145)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-05-02 11:19:43.468 [SpringApplicationShutdownHook] INFO  [NOCORR] [user=anon] c.netflix.discovery.DiscoveryClient - Completed shut down of DiscoveryClient

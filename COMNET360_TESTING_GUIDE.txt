@@ -1,0 +1,2363 @@
+╔══════════════════════════════════════════════════════════════════╗
+║         COMNET360 — COMPLETE BACKEND & FRONTEND TESTING GUIDE   ║
+║         All Services: VOICE · VIDEO · MESSAGING                 ║
+║         Backend REST API + Frontend UI — No Shortcuts            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+══════════════════════════════════════════════════════════════════
+SECTION 0 — SERVICE PORTS QUICK REFERENCE
+══════════════════════════════════════════════════════════════════
+
+  MySQL             : 3306
+  Eureka Server     : 8761    http://localhost:8761
+  API Gateway       : 8001    (ALL frontend requests go here)
+  IAM Service       : 8081    (direct access only for Swagger)
+  Provisioning      : 8082
+  Usage/SLA         : 8083
+  Incident          : 8084
+  Analytics         : 8085
+  Notification      : 8086
+  Frontend (React)  : 5173    http://localhost:5173
+
+  Swagger UIs (direct, no gateway auth needed):
+    IAM          : http://localhost:8081/swagger-ui.html
+    Provisioning : http://localhost:8082/swagger-ui.html
+    Usage/SLA    : http://localhost:8083/swagger-ui.html
+    Incident     : http://localhost:8084/swagger-ui.html
+    Analytics    : http://localhost:8085/swagger-ui.html
+    Notification : http://localhost:8086/swagger-ui.html
+
+══════════════════════════════════════════════════════════════════
+SECTION 1 — DATABASE SETUP (RUN ONCE BEFORE FIRST START)
+══════════════════════════════════════════════════════════════════
+
+Open MySQL command line or MySQL Workbench and run:
+
+  mysql -u root -p
+
+Then inside MySQL prompt:
+
+  SOURCE C:/Users/2484896/Downloads/comnet360-backendf/comnet360/database/00_init_all.sql;
+
+  -- OR run files individually in this order:
+  SOURCE C:/Users/.../database/01_iam_db.sql;
+  SOURCE C:/Users/.../database/02_provisioning_db.sql;
+  SOURCE C:/Users/.../database/03_usage_db.sql;
+  SOURCE C:/Users/.../database/04_incident_db.sql;
+  SOURCE C:/Users/.../database/05_analytics_db.sql;
+  SOURCE C:/Users/.../database/06_notification_db.sql;
+
+Verify databases exist:
+  SHOW DATABASES;
+  -- Should show: iam_db, provisioning_db, usage_db,
+  --              incident_db, analytics_db, notification_db
+
+NOTE: usage-sla service uses database name "usage_db" (not "usage_sla_db")
+Check application.yml to confirm. If it uses usage_sla_db instead:
+  CREATE DATABASE IF NOT EXISTS usage_sla_db;
+
+══════════════════════════════════════════════════════════════════
+SECTION 2 — SERVICE STARTUP ORDER
+══════════════════════════════════════════════════════════════════
+
+Start each service in its own terminal window. Wait for each to
+say "Started ... in X.X seconds" before starting the next.
+
+STEP 1: MySQL must be running (Windows Services or XAMPP/WAMP)
+
+STEP 2: Start Eureka Server
+  cd comnet360/eureka-server
+  mvn spring-boot:run
+  Wait for: "Started EurekaServerApplication"
+  Verify: http://localhost:8761 shows Eureka dashboard
+
+STEP 3: Start API Gateway
+  cd comnet360/gateway
+  mvn spring-boot:run
+  Wait for: "Started GatewayApplication"
+
+STEP 4: Start IAM Service
+  cd comnet360/services/iam-service
+  mvn spring-boot:run
+  Wait for: "✅ Admin password re-synced on startup"
+  or: "✅ Default admin created on startup"
+
+STEP 5: Start Provisioning Service
+  cd comnet360/services/provisioning-service
+  mvn spring-boot:run
+
+STEP 6: Start Usage/SLA Service
+  cd comnet360/services/usage-sla-service
+  mvn spring-boot:run
+
+STEP 7: Start Incident Service
+  cd comnet360/services/incident-service
+  mvn spring-boot:run
+
+STEP 8: Start Analytics Service
+  cd comnet360/services/analytics-service
+  mvn spring-boot:run
+
+STEP 9: Start Notification Service
+  cd comnet360/services/notification-service
+  mvn spring-boot:run
+
+STEP 10: Start Frontend
+  cd comnet360-frontend
+  npm install   (first time only)
+  npm run dev
+  Open: http://localhost:5173
+
+══════════════════════════════════════════════════════════════════
+SECTION 3 — BACKEND API TESTING (cURL COMMANDS)
+══════════════════════════════════════════════════════════════════
+
+All cURL commands go through the API Gateway on port 8001.
+The gateway adds X-User-Id, X-User-Email, X-User-Role headers
+automatically based on the JWT token.
+
+────────────────────────────────────────────────
+3.1  IAM SERVICE — Authentication
+────────────────────────────────────────────────
+
+STEP 1: LOGIN AS ADMIN
+──────────────────────
+curl -X POST http://localhost:8001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@comnet360.com",
+    "password": "Admin@123"
+  }'
+
+Expected Response (200 OK):
+{
+  "accessToken": "eyJhbGciOiJIUzUxMiJ9...",
+  "refreshToken": "eyJhbGciOiJIUzUxMiJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": 86400000,
+  "userId": 1,
+  "name": "System Admin",
+  "email": "admin@comnet360.com",
+  "role": "ADMIN"
+}
+
+SAVE THE ACCESS TOKEN — you will use it in all subsequent calls.
+Replace <ADMIN_TOKEN> with your actual token below.
+
+STEP 2: REGISTER A NEW USER
+────────────────────────────
+curl -X POST http://localhost:8001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Engineer",
+    "email": "john@comnet360.com",
+    "password": "John@123"
+  }'
+
+Expected Response (201 Created):
+{
+  "accessToken": "...",
+  "userId": 2,
+  "name": "John Engineer",
+  "email": "john@comnet360.com",
+  "role": "ENTERPRISE_USER"
+}
+
+Save john's userId (e.g. 2). Replace <USER_ID> below.
+
+STEP 3: REGISTER MORE TEST USERS
+──────────────────────────────────
+-- Service Manager
+curl -X POST http://localhost:8001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sara Manager",
+    "email": "sara@comnet360.com",
+    "password": "Sara@123"
+  }'
+
+-- Network Engineer
+curl -X POST http://localhost:8001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Mike Engineer",
+    "email": "mike@comnet360.com",
+    "password": "Mike@123"
+  }'
+
+-- Operations Head
+curl -X POST http://localhost:8001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Lisa Ops",
+    "email": "lisa@comnet360.com",
+    "password": "Lisa@123"
+  }'
+
+STEP 4: GET ALL USERS (Admin only)
+────────────────────────────────────
+curl -X GET http://localhost:8001/api/users \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+Expected Response (200 OK): Array of users with userId, name, email, role, isActive
+
+STEP 5: ASSIGN ROLES TO REGISTERED USERS
+──────────────────────────────────────────
+-- Assign SERVICE_MANAGER to Sara (assume Sara's userId = 2)
+curl -X PUT http://localhost:8001/api/users/2/role \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "SERVICE_MANAGER"}'
+
+-- Assign NETWORK_ENGINEER to Mike (assume userId = 3)
+curl -X PUT http://localhost:8001/api/users/3/role \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "NETWORK_ENGINEER"}'
+
+-- Assign OPERATIONS_HEAD to Lisa (assume userId = 4)
+curl -X PUT http://localhost:8001/api/users/4/role \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "OPERATIONS_HEAD"}'
+
+Expected Response (200 OK): Updated user object
+Expected Side Effect: Notification sent to Sara, Mike, Lisa about role change
+Verify in logs: "✅ Notification sent to userId=X: Your role has been updated"
+
+STEP 6: GET MY PROFILE
+────────────────────────
+curl -X GET http://localhost:8001/api/users/me \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 7: DEACTIVATE A USER
+───────────────────────────
+curl -X PUT http://localhost:8001/api/users/2/status \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"isActive": false}'
+
+STEP 8: REACTIVATE A USER
+───────────────────────────
+curl -X PUT http://localhost:8001/api/users/2/status \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"isActive": true}'
+
+STEP 9: REFRESH TOKEN
+───────────────────────
+curl -X POST http://localhost:8001/api/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refreshToken": "<REFRESH_TOKEN>"}'
+
+STEP 10: LOGOUT
+─────────────────
+curl -X POST http://localhost:8001/api/auth/logout \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 11: AUDIT LOGS
+─────────────────────
+curl -X GET http://localhost:8001/api/audit-logs \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+-- Logs for specific user
+curl -X GET http://localhost:8001/api/audit-logs/user/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+-- Logs in date range
+curl -X GET "http://localhost:8001/api/audit-logs/range?from=2025-01-01T00:00:00&to=2026-12-31T23:59:59" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+────────────────────────────────────────────────
+3.2  PROVISIONING SERVICE — Services
+────────────────────────────────────────────────
+
+Get Sara's token first (login as sara@comnet360.com / Sara@123)
+Replace <SARA_TOKEN> with Sara's access token.
+
+STEP 12: CREATE A VOICE SERVICE
+─────────────────────────────────
+curl -X POST http://localhost:8001/api/services \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Corporate Voice Gateway",
+    "type": "VOICE",
+    "description": "Primary SIP trunk for corporate telephony",
+    "configDetails": "{\"codec\":\"G711\",\"maxChannels\":500,\"sipPort\":5060}"
+  }'
+
+Expected Response (201 Created):
+{
+  "serviceId": 1,
+  "name": "Corporate Voice Gateway",
+  "type": "VOICE",
+  "status": "DRAFT",
+  "ownerUserId": 2,
+  ...
+}
+
+Save serviceId (e.g. 1). Replace <VOICE_SVC_ID>.
+
+STEP 13: CREATE A VIDEO CONFERENCING SERVICE
+──────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/services \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "HD Video Conferencing",
+    "type": "VIDEO",
+    "description": "Enterprise video conferencing platform supporting 4K",
+    "configDetails": "{\"codec\":\"H264\",\"maxResolution\":\"4K\",\"maxParticipants\":100}"
+  }'
+
+Save serviceId (e.g. 2). Replace <VIDEO_SVC_ID>.
+
+STEP 14: CREATE A MESSAGING SERVICE
+──────────────────────────────────────
+curl -X POST http://localhost:8001/api/services \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Enterprise Messaging Platform",
+    "type": "MESSAGING",
+    "description": "Secure real-time messaging with delivery receipts",
+    "configDetails": "{\"protocol\":\"XMPP\",\"maxMessageSize\":\"5MB\",\"encryption\":\"AES256\"}"
+  }'
+
+Save serviceId (e.g. 3). Replace <MSG_SVC_ID>.
+
+STEP 15: GET ALL SERVICES
+───────────────────────────
+curl -X GET http://localhost:8001/api/services \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 16: FILTER SERVICES BY TYPE
+───────────────────────────────────
+-- Get only VOICE services
+curl -X GET "http://localhost:8001/api/services?type=VOICE" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+-- Get only VIDEO services
+curl -X GET "http://localhost:8001/api/services?type=VIDEO" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+-- Get only MESSAGING services
+curl -X GET "http://localhost:8001/api/services?type=MESSAGING" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 17: FILTER SERVICES BY STATUS
+─────────────────────────────────────
+curl -X GET "http://localhost:8001/api/services?status=DRAFT" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 18: GET SERVICE BY ID
+────────────────────────────
+curl -X GET http://localhost:8001/api/services/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 19: GET MY SERVICES
+──────────────────────────
+curl -X GET http://localhost:8001/api/services/my \
+  -H "Authorization: Bearer <SARA_TOKEN>"
+
+STEP 20: UPDATE A SERVICE
+───────────────────────────
+curl -X PUT http://localhost:8001/api/services/1 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Corporate Voice Gateway v2",
+    "description": "Updated SIP trunk with failover support",
+    "configDetails": "{\"codec\":\"G722\",\"maxChannels\":1000,\"failover\":true}"
+  }'
+
+STEP 21: ACTIVATE VOICE SERVICE
+─────────────────────────────────
+curl -X PUT http://localhost:8001/api/services/1/activate \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "Approved by management"}'
+
+Expected: status changes from DRAFT to ACTIVE
+
+STEP 22: ACTIVATE VIDEO AND MESSAGING SERVICES
+────────────────────────────────────────────────
+curl -X PUT http://localhost:8001/api/services/2/activate \
+  -H "Authorization: Bearer <SARA_TOKEN>"
+
+curl -X PUT http://localhost:8001/api/services/3/activate \
+  -H "Authorization: Bearer <SARA_TOKEN>"
+
+STEP 23: DEACTIVATE A SERVICE
+───────────────────────────────
+curl -X PUT http://localhost:8001/api/services/2/deactivate \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "Temporary maintenance"}'
+
+Expected: status changes to INACTIVE
+
+STEP 24: DECOMMISSION A SERVICE (Admin only)
+─────────────────────────────────────────────
+-- Create a throwaway service first, then decommission it
+curl -X POST http://localhost:8001/api/services \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Old Messaging","type":"MESSAGING","description":"Legacy system"}'
+
+curl -X PUT http://localhost:8001/api/services/4/decommission \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "Replaced by new platform"}'
+
+Expected: status changes to DECOMMISSIONED
+
+────────────────────────────────────────────────
+3.3  PROVISIONING SERVICE — Configurations
+────────────────────────────────────────────────
+
+STEP 25: ADD VOICE SERVICE CONFIGURATIONS
+───────────────────────────────────────────
+-- Max concurrent calls config
+curl -X POST http://localhost:8001/api/configurations/1 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "max_concurrent_calls",
+    "value": "500",
+    "effectiveDate": "2025-01-01"
+  }'
+
+-- Codec config
+curl -X POST http://localhost:8001/api/configurations/1 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "audio_codec",
+    "value": "G711",
+    "effectiveDate": "2025-01-01"
+  }'
+
+-- SIP port config
+curl -X POST http://localhost:8001/api/configurations/1 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "sip_port",
+    "value": "5060",
+    "effectiveDate": "2025-01-01"
+  }'
+
+STEP 26: ADD VIDEO SERVICE CONFIGURATIONS
+───────────────────────────────────────────
+curl -X POST http://localhost:8001/api/configurations/2 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "max_participants",
+    "value": "100",
+    "effectiveDate": "2025-01-01"
+  }'
+
+curl -X POST http://localhost:8001/api/configurations/2 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "video_codec",
+    "value": "H264",
+    "effectiveDate": "2025-01-01"
+  }'
+
+curl -X POST http://localhost:8001/api/configurations/2 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "max_bandwidth_mbps",
+    "value": "50",
+    "effectiveDate": "2025-01-01"
+  }'
+
+STEP 27: ADD MESSAGING SERVICE CONFIGURATIONS
+───────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/configurations/3 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "max_message_size_mb",
+    "value": "5",
+    "effectiveDate": "2025-01-01"
+  }'
+
+curl -X POST http://localhost:8001/api/configurations/3 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "message_retention_days",
+    "value": "90",
+    "effectiveDate": "2025-01-01"
+  }'
+
+curl -X POST http://localhost:8001/api/configurations/3 \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parameter": "encryption_algorithm",
+    "value": "AES256",
+    "effectiveDate": "2025-01-01"
+  }'
+
+STEP 28: GET ALL CONFIGURATIONS FOR A SERVICE
+───────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/configurations/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 29: GET SPECIFIC CONFIGURATION BY ID
+───────────────────────────────────────────
+curl -X GET http://localhost:8001/api/configurations/detail/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 30: DELETE A CONFIGURATION (Admin only)
+──────────────────────────────────────────────
+curl -X DELETE http://localhost:8001/api/configurations/3 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+Expected: {"message": "Configuration deleted successfully"}
+
+────────────────────────────────────────────────
+3.4  USAGE/SLA SERVICE — SLA Definitions
+────────────────────────────────────────────────
+
+STEP 31: CREATE SLA FOR VOICE SERVICE — CALL AVAILABILITY
+───────────────────────────────────────────────────────────
+-- Uptime must be greater than 99.9%
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "metric": "UPTIME_PERCENT",
+    "threshold": 99.9,
+    "unit": "%",
+    "operator": "GREATER_THAN",
+    "description": "Voice service uptime must exceed 99.9%"
+  }'
+
+Save slaId (e.g. 1). Replace <VOICE_SLA_ID>.
+
+STEP 32: CREATE SLA FOR VOICE SERVICE — CALL LATENCY
+──────────────────────────────────────────────────────
+-- Latency must be less than 150ms
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "metric": "LATENCY_MS",
+    "threshold": 150,
+    "unit": "ms",
+    "operator": "LESS_THAN",
+    "description": "End-to-end call latency must be under 150ms"
+  }'
+
+STEP 33: CREATE SLA FOR VIDEO SERVICE — BANDWIDTH
+────────────────────────────────────────────────────
+-- Bandwidth must be greater than 10 Mbps
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 2,
+    "metric": "BANDWIDTH_MBPS",
+    "threshold": 10,
+    "unit": "Mbps",
+    "operator": "GREATER_THAN",
+    "description": "Video conferencing bandwidth must exceed 10 Mbps per session"
+  }'
+
+STEP 34: CREATE SLA FOR VIDEO SERVICE — PACKET LOSS
+─────────────────────────────────────────────────────
+-- Packet loss must be less than 1%
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 2,
+    "metric": "PACKET_LOSS_PERCENT",
+    "threshold": 1,
+    "unit": "%",
+    "operator": "LESS_THAN",
+    "description": "Video packet loss must stay below 1%"
+  }'
+
+STEP 35: CREATE SLA FOR MESSAGING SERVICE — DELIVERY TIME
+───────────────────────────────────────────────────────────
+-- Message delivery must be less than 500ms
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 3,
+    "metric": "MSG_DELIVERY_MS",
+    "threshold": 500,
+    "unit": "ms",
+    "operator": "LESS_THAN",
+    "description": "Message delivery latency must be under 500ms"
+  }'
+
+STEP 36: CREATE SLA FOR MESSAGING SERVICE — THROUGHPUT
+────────────────────────────────────────────────────────
+-- Throughput must be greater than 1000 messages/min
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 3,
+    "metric": "MSG_THROUGHPUT",
+    "threshold": 1000,
+    "unit": "msg/min",
+    "operator": "GREATER_THAN",
+    "description": "Messaging throughput must exceed 1000 messages per minute"
+  }'
+
+STEP 37: GET ALL SLA DEFINITIONS
+───────────────────────────────────
+curl -X GET http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 38: GET SLA FOR SPECIFIC SERVICE
+────────────────────────────────────────
+curl -X GET http://localhost:8001/api/sla/service/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 39: GET SLA BY ID
+────────────────────────
+curl -X GET http://localhost:8001/api/sla/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 40: DISABLE AN SLA
+─────────────────────────
+curl -X PUT http://localhost:8001/api/sla/1/status \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "INACTIVE"}'
+
+STEP 41: RE-ENABLE AN SLA
+───────────────────────────
+curl -X PUT http://localhost:8001/api/sla/1/status \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "ACTIVE"}'
+
+STEP 42: DELETE AN SLA (Admin only)
+─────────────────────────────────────
+curl -X DELETE http://localhost:8001/api/sla/6 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+────────────────────────────────────────────────
+3.5  USAGE/SLA SERVICE — Recording Usage Data
+────────────────────────────────────────────────
+
+NOTE: MetricType enum values are:
+  BANDWIDTH, ACTIVE_CONNECTIONS, CALL_COUNT, MESSAGE_COUNT
+
+Get Mike's token (login as mike@comnet360.com / Mike@123)
+Replace <MIKE_TOKEN> below.
+
+STEP 43: RECORD VOICE SERVICE USAGE — CALL COUNT
+──────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "metricType": "CALL_COUNT",
+    "value": 245,
+    "unit": "calls",
+    "recordedAt": "2025-01-15T09:00:00"
+  }'
+
+STEP 44: RECORD VOICE SERVICE USAGE — ACTIVE CONNECTIONS
+──────────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "metricType": "ACTIVE_CONNECTIONS",
+    "value": 87,
+    "unit": "connections",
+    "recordedAt": "2025-01-15T10:00:00"
+  }'
+
+STEP 45: RECORD VOICE SERVICE USAGE — BANDWIDTH
+─────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "metricType": "BANDWIDTH",
+    "value": 125.5,
+    "unit": "Mbps",
+    "recordedAt": "2025-01-15T11:00:00"
+  }'
+
+STEP 46: RECORD VIDEO SERVICE USAGE — ACTIVE CONNECTIONS
+──────────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 2,
+    "metricType": "ACTIVE_CONNECTIONS",
+    "value": 32,
+    "unit": "sessions",
+    "recordedAt": "2025-01-15T09:30:00"
+  }'
+
+STEP 47: RECORD VIDEO SERVICE USAGE — BANDWIDTH
+─────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 2,
+    "metricType": "BANDWIDTH",
+    "value": 380.2,
+    "unit": "Mbps",
+    "recordedAt": "2025-01-15T10:30:00"
+  }'
+
+STEP 48: RECORD MESSAGING SERVICE USAGE — MESSAGE COUNT
+─────────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 3,
+    "metricType": "MESSAGE_COUNT",
+    "value": 15432,
+    "unit": "messages",
+    "recordedAt": "2025-01-15T12:00:00"
+  }'
+
+STEP 49: RECORD MESSAGING SERVICE USAGE — BANDWIDTH
+─────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 3,
+    "metricType": "BANDWIDTH",
+    "value": 45.8,
+    "unit": "Mbps",
+    "recordedAt": "2025-01-15T13:00:00"
+  }'
+
+STEP 50: RECORD MORE USAGE (spread over multiple days)
+────────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"serviceId":1,"metricType":"CALL_COUNT","value":312,"unit":"calls","recordedAt":"2025-01-16T09:00:00"}'
+
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"serviceId":1,"metricType":"CALL_COUNT","value":198,"unit":"calls","recordedAt":"2025-01-17T09:00:00"}'
+
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"serviceId":2,"metricType":"BANDWIDTH","value":420.5,"unit":"Mbps","recordedAt":"2025-01-16T10:00:00"}'
+
+curl -X POST http://localhost:8001/api/usage \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"serviceId":3,"metricType":"MESSAGE_COUNT","value":22100,"unit":"messages","recordedAt":"2025-01-16T12:00:00"}'
+
+STEP 51: GET USAGE FOR VOICE SERVICE
+───────────────────────────────────────
+curl -X GET http://localhost:8001/api/usage/service/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 52: GET USAGE BY METRIC TYPE (VOICE + CALL_COUNT only)
+─────────────────────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/usage/service/1/metric/CALL_COUNT \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 53: GET USAGE BY DATE RANGE
+───────────────────────────────────
+curl -X GET "http://localhost:8001/api/usage/service/1/range?from=2025-01-15T00:00:00&to=2025-01-17T23:59:59" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 54: GET ALL USAGE FOR A USER
+────────────────────────────────────
+curl -X GET http://localhost:8001/api/usage/user/3 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 55: GET SLA BREACH EVENTS
+─────────────────────────────────
+curl -X GET http://localhost:8001/api/sla/breaches \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 56: GET UNRESOLVED BREACHES
+───────────────────────────────────
+curl -X GET http://localhost:8001/api/sla/breaches/unresolved \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 57: GET BREACHES FOR SPECIFIC SERVICE
+────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/sla/breaches/service/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 58: RESOLVE A BREACH (if any exist)
+──────────────────────────────────────────
+-- Replace 1 with actual breachId from Step 55
+curl -X PUT http://localhost:8001/api/sla/breaches/1/resolve \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+NOTE: Breaches are created automatically by the SLA checker when
+recorded usage values violate SLA thresholds. Check the
+usage-sla-service logs for breach detection messages.
+
+────────────────────────────────────────────────
+3.6  INCIDENT SERVICE — Incidents
+────────────────────────────────────────────────
+
+STEP 59: CREATE VOICE SERVICE INCIDENT
+────────────────────────────────────────
+curl -X POST http://localhost:8001/api/incidents \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "title": "SIP trunk degradation causing dropped calls",
+    "description": "Multiple users reporting calls dropping after 30-45 seconds. Affects all channels on SIP trunk 1. Started at 09:15 AM. 47 calls dropped in the last hour.",
+    "severity": "HIGH"
+  }'
+
+Save incidentId (e.g. 1). Replace <VOICE_INC_ID>.
+
+STEP 60: CREATE VIDEO SERVICE INCIDENT — CRITICAL
+───────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/incidents \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 2,
+    "title": "Video conferencing server unresponsive",
+    "description": "Video conferencing backend completely unresponsive. All scheduled meetings failing to connect. Board meeting at 2PM affected. 150+ users impacted. CPU at 100%.",
+    "severity": "CRITICAL"
+  }'
+
+Save incidentId (e.g. 2). Replace <VIDEO_INC_ID>.
+
+STEP 61: CREATE MESSAGING SERVICE INCIDENT
+────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/incidents \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 3,
+    "title": "Message delivery delays exceeding 5 minutes",
+    "description": "Messages taking 5+ minutes to deliver. Users receiving no notifications. Queue backlog growing. Started after deployment at 08:00.",
+    "severity": "MEDIUM"
+  }'
+
+STEP 62: CREATE A LOW-SEVERITY INCIDENT
+─────────────────────────────────────────
+curl -X POST http://localhost:8001/api/incidents \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceId": 1,
+    "title": "Intermittent echo on some voice calls",
+    "description": "Small number of users reporting echo on calls. Appears intermittent. Not affecting all calls. Under investigation.",
+    "severity": "LOW"
+  }'
+
+STEP 63: GET ALL INCIDENTS
+────────────────────────────
+curl -X GET http://localhost:8001/api/incidents \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 64: FILTER INCIDENTS BY STATUS
+──────────────────────────────────────
+curl -X GET "http://localhost:8001/api/incidents?status=OPEN" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 65: FILTER INCIDENTS BY SEVERITY
+────────────────────────────────────────
+curl -X GET "http://localhost:8001/api/incidents?severity=CRITICAL" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 66: GET INCIDENTS FOR A SERVICE
+──────────────────────────────────────
+curl -X GET http://localhost:8001/api/incidents/service/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 67: GET INCIDENTS ASSIGNED TO A USER
+────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/incidents/assigned/3 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 68: GET INCIDENT BY ID
+─────────────────────────────
+curl -X GET http://localhost:8001/api/incidents/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 69: ASSIGN INCIDENT TO ENGINEER
+──────────────────────────────────────
+-- IMPORTANT: body key must be "assignedTo" not "userId"
+curl -X PUT http://localhost:8001/api/incidents/1/assign \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"assignedTo": 3}'
+
+Expected: incident.assignedTo = 3 (Mike's userId)
+
+-- Assign critical video incident to Mike also
+curl -X PUT http://localhost:8001/api/incidents/2/assign \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"assignedTo": 3}'
+
+────────────────────────────────────────────────
+3.7  INCIDENT SERVICE — Comments
+────────────────────────────────────────────────
+
+STEP 70: ADD COMMENT TO VOICE INCIDENT
+────────────────────────────────────────
+-- IMPORTANT: field name is "comment" not "content"
+curl -X POST http://localhost:8001/api/incidents/1/comments \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"comment": "Investigated SIP trunk config. Found packet loss on upstream provider link. Contacting provider."}'
+
+STEP 71: ADD ANOTHER COMMENT
+──────────────────────────────
+curl -X POST http://localhost:8001/api/incidents/1/comments \
+  -H "Authorization: Bearer <SARA_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"comment": "Provider confirms network maintenance ongoing. ETA for fix: 2 hours."}'
+
+STEP 72: ADD COMMENT TO VIDEO INCIDENT
+────────────────────────────────────────
+curl -X POST http://localhost:8001/api/incidents/2/comments \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"comment": "Memory leak identified in media server process. Restarting in maintenance mode."}'
+
+curl -X POST http://localhost:8001/api/incidents/2/comments \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"comment": "Server restarted. Service coming back online. Monitoring for 30 minutes."}'
+
+STEP 73: GET ALL COMMENTS FOR AN INCIDENT
+───────────────────────────────────────────
+curl -X GET http://localhost:8001/api/incidents/1/comments \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+────────────────────────────────────────────────
+3.8  INCIDENT SERVICE — Resolution Actions
+────────────────────────────────────────────────
+
+STEP 74: CREATE RESOLUTION ACTIONS FOR VOICE INCIDENT
+───────────────────────────────────────────────────────
+-- IMPORTANT: no "title" field — use "actionDescription" only
+curl -X POST http://localhost:8001/api/actions/incident/1 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ownerId": 3,
+    "actionDescription": "Contact upstream SIP provider to report packet loss on trunk and request immediate fix",
+    "dueDate": "2025-01-15T14:00:00"
+  }'
+
+curl -X POST http://localhost:8001/api/actions/incident/1 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ownerId": 3,
+    "actionDescription": "Configure automatic failover to backup SIP trunk when primary drops below threshold",
+    "dueDate": "2025-01-15T16:00:00"
+  }'
+
+curl -X POST http://localhost:8001/api/actions/incident/1 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ownerId": 2,
+    "actionDescription": "Notify affected enterprise customers via email about service degradation and expected resolution time",
+    "dueDate": "2025-01-15T11:00:00"
+  }'
+
+STEP 75: CREATE RESOLUTION ACTIONS FOR VIDEO INCIDENT
+───────────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/actions/incident/2 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ownerId": 3,
+    "actionDescription": "Perform rolling restart of all media server nodes to clear memory leak",
+    "dueDate": "2025-01-15T13:00:00"
+  }'
+
+curl -X POST http://localhost:8001/api/actions/incident/2 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ownerId": 3,
+    "actionDescription": "Apply hotfix patch v2.3.1 which addresses the memory leak in media transcoder",
+    "dueDate": "2025-01-15T15:00:00"
+  }'
+
+STEP 76: GET ALL ACTIONS FOR AN INCIDENT
+──────────────────────────────────────────
+curl -X GET http://localhost:8001/api/actions/incident/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 77: GET ACTIONS BY OWNER
+───────────────────────────────
+curl -X GET http://localhost:8001/api/actions/owner/3 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 78: UPDATE ACTION STATUS
+───────────────────────────────
+-- Mark action 1 as IN_PROGRESS
+curl -X PUT http://localhost:8001/api/actions/1/status \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "IN_PROGRESS"}'
+
+-- Mark action 2 as COMPLETED
+curl -X PUT http://localhost:8001/api/actions/2/status \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "COMPLETED"}'
+
+STEP 79: RESOLVE AN INCIDENT
+───────────────────────────────
+curl -X PUT http://localhost:8001/api/incidents/1/resolve \
+  -H "Authorization: Bearer <MIKE_TOKEN>"
+
+Expected: status changes to RESOLVED, resolvedDate is set
+
+STEP 80: CLOSE AN INCIDENT (after resolving)
+─────────────────────────────────────────────
+curl -X PUT http://localhost:8001/api/incidents/1/close \
+  -H "Authorization: Bearer <SARA_TOKEN>"
+
+Expected: status changes to CLOSED
+
+────────────────────────────────────────────────
+3.9  ANALYTICS SERVICE — Reports
+────────────────────────────────────────────────
+
+STEP 81: GENERATE OPERATIONS REPORT
+───────────────────────────────────────
+curl -X POST http://localhost:8001/api/reports/generate \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Q1 2025 Operations Report",
+    "scope": "ALL_SERVICES",
+    "reportType": "OPERATIONS",
+    "fromDate": "2025-01-01",
+    "toDate": "2025-03-31"
+  }'
+
+Save reportId (e.g. 1). Replace <REPORT_ID>.
+
+STEP 82: GENERATE SLA COMPLIANCE REPORT
+─────────────────────────────────────────
+curl -X POST http://localhost:8001/api/reports/generate \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "January SLA Compliance — Voice Services",
+    "scope": "VOICE",
+    "reportType": "SLA_COMPLIANCE",
+    "fromDate": "2025-01-01",
+    "toDate": "2025-01-31"
+  }'
+
+STEP 83: GENERATE INCIDENT SUMMARY REPORT
+───────────────────────────────────────────
+curl -X POST http://localhost:8001/api/reports/generate \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "January Incident Summary",
+    "scope": "ALL",
+    "reportType": "INCIDENT_SUMMARY",
+    "fromDate": "2025-01-01",
+    "toDate": "2025-01-31"
+  }'
+
+STEP 84: GENERATE USAGE ANALYTICS REPORT
+──────────────────────────────────────────
+curl -X POST http://localhost:8001/api/reports/generate \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Usage Analytics — All Services Q1",
+    "scope": "ALL",
+    "reportType": "USAGE_ANALYTICS",
+    "fromDate": "2025-01-01",
+    "toDate": "2025-03-31"
+  }'
+
+STEP 85: GET ALL REPORTS
+──────────────────────────
+curl -X GET http://localhost:8001/api/reports \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 86: FILTER REPORTS BY TYPE
+─────────────────────────────────
+curl -X GET "http://localhost:8001/api/reports?type=OPERATIONS" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 87: GET MY REPORTS (reports I generated)
+────────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/reports/my \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 88: GET REPORT BY ID
+───────────────────────────
+curl -X GET http://localhost:8001/api/reports/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 89: GET SLA COMPLIANCE DATA
+───────────────────────────────────
+-- Requires serviceId + from + to (all mandatory)
+curl -X GET "http://localhost:8001/api/reports/sla-compliance?serviceId=1&from=2025-01-01&to=2025-01-31" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+Expected Response:
+{
+  "serviceId": 1,
+  "metric": "...",
+  "totalBreaches": 0,
+  "resolvedBreaches": 0,
+  "unresolvedBreaches": 0,
+  "compliancePercentage": 100.0,
+  "fromDate": "2025-01-01",
+  "toDate": "2025-01-31"
+}
+
+STEP 90: GET INCIDENT SUMMARY DATA
+─────────────────────────────────────
+-- Requires from + to (both mandatory)
+curl -X GET "http://localhost:8001/api/reports/incident-summary?from=2025-01-01&to=2025-01-31" \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 91: GENERATE OPERATIONS DASHBOARD SNAPSHOT
+──────────────────────────────────────────────────
+curl -X POST http://localhost:8001/api/reports/snapshots/operations \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 92: GET ALL SNAPSHOTS
+────────────────────────────
+curl -X GET http://localhost:8001/api/reports/snapshots \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 93: GET LATEST SNAPSHOT BY TYPE
+──────────────────────────────────────
+curl -X GET http://localhost:8001/api/reports/snapshots/OPERATIONS \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 94: DELETE A REPORT (Admin only)
+───────────────────────────────────────
+curl -X DELETE http://localhost:8001/api/reports/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+────────────────────────────────────────────────
+3.10  NOTIFICATION SERVICE — Notifications
+────────────────────────────────────────────────
+
+STEP 95: SEND A MANUAL IN-APP NOTIFICATION
+────────────────────────────────────────────
+-- category must be: INCIDENT, SLA_BREACH, SERVICE_UPDATE,
+--                   SYSTEM_ALERT, or GENERAL
+-- channel: IN_APP, EMAIL, or BOTH
+curl -X POST http://localhost:8001/api/notifications \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": 3,
+    "title": "Scheduled maintenance tonight",
+    "message": "Voice services will undergo maintenance from 11 PM to 1 AM. Expect 15 min downtime.",
+    "category": "SERVICE_UPDATE",
+    "channel": "IN_APP"
+  }'
+
+STEP 96: SEND INCIDENT NOTIFICATION
+─────────────────────────────────────
+curl -X POST http://localhost:8001/api/notifications \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": 2,
+    "title": "Critical incident on Voice Gateway",
+    "message": "A critical incident has been raised on Corporate Voice Gateway. Immediate attention required.",
+    "category": "INCIDENT",
+    "channel": "IN_APP",
+    "referenceId": 2,
+    "referenceType": "INCIDENT"
+  }'
+
+STEP 97: SEND SLA BREACH NOTIFICATION
+───────────────────────────────────────
+curl -X POST http://localhost:8001/api/notifications \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": 2,
+    "title": "SLA Breach Detected — Video Bandwidth",
+    "message": "Video conferencing bandwidth dropped to 7.2 Mbps, breaching the 10 Mbps SLA threshold.",
+    "category": "SLA_BREACH",
+    "channel": "IN_APP",
+    "referenceId": 1,
+    "referenceType": "SLA_BREACH"
+  }'
+
+STEP 98: SEND SYSTEM ALERT
+────────────────────────────
+curl -X POST http://localhost:8001/api/notifications \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": 3,
+    "title": "System maintenance window approved",
+    "message": "Your requested maintenance window for the messaging service has been approved for this Saturday 2-4 AM.",
+    "category": "SYSTEM_ALERT",
+    "channel": "IN_APP"
+  }'
+
+STEP 99: GET ALL NOTIFICATIONS FOR A USER
+───────────────────────────────────────────
+-- Get Mike's notifications (userId=3)
+curl -X GET http://localhost:8001/api/notifications/user/3 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 100: GET ONLY UNREAD NOTIFICATIONS
+─────────────────────────────────────────
+curl -X GET http://localhost:8001/api/notifications/user/3/unread \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+STEP 101: GET UNREAD COUNT (for notification badge)
+─────────────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/notifications/user/3/count \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+
+Expected: {"userId": 3, "unreadCount": 3}
+
+STEP 102: MARK A SINGLE NOTIFICATION AS READ
+──────────────────────────────────────────────
+-- Replace 1 with actual notificationId
+curl -X PUT http://localhost:8001/api/notifications/1/read \
+  -H "Authorization: Bearer <MIKE_TOKEN>"
+
+STEP 103: MARK ALL NOTIFICATIONS AS READ
+──────────────────────────────────────────
+curl -X PUT http://localhost:8001/api/notifications/user/3/read-all \
+  -H "Authorization: Bearer <MIKE_TOKEN>"
+
+Expected: {"message": "All notifications marked as read"}
+
+────────────────────────────────────────────────
+3.11  NOTIFICATION SERVICE — Preferences
+────────────────────────────────────────────────
+
+STEP 104: GET NOTIFICATION PREFERENCES FOR A USER
+────────────────────────────────────────────────────
+curl -X GET http://localhost:8001/api/notifications/preferences/3 \
+  -H "Authorization: Bearer <MIKE_TOKEN>"
+
+STEP 105: UPDATE NOTIFICATION PREFERENCES
+───────────────────────────────────────────
+-- Disable email, keep in-app, receive only INCIDENT and SLA_BREACH
+curl -X PUT http://localhost:8001/api/notifications/preferences/3 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailEnabled": false,
+    "inAppEnabled": true,
+    "categories": "[\"INCIDENT\",\"SLA_BREACH\"]"
+  }'
+
+-- Enable everything
+curl -X PUT http://localhost:8001/api/notifications/preferences/3 \
+  -H "Authorization: Bearer <MIKE_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailEnabled": true,
+    "inAppEnabled": true,
+    "categories": null
+  }'
+
+══════════════════════════════════════════════════════════════════
+SECTION 4 — FRONTEND UI TESTING (Complete Step-by-Step)
+══════════════════════════════════════════════════════════════════
+
+Open http://localhost:5173 in your browser.
+All tests below can be done WITHOUT cURL — just the browser UI.
+
+────────────────────────────────────────────────
+4.1  LOGIN PAGE
+────────────────────────────────────────────────
+
+TEST 1: Admin Login
+  1. Go to http://localhost:5173
+  2. Should redirect to /login
+  3. Enter: admin@comnet360.com
+  4. Enter: Admin@123
+  5. Click "Sign In"
+  Expected: Redirects to dashboard, shows "Good morning/afternoon/evening, System Admin 👋"
+
+TEST 2: Wrong Password
+  1. Enter: admin@comnet360.com
+  2. Enter: wrongpassword
+  3. Click "Sign In"
+  Expected: Toast error "Invalid credentials" or similar
+
+TEST 3: Empty Fields
+  1. Leave email blank, click Sign In
+  Expected: Browser validation or error message
+
+TEST 4: Register New Account
+  1. Click "Create account" or "Register" link
+  2. Enter: name="Test User", email="testuser@comnet360.com", password="Test@123"
+  3. Click Register
+  Expected: Logged in as ENTERPRISE_USER, redirected to dashboard
+
+────────────────────────────────────────────────
+4.2  DASHBOARD PAGE
+────────────────────────────────────────────────
+
+TEST 5: Dashboard Stats
+  Login as admin, go to Dashboard.
+  Expected to see:
+  - "Active Services" stat card showing count
+  - "Open Incidents" stat card
+  - "SLA Breaches" stat card
+  - "Total Users" stat card (admin only)
+  - "Incidents by Severity" bar chart
+  - "Service Distribution" pie chart
+  - "Recent Incidents" table with incidentId links
+  - "Services Overview" table with serviceId links
+
+TEST 6: Click Service Link
+  Click any service name in "Services Overview"
+  Expected: Navigates to /services/{serviceId}
+
+TEST 7: Click Incident Link
+  Click any incident title in "Recent Incidents"
+  Expected: Navigates to /incidents/{incidentId}
+
+TEST 8: View All Incidents Link
+  Click "View all →" next to Recent Incidents
+  Expected: Navigates to /incidents
+
+────────────────────────────────────────────────
+4.3  SERVICES PAGE — All 3 Service Types
+────────────────────────────────────────────────
+
+TEST 9: View All Services
+  Click "Services" in sidebar
+  Expected: Table showing all services with serviceId, name, type, status, owner
+
+TEST 10: Create a VOICE Service
+  1. Click "New Service" button
+  2. Fill: Name = "Test Voice Service"
+  3. Select Type = "Voice"
+  4. Fill: Description = "Test SIP gateway for voice calls"
+  5. Click "Create Service"
+  Expected:
+  - Toast "Service created"
+  - New row appears in table with type "VOICE" badge
+  - Status shows "DRAFT"
+
+TEST 11: Create a VIDEO Service
+  1. Click "New Service"
+  2. Name = "Enterprise Video Bridge"
+  3. Type = "Video"
+  4. Description = "Multi-party video conferencing bridge"
+  5. Create Service
+  Expected: New row with VIDEO badge
+
+TEST 12: Create a MESSAGING Service
+  1. Click "New Service"
+  2. Name = "Corporate Messaging Hub"
+  3. Type = "Messaging"
+  4. Description = "Enterprise instant messaging platform"
+  5. Create Service
+  Expected: New row with MESSAGING badge
+
+TEST 13: Filter by Service Type
+  1. Select "VOICE" from the type dropdown
+  Expected: Only VOICE services shown
+  2. Select "VIDEO"
+  Expected: Only VIDEO services shown
+  3. Select "MESSAGING"
+  Expected: Only MESSAGING services shown
+  4. Select "" (all)
+  Expected: All services shown
+
+TEST 14: Filter by Status
+  1. Select "DRAFT"
+  Expected: Only draft services
+  2. Select "ACTIVE"
+  Expected: Only active services
+
+TEST 15: Search Services
+  1. Type "Voice" in search box
+  Expected: Only services with "Voice" in name
+  2. Clear search
+  Expected: All services
+
+TEST 16: Service Detail — Click Details
+  Click "Details →" on any service
+  Expected: Navigates to service detail page showing:
+  - Service name, type badge, status badge
+  - Service ID, Owner "User #X", Created date, Last Updated
+  - Configurations table (may be empty)
+  - Activate/Deactivate/Decommission buttons
+
+TEST 17: Activate a Service
+  1. On a service with status DRAFT/PENDING/INACTIVE
+  2. Click "Activate" button
+  Expected:
+  - Toast "Service activated"
+  - Status badge changes to ACTIVE
+  - Activate button disappears
+  - Deactivate button appears
+
+TEST 18: Add Configuration to VOICE Service
+  1. Navigate to Voice service detail page
+  2. Click "Add Config"
+  3. Parameter Name: "max_concurrent_calls"
+  4. Value: "500"
+  5. Effective Date: select today's date
+  6. Click Save
+  Expected:
+  - Toast "Configuration added"
+  - Config appears in table: parameter, value, effective date
+
+TEST 19: Add More Configs to VOICE Service
+  Add these one by one:
+  - Parameter: "audio_codec", Value: "G711", Date: today
+  - Parameter: "sip_port", Value: "5060", Date: today
+  Expected: All 3 appear in configurations table
+
+TEST 20: Add Configuration to VIDEO Service
+  Navigate to Video service detail page, Add Config:
+  - Parameter: "max_participants", Value: "100"
+  - Parameter: "video_codec", Value: "H264"
+  Expected: Both appear in table
+
+TEST 21: Add Configuration to MESSAGING Service
+  Navigate to Messaging service detail page, Add Config:
+  - Parameter: "max_message_size_mb", Value: "5"
+  - Parameter: "encryption_algorithm", Value: "AES256"
+  - Parameter: "message_retention_days", Value: "90"
+  Expected: All 3 appear in table
+
+TEST 22: Delete a Configuration (Admin only)
+  1. On service detail page, find a config row
+  2. Click the red trash icon
+  Expected: Row removed, toast "Deleted"
+
+TEST 23: Deactivate a Service
+  1. On an ACTIVE service detail page
+  2. Click "Deactivate"
+  Expected:
+  - Toast "Service deactivated"
+  - Status changes to INACTIVE
+  - Activate button reappears
+
+TEST 24: Decommission a Service (Admin only)
+  1. On any non-decommissioned service
+  2. Click "Decommission" (red button)
+  3. Confirm the dialog
+  Expected:
+  - Toast "Service decommissioned"
+  - Status changes to DECOMMISSIONED
+  - All action buttons disappear
+
+────────────────────────────────────────────────
+4.4  USAGE & SLA PAGE
+────────────────────────────────────────────────
+
+TEST 25: View Usage Chart
+  1. Click "Usage & SLA" in sidebar
+  2. Select "Corporate Voice Gateway" from service dropdown
+  Expected:
+  - Line chart shows usage data (if any recorded via API)
+  - If no data: "No usage data for this service"
+
+TEST 26: View SLA Definitions Table
+  Expected: Table shows SLA definitions with:
+  - Service ID (e.g. #1)
+  - Metric name (e.g. UPTIME_PERCENT)
+  - Condition (LESS THAN / GREATER THAN / EQUALS)
+  - Threshold value
+  - Unit
+  - Status badge
+
+TEST 27: Create SLA for VOICE Service
+  1. Click "New SLA"
+  2. Service: select "Corporate Voice Gateway"
+  3. Metric Name: "LATENCY_MS"
+  4. Operator: "Less Than"
+  5. Threshold: "150"
+  6. Unit: "ms"
+  7. Description: "Voice call latency must be under 150ms"
+  8. Click "Create SLA"
+  Expected: Toast "SLA created", new row in table
+
+TEST 28: Create SLA for VIDEO Service
+  1. Click "New SLA"
+  2. Service: "HD Video Conferencing"
+  3. Metric: "BANDWIDTH_MBPS"
+  4. Operator: "Greater Than"
+  5. Threshold: "10"
+  6. Unit: "Mbps"
+  7. Description: "Video bandwidth must exceed 10 Mbps"
+  8. Create SLA
+  Expected: New row appears
+
+TEST 29: Create SLA for MESSAGING Service
+  1. New SLA
+  2. Service: "Enterprise Messaging Platform"
+  3. Metric: "MSG_DELIVERY_MS"
+  4. Operator: "Less Than"
+  5. Threshold: "500"
+  6. Unit: "ms"
+  7. Create SLA
+  Expected: New row appears
+
+TEST 30: Disable an SLA
+  1. Find an ACTIVE SLA in the table
+  2. Click "Disable" link
+  Expected: Status badge changes to INACTIVE, link changes to "Enable"
+
+TEST 31: Re-enable an SLA
+  1. Find an INACTIVE SLA
+  2. Click "Enable"
+  Expected: Status badge changes back to ACTIVE
+
+TEST 32: View SLA Breach Events
+  Scroll to "SLA Breach Events" section.
+  Expected:
+  - If no breaches: "No SLA breaches — all good!" with green checkmark
+  - If breaches exist: table showing slaId, serviceId, actual/threshold values
+
+TEST 33: Resolve a Breach (if any exist)
+  1. Find an unresolved breach
+  2. Click "Resolve"
+  3. Enter notes: "Increased bandwidth allocation to fix breach"
+  4. Click "Mark Resolved"
+  Expected: Toast "Breach resolved", breach shows Resolved = Yes
+
+────────────────────────────────────────────────
+4.5  INCIDENTS PAGE — All 3 Service Types
+────────────────────────────────────────────────
+
+TEST 34: View All Incidents
+  Click "Incidents" in sidebar
+  Expected:
+  - Header shows "X open • Y total"
+  - Table: incidentId (#1, #2, etc.), title, service #ID, severity badge, status badge, detected date
+
+TEST 35: Create VOICE Incident
+  1. Click "New Incident"
+  2. Title: "High call drop rate on SIP trunk"
+  3. Description: "30% of calls dropping after 45 seconds on primary SIP trunk"
+  4. Severity: "High"
+  5. Affected Service: "Corporate Voice Gateway"
+  6. Click "Create Incident"
+  Expected: Toast "Incident created", new row appears in table
+
+TEST 36: Create VIDEO Incident
+  1. New Incident
+  2. Title: "Video freezing on high-bandwidth calls"
+  3. Description: "All 4K video calls freezing every 2-3 minutes. Normal HD calls unaffected."
+  4. Severity: "Critical"
+  5. Service: "HD Video Conferencing"
+  6. Create
+  Expected: New row with CRITICAL badge
+
+TEST 37: Create MESSAGING Incident
+  1. New Incident
+  2. Title: "Push notifications not delivered"
+  3. Description: "Mobile users not receiving push notifications. Desktop notifications working fine."
+  4. Severity: "Medium"
+  5. Service: "Enterprise Messaging Platform"
+  6. Create
+  Expected: New row with MEDIUM badge
+
+TEST 38: Filter Incidents by Status
+  1. Select "OPEN" from status filter
+  Expected: Only open incidents shown
+
+TEST 39: Filter Incidents by Severity
+  1. Select "CRITICAL" from severity filter
+  Expected: Only critical incidents
+  2. Select "HIGH"
+  Expected: Only high incidents
+
+TEST 40: Search Incidents
+  1. Type "Video" in search
+  Expected: Only incidents with "Video" in title
+  2. Clear search
+  Expected: All back
+
+TEST 41: View Incident Detail
+  Click "View →" on any incident
+  Expected: Detail page showing:
+  - Title, severity badge, status badge
+  - Incident #X, Service #Y, Reported by "User #Z", Assigned to (Unassigned or User #X)
+  - Resolution Actions section
+  - Discussion (comments) section
+
+TEST 42: Assign Incident to Engineer
+  1. On an OPEN incident detail page
+  2. Click "Assign" button
+  3. Select a user from dropdown
+  4. Click "Assign"
+  Expected:
+  - Toast "Assigned"
+  - "Assigned to" meta card updates to "User #X"
+
+TEST 43: Add Resolution Action to VOICE Incident
+  1. In Voice incident detail page
+  2. Click "Add Action"
+  3. Action Description: "Escalate to SIP provider support team"
+  4. Owner: select Mike Engineer
+  5. Click "Create"
+  Expected: Action appears in list with PENDING status
+
+TEST 44: Add More Actions
+  2nd action:
+  - Description: "Configure backup SIP trunk as failover"
+  - Owner: Mike
+  3rd action:
+  - Description: "Send notification to affected customers"
+  - Owner: Sara
+
+TEST 45: Update Action Status
+  1. Find action in list
+  2. Use status dropdown to change to "IN_PROGRESS"
+  Expected: Dropdown updates immediately
+  3. Change to "COMPLETED"
+  Expected: Status updates
+
+TEST 46: Add Comments to VOICE Incident
+  1. In comments section, type: "Contacted SIP provider. They confirmed maintenance window affecting our trunk."
+  2. Click "Post" or press Enter
+  Expected: Comment appears in discussion thread with "User #X" and timestamp
+
+  Add another comment: "Provider has fixed the issue. Monitoring for next 30 minutes."
+  Expected: Appears below first comment
+
+TEST 47: Add Comments to VIDEO Incident
+  Navigate to Video incident. Add:
+  - Comment 1: "Root cause identified: codec incompatibility on 4K stream."
+  - Comment 2: "Patch deployed. Testing with QA team."
+
+TEST 48: Resolve Incident
+  1. On an OPEN incident
+  2. Click "Resolve" (green button)
+  Expected:
+  - Toast "Incident resolved"
+  - Status badge changes to RESOLVED
+  - Resolve button disappears, "Close" button appears
+
+TEST 49: Close Incident
+  1. On a RESOLVED incident
+  2. Click "Close"
+  Expected:
+  - Toast "Incident closed"
+  - Status changes to CLOSED
+  - All action buttons disappear
+
+────────────────────────────────────────────────
+4.6  ANALYTICS PAGE
+────────────────────────────────────────────────
+
+TEST 50: View Analytics Page
+  Click "Analytics" in sidebar
+  Expected:
+  - Header with "Generate Report" and "Capture Snapshot" buttons
+  - Incident Summary section with date pickers
+  - Snapshots section (if any)
+  - Generated Reports table
+
+TEST 51: View Incident Summary
+  1. The date range defaults to last 30 days
+  2. Should see stats: Total, Open, Resolved, Avg MTTR
+  3. Bar chart showing open/resolved/closed/critical/high/medium/low
+  Expected: Numbers match what was created in test steps above
+
+TEST 52: Change Incident Summary Date Range
+  1. Change "From" date to start of year
+  2. Change "To" date to today
+  Expected: Numbers update to reflect new date range
+
+TEST 53: Generate Operations Report
+  1. Click "Generate Report"
+  2. Report form appears
+  3. Title: "Q1 2025 Operations" (or leave default)
+  4. Scope: "ALL_SERVICES"
+  5. Type: "OPERATIONS"
+  6. From: 2025-01-01
+  7. To: 2025-03-31
+  8. Click "Generate"
+  Expected:
+  - Toast "Report generated"
+  - New row appears in Reports Table
+
+TEST 54: Generate SLA Compliance Report
+  1. Generate Report
+  2. Title: "Voice SLA Compliance January"
+  3. Scope: "VOICE"
+  4. Type: "SLA_COMPLIANCE"
+  5. From: 2025-01-01, To: 2025-01-31
+  6. Generate
+  Expected: New report row
+
+TEST 55: Generate Incident Summary Report
+  1. Generate Report
+  2. Title: "January Incident Report"
+  3. Scope: "ALL"
+  4. Type: "INCIDENT_SUMMARY"
+  5. Dates: Jan 2025
+  Expected: New report row
+
+TEST 56: View Reports Table
+  Expected:
+  - Title, Type badge (OPERATIONS/SLA_COMPLIANCE/etc)
+  - Scope, Period (fromDate → toDate)
+  - Generated by "User #X"
+  - Delete button (Admin only)
+
+TEST 57: Capture Snapshot
+  Click "Capture Snapshot"
+  Expected:
+  - Toast "Snapshot captured"
+  - Snapshot appears in "Dashboard Snapshots" section with type and timestamp
+
+TEST 58: Delete a Report (Admin only)
+  1. Find a report row
+  2. Click trash icon
+  Expected: Row removed, toast "Deleted"
+
+────────────────────────────────────────────────
+4.7  NOTIFICATIONS PAGE
+────────────────────────────────────────────────
+
+TEST 59: Check Notification Badge
+  Look at top-right of any page at the Bell icon.
+  Expected:
+  - If unread notifications exist: red badge shows count (1-9 or 9+)
+  - Updates automatically every 30 seconds
+
+TEST 60: View Notifications Page
+  Click Bell icon or navigate to /notifications
+  Expected:
+  - List of notifications with title, message, category badge, timestamp
+  - Unread ones highlighted differently from read ones
+
+TEST 61: Mark Single Notification as Read
+  1. Find an unread notification
+  2. Click "Mark as read" or click the notification
+  Expected:
+  - Notification status changes to read
+  - Badge count decreases
+
+TEST 62: Mark All Notifications as Read
+  Click "Mark all read" button
+  Expected:
+  - All notifications marked as read
+  - Bell badge disappears (count = 0)
+
+TEST 63: View Notification Preferences
+  1. On Notifications page, scroll down to preferences section
+  2. Expected: emailEnabled and inAppEnabled toggles
+
+TEST 64: Update Preferences
+  1. Toggle "Email Notifications" off
+  2. Save
+  Expected: Toast success, preference saved
+
+TEST 65: Role-Change Notification Flow
+  1. Login as Admin
+  2. Go to Admin → Users
+  3. Change a user's role (e.g. from ENTERPRISE_USER to SERVICE_MANAGER)
+  4. Toast "Role updated" appears
+  5. Logout from admin
+  6. Login as the affected user
+  7. Check notification bell
+  Expected:
+  - Red badge appears
+  - Notification page shows: "Your role has been updated"
+  - Message: "An administrator has changed your role from ENTERPRISE USER to SERVICE MANAGER..."
+
+────────────────────────────────────────────────
+4.8  ADMIN — USERS PAGE
+────────────────────────────────────────────────
+
+TEST 66: View All Users (Admin only)
+  Login as Admin, click "Admin" → "Users"
+  Expected: Table with userId, name, email, role, isActive status
+
+TEST 67: Change User Role
+  1. Find a user row
+  2. Change role dropdown to "SERVICE_MANAGER"
+  Expected:
+  - Toast "Role updated"
+  - Role dropdown shows new role
+  - Notification sent to user (verify by logging in as that user)
+
+TEST 68: All Role Options
+  Test changing roles to each:
+  - SERVICE_MANAGER
+  - NETWORK_ENGINEER
+  - OPERATIONS_HEAD
+  - COMPLIANCE_OFFICER
+  - ENTERPRISE_USER
+  Expected: Each change succeeds with toast
+
+TEST 69: Toggle User Active Status
+  1. Find an active user (green "Active" badge)
+  2. Click toggle to deactivate
+  Expected:
+  - Badge changes to "Inactive"
+  - Toast success
+
+TEST 70: Reactivate a User
+  1. Find an inactive user
+  2. Click toggle
+  Expected: Badge changes to "Active"
+
+TEST 71: Cannot Change Own Role (Admin)
+  Admin's own row should not have editable role dropdown
+  (safety: admin cannot remove themselves from ADMIN role)
+
+────────────────────────────────────────────────
+4.9  ADMIN — AUDIT LOGS PAGE
+────────────────────────────────────────────────
+
+TEST 72: View Audit Logs (Admin/Compliance Officer only)
+  Click "Admin" → "Audit Logs"
+  Expected: Table showing:
+  - auditId, userId, action, entityType, entityId, details, ipAddress, timestamp
+  - All login, logout, role change, status change actions recorded
+
+TEST 73: Audit Log Contains Role Changes
+  After performing role changes in TEST 67-68,
+  check audit logs for entries with:
+  - action: "UPDATE_ROLE"
+  - entityType: "USER"
+
+TEST 74: Audit Log Contains Login Events
+  Should see LOGIN entries for all login operations
+
+────────────────────────────────────────────────
+4.10  PROFILE PAGE
+────────────────────────────────────────────────
+
+TEST 75: View Own Profile
+  Click the User icon in top bar
+  Expected: Profile page showing:
+  - Name, Email, Phone (if set)
+  - Role badge
+  - Status: ACTIVE or INACTIVE
+  - Member since date
+
+TEST 76: Profile Shows Correct Status
+  Status shows "ACTIVE" when isActive=true
+  Not the old "status: ACTIVE" enum — just derived from isActive
+
+────────────────────────────────────────────────
+4.11  MULTI-ROLE TESTING
+────────────────────────────────────────────────
+
+TEST 77: Login as SERVICE_MANAGER
+  1. Login as sara@comnet360.com / Sara@123
+  Expected:
+  - Can see Services, Incidents, Usage, Analytics
+  - Can create/manage services
+  - Can NOT see Admin menu
+  - Cannot decommission services (Admin-only)
+
+TEST 78: Login as NETWORK_ENGINEER
+  1. Login as mike@comnet360.com / Mike@123
+  Expected:
+  - Can see Services, Incidents, Usage
+  - Can create incidents
+  - Can record usage data
+  - Cannot create/manage services
+  - Cannot see Admin menu
+
+TEST 79: Login as ENTERPRISE_USER
+  1. Login as testuser@comnet360.com / Test@123
+  Expected:
+  - Can see Dashboard, limited services view
+  - Can create incidents
+  - Cannot see Users page
+  - Cannot see Audit Logs
+  - Cannot manage services or SLAs
+
+TEST 80: Verify Role-Based Navigation
+  Different roles see different sidebar menu items:
+  - ADMIN:       Dashboard, Services, Usage/SLA, Incidents, Analytics, Notifications, Admin(Users+AuditLogs)
+  - SERVICE_MGR: Dashboard, Services, Usage/SLA, Incidents, Analytics, Notifications
+  - NETWORK_ENG: Dashboard, Services, Usage/SLA, Incidents, Notifications
+  - OPERATIONS:  Dashboard, Services, Incidents, Analytics, Notifications
+  - COMPLIANCE:  Dashboard, Analytics, Notifications
+  - ENTERPRISE:  Dashboard, Services, Incidents, Notifications
+
+══════════════════════════════════════════════════════════════════
+SECTION 5 — ERROR CASE TESTING
+══════════════════════════════════════════════════════════════════
+
+TEST 81: 400 — Create Config Without Effective Date
+curl -X POST http://localhost:8001/api/configurations/1 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"parameter": "test", "value": "123"}'
+Expected: 400 "Effective date is required"
+
+TEST 82: 400 — Create SLA Without Unit
+curl -X POST http://localhost:8001/api/sla \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"serviceId":1,"metric":"LATENCY","threshold":100,"operator":"LESS_THAN"}'
+Expected: 400 "Unit is required"
+
+TEST 83: 400 — Generate Report Without Scope
+curl -X POST http://localhost:8001/api/reports/generate \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test","reportType":"OPERATIONS","fromDate":"2025-01-01","toDate":"2025-12-31"}'
+Expected: 400 "Scope is required"
+
+TEST 84: 400 — Add Comment With Wrong Field Name
+curl -X POST http://localhost:8001/api/incidents/1/comments \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"content": "This is wrong field name"}'
+Expected: 400 "Comment cannot be empty" (because "content" is ignored, "comment" is empty)
+
+TEST 85: 400 — Assign Incident With Wrong Field Name
+curl -X PUT http://localhost:8001/api/incidents/1/assign \
+  -H "Authorization: Bearer <ADMIN_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"userId": 3}'
+Expected: 500 or null (backend reads "assignedTo", not "userId")
+CORRECT: use {"assignedTo": 3}
+
+TEST 86: 403 — Enterprise User Trying to Create Service
+  Login as testuser@comnet360.com / Test@123 in the UI
+  Go to Services page
+  If "New Service" button is hidden — role check works correctly
+  If button is shown, click it and expect 403 error toast
+
+TEST 87: 401 — Call API Without Token
+curl -X GET http://localhost:8001/api/services
+Expected: 401 Unauthorized
+
+TEST 88: 404 — Get Non-Existent Service
+curl -X GET http://localhost:8001/api/services/99999 \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+Expected: 404 Not Found
+
+TEST 89: 400 — Login With Missing Password
+curl -X POST http://localhost:8001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@comnet360.com"}'
+Expected: 400 validation error
+
+TEST 90: Expired Token
+  Wait 24 hours (or change JWT expiration to 1 second in application.yml for testing)
+  Call any protected endpoint with old token
+  Expected: 401 "JWT token is expired"
+  Then use /api/auth/refresh with refresh token
+
+══════════════════════════════════════════════════════════════════
+SECTION 6 — END-TO-END SCENARIO TESTS
+══════════════════════════════════════════════════════════════════
+
+SCENARIO A: Complete Voice Service Lifecycle
+──────────────────────────────────────────────
+1. Admin creates user Sara (register) → assigns SERVICE_MANAGER role
+2. Sara creates "Enterprise Voice Gateway" (VOICE type)
+3. Sara adds configurations: codec, max_channels, sip_port
+4. Sara activates the service (status: DRAFT → ACTIVE)
+5. Mike records voice usage: CALL_COUNT=245, BANDWIDTH=125 Mbps
+6. Sara creates SLA: LATENCY_MS < 150ms, UPTIME_PERCENT > 99.9%
+7. Mike creates incident: "SIP trunk packet loss" (HIGH severity)
+8. Sara assigns incident to Mike
+9. Mike adds comments about investigation
+10. Mike creates resolution action: "Contact provider"
+11. Mike updates action to IN_PROGRESS → COMPLETED
+12. Mike resolves incident
+13. Admin generates SLA Compliance report for Voice service
+14. Admin captures operations snapshot
+15. Verify: Dashboard shows Active Services count increased
+
+SCENARIO B: Video Conferencing Degradation
+────────────────────────────────────────────
+1. Sara creates "HD Video Conferencing" (VIDEO type)
+2. Add configs: max_participants=50, codec=H264
+3. Activate service
+4. Create SLA: BANDWIDTH_MBPS > 10 Mbps, PACKET_LOSS_PERCENT < 1%
+5. Record usage: BANDWIDTH=380 Mbps (healthy)
+6. Record usage: ACTIVE_CONNECTIONS=48 sessions
+7. Mike creates CRITICAL incident: "Video freezing for all users"
+8. Admin assigns to Mike
+9. Mike adds 3 comments documenting investigation
+10. Mike adds resolution action: "Restart media servers"
+11. Mike adds resolution action: "Apply hotfix patch"
+12. Actions updated: IN_PROGRESS → COMPLETED
+13. Mike resolves incident
+14. Sara closes incident
+15. Admin generates INCIDENT_SUMMARY report
+16. Notification: Role-change notification verified for any user whose role changed
+
+SCENARIO C: Messaging System Monitoring
+─────────────────────────────────────────
+1. Create "Secure Messaging Hub" (MESSAGING type)
+2. Add configs: encryption=AES256, retention=90 days
+3. Activate
+4. Create SLA: MSG_DELIVERY_MS < 500ms
+5. Record daily usage for 3 days:
+   Day 1: MESSAGE_COUNT=15432
+   Day 2: MESSAGE_COUNT=22100
+   Day 3: MESSAGE_COUNT=18750
+6. View Usage page, select this service, observe line chart showing 3 data points
+7. Create LOW incident: "Occasional duplicate message delivery"
+8. Add comment
+9. Resolve and close
+10. Generate USAGE_ANALYTICS report for the 3-day period
+
+SCENARIO D: Admin User Management Flow
+────────────────────────────────────────
+1. Admin registers 3 new users via register API
+2. Admin assigns roles: SERVICE_MANAGER, NETWORK_ENGINEER, COMPLIANCE_OFFICER
+3. Verify each user gets a role-change notification
+4. Login as each user — verify they see only their allowed menu items
+5. SERVICE_MANAGER tries to decommission a service — should get 403
+6. COMPLIANCE_OFFICER views audit logs — should succeed
+7. ENTERPRISE_USER tries to create a service — should get 403 or button hidden
+8. Admin deactivates one user (isActive=false)
+9. That user tries to login — should get 401/403
+10. Admin reactivates the user — login works again
+
+══════════════════════════════════════════════════════════════════
+SECTION 7 — SWAGGER UI TESTING (Alternative to cURL)
+══════════════════════════════════════════════════════════════════
+
+Each service has a Swagger UI accessible directly without the gateway.
+You must add JWT authentication manually in Swagger.
+
+HOW TO USE SWAGGER:
+1. Login via cURL or frontend to get your JWT token
+2. Open Swagger UI for the service you want to test
+3. Click "Authorize" button (lock icon, top right)
+4. Enter: Bearer <YOUR_ACCESS_TOKEN>
+5. Click Authorize, then Close
+6. Now all API calls in Swagger UI will use your token
+
+SERVICE SWAGGER URLS:
+  IAM          : http://localhost:8081/swagger-ui.html
+  Provisioning : http://localhost:8082/swagger-ui.html
+  Usage/SLA    : http://localhost:8083/swagger-ui.html
+  Incident     : http://localhost:8084/swagger-ui.html
+  Analytics    : http://localhost:8085/swagger-ui.html
+  Notification : http://localhost:8086/swagger-ui.html
+
+NOTE: When calling through Swagger directly (not gateway), the gateway
+does NOT inject X-User-Id, X-User-Email, X-User-Role headers.
+Some endpoints accept these as optional and fall back to 0/null.
+For full functionality, always test through the gateway (port 8001).
+
+══════════════════════════════════════════════════════════════════
+SECTION 8 — WHAT EACH API RETURNS (Response Field Reference)
+══════════════════════════════════════════════════════════════════
+
+POST /api/auth/login → AuthResponse:
+  accessToken, refreshToken, tokenType, expiresIn,
+  userId, name, email, role
+
+GET /api/users → UserResponse[]:
+  userId, name, email, phone, role, isActive, createdAt, updatedAt
+
+GET /api/services → ServiceResponse[]:
+  serviceId, name, type, status, description,
+  ownerUserId, configDetails, createdAt, updatedAt
+
+GET /api/configurations/{serviceId} → ConfigurationResponse[]:
+  configId, serviceId, parameter, value, effectiveDate,
+  createdBy, createdAt
+
+GET /api/usage/service/{serviceId} → UsageRecordResponse[]:
+  usageId, serviceId, userId, metricType, value, unit, recordedAt
+
+GET /api/sla → SlaDefinitionResponse[]:
+  slaId, serviceId, metric, threshold, unit, operator,
+  status, description, createdAt, updatedAt
+
+GET /api/sla/breaches → SlaBreachEventResponse[]:
+  breachId, slaId, serviceId, actualValue, thresholdValue,
+  breachTime, resolved, resolvedAt
+
+GET /api/incidents → IncidentResponse[]:
+  incidentId, serviceId, title, description, severity, status,
+  detectedDate, resolvedDate, reportedBy, assignedTo
+
+GET /api/incidents/{id}/comments → IncidentCommentResponse[]:
+  commentId, incidentId, authorId, comment, createdAt
+
+GET /api/actions/incident/{id} → ResolutionActionResponse[]:
+  actionId, incidentId, ownerId, actionDescription, dueDate,
+  status, completedAt, createdAt, updatedAt
+
+POST /api/reports/generate → KpiReportResponse:
+  reportId, title, scope, reportType, metrics, fromDate, toDate,
+  generatedBy, generatedDate
+
+GET /api/reports/sla-compliance → SlaComplianceResponse:
+  serviceId, metric, totalBreaches, resolvedBreaches,
+  unresolvedBreaches, compliancePercentage, fromDate, toDate
+
+GET /api/reports/incident-summary → IncidentSummaryResponse:
+  totalIncidents, openIncidents, inProgressIncidents,
+  resolvedIncidents, closedIncidents, criticalIncidents,
+  highIncidents, mediumIncidents, lowIncidents,
+  averageMttrMinutes, fromDate, toDate
+
+POST /api/reports/snapshots/operations → DashboardSnapshotResponse:
+  snapshotId, snapshotType, data (JSON string), capturedAt
+
+GET /api/notifications/user/{id} → NotificationResponse[]:
+  notificationId, userId, title, message, category, channel,
+  status (UNREAD/READ), referenceId, referenceType,
+  createdDate, readAt
+
+GET /api/notifications/user/{id}/count → UnreadCountResponse:
+  userId, unreadCount
+
+GET /api/notifications/preferences/{id} → NotificationPreferenceResponse:
+  prefId, userId, emailEnabled, inAppEnabled, categories
+
+GET /api/audit-logs → AuditLog[]:
+  auditId, userId, action, entityType, entityId, details,
+  ipAddress, timestamp
+
+══════════════════════════════════════════════════════════════════
+SECTION 9 — COMMON ISSUES & FIXES
+══════════════════════════════════════════════════════════════════
+
+ISSUE: Admin login returns 401 "Invalid credentials"
+FIX  : Restart iam-service. AdminInitializer re-encodes password.
+       Then retry: admin@comnet360.com / Admin@123
+
+ISSUE: 400 on POST /api/configurations — effectiveDate error
+FIX  : Must send { "parameter":"...", "value":"...", "effectiveDate":"YYYY-MM-DD" }
+       effectiveDate is required, format must be ISO date string
+
+ISSUE: 400 on POST /api/sla — unit error
+FIX  : Must include "unit" field e.g. "unit": "ms"
+       Also "metric" is free text not an enum
+
+ISSUE: 400 on POST /api/reports/generate
+FIX  : Must include ALL of: title, scope, reportType, fromDate, toDate
+       reportType must be one of: OPERATIONS, SLA_COMPLIANCE,
+       INCIDENT_SUMMARY, USAGE_ANALYTICS
+
+ISSUE: POST /api/incidents/{id}/comments with {content:...} gets 400
+FIX  : Use {"comment": "your text"} — field is "comment" not "content"
+
+ISSUE: PUT /api/incidents/{id}/assign not working
+FIX  : Use {"assignedTo": 3} — NOT {"userId": 3}
+       Backend reads body.get("assignedTo")
+
+ISSUE: Notification bell badge not updating
+FIX  : Badge polls every 30 seconds. Wait or refresh the page.
+       Check notification-service is running on port 8086.
+
+ISSUE: Role-change notification not appearing
+FIX  : Check iam-service logs for "✅ Notification sent" or "⚠️ Failed"
+       Ensure notification-service is on port 8086
+       Check application.yml: notification.service.url=http://localhost:8086
+
+ISSUE: 503 Service Unavailable
+FIX  : Service not registered in Eureka yet. Wait 30 seconds and retry.
+       Check Eureka at http://localhost:8761 — service must appear.
+
+ISSUE: Usage chart shows no data
+FIX  : Record usage via POST /api/usage first (Steps 43-50)
+       Then select the service from dropdown on Usage page
+
+ISSUE: Incident detail shows "User #0" for reportedBy
+FIX  : This happens when calling directly through Swagger (no gateway).
+       Always test incidents through the gateway (port 8001) so the
+       gateway injects X-User-Id header correctly.
+
+ISSUE: Analytics getSlaCompliance returns 400
+FIX  : All three params are required: serviceId, from, to
+       Example: ?serviceId=1&from=2025-01-01&to=2025-12-31
+
+ISSUE: Frontend shows "Service not found" after creating service
+FIX  : The URL uses serviceId (from backend). If you see /services/undefined
+       it means the old "id" field was being read. This was fixed in the
+       latest frontend update. Hard refresh browser (Ctrl+F5).
+
+══════════════════════════════════════════════════════════════════
+SECTION 10 — TESTING CHECKLIST (All Services Covered)
+══════════════════════════════════════════════════════════════════
+
+IAM / Auth Service:
+[ ] Register new user
+[ ] Login as admin (admin@comnet360.com / Admin@123)
+[ ] Login as regular user
+[ ] Refresh token
+[ ] Logout
+[ ] Get all users (admin)
+[ ] Get user by ID
+[ ] Change user role (5 different roles)
+[ ] Toggle user active status (deactivate + reactivate)
+[ ] View audit logs
+[ ] Audit log range query
+
+Provisioning — VOICE Services:
+[ ] Create VOICE service
+[ ] Add codec config
+[ ] Add max_channels config
+[ ] Add sip_port config
+[ ] Activate service
+[ ] Deactivate service
+[ ] Filter services by type=VOICE
+
+Provisioning — VIDEO Services:
+[ ] Create VIDEO service
+[ ] Add max_participants config
+[ ] Add video_codec config
+[ ] Add max_bandwidth_mbps config
+[ ] Activate service
+
+Provisioning — MESSAGING Services:
+[ ] Create MESSAGING service
+[ ] Add message_size config
+[ ] Add encryption config
+[ ] Add retention_days config
+[ ] Activate service
+
+Usage/SLA — Usage Recording (MetricType enum: BANDWIDTH, ACTIVE_CONNECTIONS, CALL_COUNT, MESSAGE_COUNT):
+[ ] Record CALL_COUNT for VOICE
+[ ] Record ACTIVE_CONNECTIONS for VOICE
+[ ] Record BANDWIDTH for VOICE
+[ ] Record ACTIVE_CONNECTIONS for VIDEO
+[ ] Record BANDWIDTH for VIDEO
+[ ] Record MESSAGE_COUNT for MESSAGING
+[ ] Record BANDWIDTH for MESSAGING
+[ ] Get usage by service
+[ ] Get usage by service + metric type
+[ ] Get usage by date range
+
+Usage/SLA — SLA Management:
+[ ] Create SLA for VOICE (LATENCY_MS < 150, unit=ms)
+[ ] Create SLA for VOICE (UPTIME_PERCENT > 99.9, unit=%)
+[ ] Create SLA for VIDEO (BANDWIDTH_MBPS > 10, unit=Mbps)
+[ ] Create SLA for VIDEO (PACKET_LOSS_PERCENT < 1, unit=%)
+[ ] Create SLA for MESSAGING (MSG_DELIVERY_MS < 500, unit=ms)
+[ ] Get all SLAs
+[ ] Get SLA by service
+[ ] Disable SLA
+[ ] Enable SLA
+[ ] View breach events
+[ ] Resolve a breach (if any)
+
+Incident Service:
+[ ] Create VOICE incident (HIGH severity)
+[ ] Create VIDEO incident (CRITICAL severity)
+[ ] Create MESSAGING incident (MEDIUM severity)
+[ ] Create LOW severity incident
+[ ] Get all incidents
+[ ] Filter by status=OPEN
+[ ] Filter by severity=CRITICAL
+[ ] Get incidents by service
+[ ] Assign incident to engineer (using {assignedTo: X})
+[ ] Add comment (using {comment: "..."})
+[ ] Get comments for incident
+[ ] Create resolution action (using {ownerId, actionDescription})
+[ ] Update action to IN_PROGRESS
+[ ] Update action to COMPLETED
+[ ] Resolve incident
+[ ] Close incident
+
+Analytics Service:
+[ ] Generate OPERATIONS report
+[ ] Generate SLA_COMPLIANCE report
+[ ] Generate INCIDENT_SUMMARY report
+[ ] Generate USAGE_ANALYTICS report
+[ ] Get all reports
+[ ] Filter by type
+[ ] Get SLA compliance data (with serviceId + from + to)
+[ ] Get incident summary data (with from + to)
+[ ] Capture operations snapshot
+[ ] Get all snapshots
+[ ] Delete a report
+
+Notification Service:
+[ ] Send IN_APP notification (INCIDENT category)
+[ ] Send IN_APP notification (SLA_BREACH category)
+[ ] Send IN_APP notification (SERVICE_UPDATE category)
+[ ] Send IN_APP notification (SYSTEM_ALERT category)
+[ ] Get notifications for user
+[ ] Get unread notifications
+[ ] Get unread count
+[ ] Mark single as read
+[ ] Mark all as read
+[ ] Get notification preferences
+[ ] Update preferences (emailEnabled, inAppEnabled, categories)
+[ ] Verify role-change notification automatically sent by IAM service
+
+Frontend:
+[ ] Login page — success
+[ ] Login page — wrong password error
+[ ] Dashboard loads all stats and charts
+[ ] Create VOICE service from UI
+[ ] Create VIDEO service from UI
+[ ] Create MESSAGING service from UI
+[ ] Filter services by type
+[ ] Service detail — activate/deactivate
+[ ] Add config to each service type
+[ ] Create SLA from UI with metric + unit
+[ ] View usage chart (select service)
+[ ] Create incident from UI for each service
+[ ] Assign incident via UI
+[ ] Post comments via UI
+[ ] Add resolution actions via UI
+[ ] Update action status via UI
+[ ] Resolve and close incident via UI
+[ ] Generate report from UI with all fields
+[ ] View incident summary with date range
+[ ] Bell badge shows count
+[ ] Notifications page — view all
+[ ] Mark all read — badge clears
+[ ] Admin users page — change role
+[ ] Admin users page — toggle active
+[ ] Audit logs page loads
+[ ] Profile page shows correct isActive status
+[ ] Different role logins see correct navigation
+
+══════════════════════════════════════════════════════════════════
+END OF TESTING GUIDE
+══════════════════════════════════════════════════════════════════

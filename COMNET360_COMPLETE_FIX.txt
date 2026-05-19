@@ -1,0 +1,321 @@
+============================================================
+  COMNET360 — COMPLETE FIX GUIDE
+  All backend ↔ frontend mismatches resolved
+============================================================
+
+────────────────────────────────────────────────────────────
+PART 1 — WHAT WAS FIXED AND WHY
+────────────────────────────────────────────────────────────
+
+1. ADMIN LOGIN (iam-service)
+   Problem : DB had a broken BCrypt hash seed from original SQL dump.
+   Fix     : AdminInitializer.java (ApplicationRunner) re-encodes the
+             admin password on every startup using Spring's own encoder.
+   File    : comnet360/services/iam-service/src/main/java/com/comnet360/iam/config/AdminInitializer.java
+   Login   : admin@comnet360.com / Admin@123
+
+2. ADMIN UPDATE USER ROLE/STATUS
+   Problem : Frontend sent /api/users/undefined/role because User type
+             used "id" but backend returns "userId".
+   Fix     : Updated User type, AuthContext, UsersPage to use "userId"
+             and "isActive: boolean" (not "status: string").
+
+3. ROLE-CHANGE NOTIFICATIONS
+   Problem : NotificationClient used @LoadBalanced RestTemplate with
+             Eureka service name — failed silently when Eureka not synced.
+   Fix     : Plain RestTemplate with direct URL http://localhost:8086.
+   Files   : NotificationClient.java, RestTemplateConfig.java, application.yml
+
+4. NOTIFICATIONS PAGE / TOP BAR
+   Problem : Notification type used wrong field names (id, read, createdAt).
+             Backend returns: notificationId, status (UNREAD/READ), createdDate.
+   Fix     : Updated Notification type and NotificationsPage, TopBar.
+
+5. ALL OTHER ENTITY FIELD MISMATCHES (see Part 2)
+   Every service had mismatches between backend DTO field names and
+   what the frontend was using. All fixed in this session.
+
+────────────────────────────────────────────────────────────
+PART 2 — FIELD NAME MAPPING (Backend → Frontend)
+────────────────────────────────────────────────────────────
+
+PROVISIONING SERVICE (port 8082)
+  ServiceResponse:
+    serviceId       (was: id)
+    ownerUserId     (was: ownerId / ownerEmail — no email field exists)
+    name, description, type, status, createdAt, updatedAt ✓
+
+  ConfigurationResponse:
+    configId        (was: id)
+    parameter       (was: key)
+    effectiveDate   (was: description — date string not description text)
+    serviceId, value, createdAt ✓
+    NOTE: CreateConfigurationRequest needs { parameter, value, effectiveDate }
+          effectiveDate is @NotNull — must be ISO date "YYYY-MM-DD"
+
+USAGE-SLA SERVICE (port 8083)
+  UsageRecordResponse:
+    usageId         (was: id)
+    metricType, serviceId, userId, value, unit, recordedAt ✓
+
+  SlaDefinitionResponse:
+    slaId           (was: id)
+    metric: String  (was: metricType — it's a plain String, not an enum)
+    unit: String    (NEW field — required in CreateSlaRequest)
+    threshold: BigDecimal, operator, status, description, createdAt ✓
+    NOTE: CreateSlaRequest needs { serviceId, metric, threshold, unit, operator, description }
+          "metric" is a free-text String, not the MetricType enum
+
+  SlaBreachEventResponse:
+    breachId        (was: id)
+    thresholdValue  (was: threshold)
+    breachTime      (was: breachedAt)
+    resolved, resolvedAt, actualValue, slaId, serviceId ✓
+    NOTE: No "metricType" field on breach — only slaId reference
+
+INCIDENT SERVICE (port 8084)
+  IncidentResponse:
+    incidentId      (was: id)
+    detectedDate    (was: createdAt)
+    resolvedDate    (was: resolvedAt)
+    reportedBy      (was: reportedById/reportedByEmail — just a Long userId)
+    assignedTo      (was: assignedToId/assignedToEmail — just a Long userId or null)
+    NOTE: No serviceName field — only serviceId
+    NOTE: PUT /incidents/{id}/assign body must be { assignedTo: userId }
+          NOT { userId: userId }
+
+  IncidentCommentResponse:
+    commentId       (was: id)
+    comment         (was: content)
+    authorId        (was: authorEmail — just a Long userId)
+    incidentId, createdAt ✓
+    NOTE: AddCommentRequest body must be { comment } NOT { content }
+
+  ResolutionActionResponse:
+    actionId        (was: id)
+    actionDescription (was: title/description — single field, no title)
+    ownerId         (was: ownerEmail — just a Long userId)
+    dueDate         (NEW — optional LocalDateTime)
+    status, completedAt, createdAt ✓
+    NOTE: CreateActionRequest body must be { ownerId, actionDescription, dueDate? }
+          There is NO "title" field
+
+ANALYTICS SERVICE (port 8085)
+  KpiReportResponse:
+    reportId        (was: id)
+    reportType      (was: type)
+    generatedBy     (was: generatedByEmail — just a Long userId)
+    generatedDate   (was: createdAt)
+    scope           (NEW field)
+    metrics         (was: data — it's a String, not Record<string,unknown>)
+    fromDate, toDate ✓
+    NOTE: GenerateReportRequest needs { title, scope, reportType, fromDate, toDate }
+          ALL fields are @NotNull/@NotBlank — none are optional
+          "reportType" must be one of: OPERATIONS, SLA_COMPLIANCE,
+          INCIDENT_SUMMARY, USAGE_ANALYTICS
+
+  DashboardSnapshotResponse:
+    snapshotId      (was: id)
+    snapshotType    (was: type)
+    data: String    (JSON string — not Record<string,unknown>)
+    capturedAt ✓
+
+  GET /reports/sla-compliance  — requires serviceId, from, to (@RequestParam, all required)
+  GET /reports/incident-summary — requires from, to (@RequestParam, both required)
+
+NOTIFICATION SERVICE (port 8086)
+  NotificationResponse:
+    notificationId  (was: id)
+    status: UNREAD|READ  (was: read: boolean)
+    createdDate     (was: createdAt)
+    userId, title, message, category, channel ✓
+
+  NotificationPreferenceResponse:
+    prefId, emailEnabled, inAppEnabled, categories: String ✓
+    (no incidentAlerts/slaAlerts/serviceUpdates — removed in backend)
+
+────────────────────────────────────────────────────────────
+PART 3 — FILES CHANGED IN THIS SESSION
+────────────────────────────────────────────────────────────
+
+BACKEND (new files created):
+  comnet360/services/iam-service/src/main/java/com/comnet360/iam/
+    config/AdminInitializer.java          — re-encodes admin password on startup
+    config/RestTemplateConfig.java        — plain RestTemplate bean (no @LoadBalanced)
+    client/NotificationClient.java        — HTTP client for notification-service
+  comnet360/services/iam-service/src/main/resources/application.yml
+    Added: notification.service.url: http://localhost:8086
+
+BACKEND (modified):
+  iam/service/UserService.java            — calls NotificationClient after role change
+
+FRONTEND (all files fully rewritten with correct field names):
+  src/types/index.ts                      — ALL entity types corrected
+  src/api/services.ts                     — CreateConfigurationRequest type updated
+  src/api/usage.ts                        — slaApi.create sends metric+unit not metricType
+  src/api/incidents.ts                    — assign sends {assignedTo}, comment sends {comment},
+                                            action sends {ownerId, actionDescription}
+  src/api/analytics.ts                    — generateReport requires all 5 fields,
+                                            getSlaCompliance requires serviceId+from+to,
+                                            getIncidentSummary requires from+to
+  src/api/notifications.ts               — getUnreadCount returns {userId, unreadCount}
+  src/contexts/AuthContext.tsx            — userId field mapping fixed
+  src/pages/dashboard/DashboardPage.tsx  — svc.serviceId, inc.incidentId, no ownerEmail
+  src/pages/services/ServicesPage.tsx    — svc.serviceId, no ownerEmail
+  src/pages/services/ServiceDetailPage.tsx — cfg.configId, cfg.parameter, cfg.effectiveDate
+  src/pages/usage/UsagePage.tsx          — sla.slaId, sla.metric, breach.breachId etc.
+  src/pages/incidents/IncidentsPage.tsx  — inc.incidentId, inc.detectedDate, no serviceName
+  src/pages/incidents/IncidentDetailPage.tsx — all incident/comment/action fields fixed
+  src/pages/analytics/AnalyticsPage.tsx  — report/snapshot fields, generate form added
+  src/pages/admin/UsersPage.tsx          — u.userId, u.isActive
+  src/pages/admin/AuditLogsPage.tsx      — log.auditId, log.entityType, log.entityId
+  src/pages/profile/ProfilePage.tsx      — user.isActive
+  src/pages/notifications/NotificationsPage.tsx — notificationId, status, createdDate
+  src/components/layout/TopBar.tsx       — countData?.unreadCount
+
+────────────────────────────────────────────────────────────
+PART 4 — SERVICE STARTUP ORDER & PORTS
+────────────────────────────────────────────────────────────
+
+Start in this order:
+  1. MySQL (port 3306)        — must be running first
+  2. eureka-server (8761)     — service registry
+  3. api-gateway (8001)       — JWT validation, header injection
+  4. iam-service (8081)       — auth, users, audit logs
+  5. provisioning-service (8082)
+  6. usage-sla-service (8083)
+  7. incident-service (8084)
+  8. analytics-service (8085)
+  9. notification-service (8086)
+  10. frontend (5173)          — npm run dev
+
+All Spring Boot services: mvn spring-boot:run  (or run from IDE)
+
+DATABASE SETUP (MySQL):
+  Databases needed (create if missing):
+    CREATE DATABASE iam_db;
+    CREATE DATABASE provisioning_db;
+    CREATE DATABASE usage_sla_db;
+    CREATE DATABASE incident_db;
+    CREATE DATABASE analytics_db;
+    CREATE DATABASE notification_db;
+
+  All services use: spring.jpa.hibernate.ddl-auto=validate
+  Run SQL schema scripts if tables don't exist.
+  After tables exist, restart iam-service — AdminInitializer will
+  create/fix the admin account automatically.
+
+────────────────────────────────────────────────────────────
+PART 5 — LOGIN CREDENTIALS
+────────────────────────────────────────────────────────────
+
+  Email    : admin@comnet360.com
+  Password : Admin@123
+  Role     : ADMIN
+
+  The admin password is re-synced on every iam-service startup
+  by AdminInitializer.java — so it always works.
+
+────────────────────────────────────────────────────────────
+PART 6 — ROLE-BY-ROLE FEATURE ACCESS
+────────────────────────────────────────────────────────────
+
+ADMIN:
+  ✅ View/create/update/deactivate all users
+  ✅ Change user roles (triggers notification to user)
+  ✅ View audit logs
+  ✅ All services: activate/deactivate/decommission
+  ✅ All incidents: create/assign/resolve/close
+  ✅ Add/delete service configurations
+  ✅ Manage SLA definitions
+  ✅ Generate/delete reports
+  ✅ View notifications
+
+SERVICE_MANAGER:
+  ✅ Create/manage services
+  ✅ Assign incidents
+  ✅ Generate reports
+  ✅ Manage SLA definitions
+
+OPERATIONS_HEAD:
+  ✅ View services, assign incidents
+  ✅ Generate reports, view analytics
+
+NETWORK_ENGINEER:
+  ✅ Create/resolve incidents
+  ✅ View services and usage
+
+COMPLIANCE_OFFICER:
+  ✅ View reports and analytics
+  ✅ View SLA compliance
+
+ENTERPRISE_USER:
+  ✅ View dashboard, services, incidents
+  ✅ Create incidents on their services
+
+────────────────────────────────────────────────────────────
+PART 7 — END-TO-END TESTING CHECKLIST
+────────────────────────────────────────────────────────────
+
+[ ] Start all services. Visit http://localhost:5173
+[ ] Login with admin@comnet360.com / Admin@123
+[ ] Dashboard loads: service count, incident count, charts visible
+[ ] Navigate to Services → table shows services (no undefined keys)
+[ ] Click a service → detail page shows service ID, owner "User #X"
+[ ] Add configuration: Parameter + Value + Effective Date → saves OK
+[ ] Navigate to Incidents → table shows incidents with serviceId
+[ ] Create incident → modal has service dropdown, submits OK
+[ ] Open incident → assign to a user (body sends {assignedTo})
+[ ] Post a comment → posts OK (body sends {comment})
+[ ] Add action → modal has description + owner, no "title" field
+[ ] Navigate to Usage/SLA → SLA table shows slaId, metric (text)
+[ ] Create SLA → form has metric (text), unit fields
+[ ] View breaches → shows breachId, thresholdValue, breachTime
+[ ] Navigate to Analytics → Generate Report form opens with all fields
+[ ] Generate report: fill title, scope, type, from, to → creates OK
+[ ] Report list shows: reportType, scope, generatedBy "User #X"
+[ ] Admin → Users: change a user's role → success toast
+[ ] The affected user's notification bell shows red badge
+[ ] Notifications page shows the role-change notification
+[ ] Logout → redirects to /login
+
+────────────────────────────────────────────────────────────
+PART 8 — COMMON ERRORS AND FIXES
+────────────────────────────────────────────────────────────
+
+"Invalid credentials" on login:
+  → Restart iam-service. AdminInitializer will re-sync the password.
+
+404 on /api/... endpoints:
+  → Check api-gateway is running on port 8001.
+  → Check frontend .env: VITE_API_URL=http://localhost:8001/api
+
+400 Bad Request on Create Configuration:
+  → Must send: { "parameter": "...", "value": "...", "effectiveDate": "YYYY-MM-DD" }
+  → effectiveDate is @NotNull — cannot be empty
+
+400 Bad Request on Generate Report:
+  → Must send all 5 fields: title, scope, reportType, fromDate, toDate
+  → reportType must match enum: OPERATIONS, SLA_COMPLIANCE,
+    INCIDENT_SUMMARY, USAGE_ANALYTICS
+
+400 Bad Request on Create SLA:
+  → Must include "unit" field (e.g. "Mbps", "ms", "%")
+  → "metric" is free text, not the MetricType enum
+
+Notification not received after role change:
+  → Check notification-service is running on port 8086.
+  → Check application.yml: notification.service.url=http://localhost:8086
+  → Check iam-service logs for "✅ Notification sent" or "⚠️ Failed"
+
+SLA compliance chart not loading:
+  → getSlaCompliance requires serviceId + from + to — all required params.
+  → Select a service and date range before calling the API.
+
+Incident detail shows "User #X" instead of email:
+  → This is correct — backend IncidentResponse only returns userId (Long),
+    not email. The email was never stored in the incident record.
+
+============================================================
+END OF FIX GUIDE
+============================================================

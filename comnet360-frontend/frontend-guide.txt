@@ -1,0 +1,674 @@
+
+╔══════════════════════════════════════════════════════════════════════════════════╗
+║           ComNet360 — Enterprise Communications Platform                        ║
+║                    FRONTEND TESTING GUIDE                                       ║
+║                  Step-by-Step: What to Click & What to Write                   ║
+╚══════════════════════════════════════════════════════════════════════════════════╝
+
+URL  : http://localhost:5173
+API  : http://localhost:8001  (Spring Cloud Gateway)
+Eureka: http://localhost:8761
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 1 — SETUP (Run these MySQL queries ONCE before testing)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open MySQL Workbench and run:
+
+  USE iam_db;
+
+  -- Check admin user exists
+  SELECT user_id, name, email, role FROM users;
+
+  -- If admin@comnet360.com exists but cannot login, fix the password hash:
+  UPDATE users
+  SET password_hash = '$2b$12$x1b7Qw0zbc5aVOlOFn16EuxuE.QY/v.hdHVSzn5Vv7TV2FrkkpXEy'
+  WHERE email = 'admin@comnet360.com';
+
+  -- After registering test users (in Section 2), set their roles:
+  UPDATE users SET role = 'SERVICE_MANAGER'   WHERE email = 'manager@comnet360.com';
+  UPDATE users SET role = 'NETWORK_ENGINEER'  WHERE email = 'engineer@comnet360.com';
+  UPDATE users SET role = 'OPERATIONS_HEAD'   WHERE email = 'ops@comnet360.com';
+  UPDATE users SET role = 'COMPLIANCE_OFFICER'WHERE email = 'compliance@comnet360.com';
+  UPDATE users SET role = 'ENTERPRISE_USER'   WHERE email = 'user@comnet360.com';
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 2 — AUTHENTICATION TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+─── TEST A: Admin Login ───────────────────────────────────────────────────────
+
+  1. Open browser → go to: http://localhost:5173
+     → You will be redirected to: http://localhost:5173/login
+
+  2. In the "Email address" field → TYPE: admin@comnet360.com
+  3. In the "Password" field      → TYPE: Admin@123
+  4. CLICK the blue "Sign in" button
+     ✓ EXPECTED: Redirected to Dashboard at http://localhost:5173/dashboard
+     ✓ EXPECTED: Sidebar shows all 8 menu items
+     ✓ EXPECTED: Top-right shows bell icon + user icon + logout icon
+
+─── TEST B: Invalid Credentials ──────────────────────────────────────────────
+
+  1. CLICK logout icon (top-right corner, arrow-out icon)
+     → Redirected to login page
+
+  2. In "Email address" field → TYPE: admin@comnet360.com
+  3. In "Password" field      → TYPE: wrongpassword
+  4. CLICK "Sign in"
+     ✓ EXPECTED: Red error box appears → "Invalid credentials"
+     ✓ EXPECTED: Stay on login page
+
+─── TEST C: Register New User ────────────────────────────────────────────────
+
+  1. On login page → CLICK blue "Register" link at bottom
+     → Navigates to: http://localhost:5173/register
+
+  2. In "Full name" field     → TYPE: Test Manager
+  3. In "Email address" field → TYPE: manager@comnet360.com
+  4. In "Password" field      → TYPE: Manager@123
+  5. In "Confirm password"    → TYPE: Manager@123
+  6. CLICK "Create account" button
+     ✓ EXPECTED: Redirected to Dashboard
+     ✓ EXPECTED: Logged in as Test Manager
+
+  7. Open MySQL → run: UPDATE users SET role='SERVICE_MANAGER' WHERE email='manager@comnet360.com';
+
+  ── Repeat for other roles ──
+  Name: Test Engineer  | Email: engineer@comnet360.com  | Pass: Engineer@123
+  Name: Test Ops       | Email: ops@comnet360.com       | Pass: OpsHead@123
+  Name: Compliance     | Email: compliance@comnet360.com| Pass: Comply@123
+  Name: Basic User     | Email: user@comnet360.com      | Pass: UserPass@123
+
+─── TEST D: Protected Route ──────────────────────────────────────────────────
+
+  1. CLICK logout icon (top-right)
+  2. In browser address bar → TYPE: http://localhost:5173/dashboard → press ENTER
+     ✓ EXPECTED: Redirected to /login (not allowed without login)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 3 — DASHBOARD TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK "Dashboard" in the left sidebar
+     → URL: http://localhost:5173/dashboard
+
+  2. CHECK the 4 stat cards at the top:
+     ✓ "Active Services"  — shows number
+     ✓ "Open Incidents"   — shows number
+     ✓ "SLA Breaches"     — shows number
+     ✓ "Total Users"      — shows number (ADMIN only)
+
+  3. CHECK charts section:
+     ✓ Left chart  → "Incidents by Severity" (bar chart with 4 bars: CRITICAL, HIGH, MEDIUM, LOW)
+     ✓ Right chart → "Service Distribution" (pie chart showing VOICE / VIDEO / MESSAGING)
+
+  4. CHECK "Recent Incidents" table at bottom-left:
+     ✓ Shows up to 5 incidents with Title, Service, Severity badge, Status badge
+     ✓ CLICK "View all →" link → goes to /incidents page
+
+  5. CHECK "Services Overview" table at bottom-right:
+     ✓ Shows up to 5 services
+     ✓ CLICK "Manage →" link → goes to /services page
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 4 — SERVICES TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+─── TEST A: Create a Service ─────────────────────────────────────────────────
+
+  1. CLICK "Services" in the left sidebar
+     → URL: http://localhost:5173/services
+
+  2. CLICK the blue "New Service" button (top-right)
+     → A modal popup opens
+
+  3. In "Service Name" field  → TYPE: Corporate Voice Gateway
+  4. In "Description" field   → TYPE: Main voice communication service for HQ
+  5. In "Service Type" dropdown → SELECT: Voice
+  6. CLICK "Create Service" button
+     ✓ EXPECTED: Modal closes
+     ✓ EXPECTED: Green toast notification → "Service created"
+     ✓ EXPECTED: New service "Corporate Voice Gateway" appears in the table
+
+  ── Create more services for testing ──
+  Name: Video Conference Hub | Description: HD video for meetings     | Type: Video
+  Name: Messaging Platform   | Description: Enterprise chat solution  | Type: Messaging
+
+─── TEST B: Filter and Search Services ───────────────────────────────────────
+
+  1. In the search box → TYPE: Voice
+     ✓ EXPECTED: Only services with "Voice" in the name appear
+
+  2. CLEAR the search box
+  3. In "All statuses" dropdown → SELECT: DRAFT
+     ✓ EXPECTED: Only DRAFT services shown (newly created services start as DRAFT)
+
+  4. In "All types" dropdown → SELECT: Video
+     ✓ EXPECTED: Only Video type services shown
+
+  5. SELECT both dropdowns back to "All statuses" and "All types"
+
+─── TEST C: Service Detail & Lifecycle ───────────────────────────────────────
+
+  1. CLICK "Details →" on "Corporate Voice Gateway"
+     → URL: http://localhost:5173/services/1 (or whichever ID)
+
+  2. CHECK the detail page:
+     ✓ Service name, type badge (blue VOICE), status badge (DRAFT) visible
+     ✓ 4 info cards: Service ID, Owner, Created, Last Updated
+
+  3. CLICK the green "Activate" button (top-right of the page)
+     ✓ EXPECTED: Green toast → "Service activated"
+     ✓ EXPECTED: Status badge changes from DRAFT → ACTIVE
+
+  4. CLICK the "Deactivate" button
+     ✓ EXPECTED: Toast → "Service deactivated"
+     ✓ EXPECTED: Status badge → INACTIVE
+
+  5. CLICK "Activate" again to re-activate
+
+─── TEST D: Add Configuration to Service ─────────────────────────────────────
+
+  1. On the Service Detail page → CLICK "Add Config" button (Configurations section)
+     → Modal opens
+
+  2. In "Key" field         → TYPE: max_channels
+  3. In "Value" field       → TYPE: 100
+  4. In "Description" field → TYPE: Maximum concurrent voice channels
+  5. CLICK "Save"
+     ✓ EXPECTED: Toast → "Configuration added"
+     ✓ EXPECTED: Config row appears: max_channels | 100 | Maximum concurrent voice channels
+
+  6. Add another config:
+     Key: codec | Value: G.711 | Description: Default audio codec
+
+  7. CLICK trash icon on any config (Admin only)
+     ✓ EXPECTED: Config row removed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 5 — INCIDENTS TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+─── TEST A: Create Incidents ─────────────────────────────────────────────────
+
+  1. CLICK "Incidents" in the left sidebar
+     → URL: http://localhost:5173/incidents
+
+  2. CLICK the red "New Incident" button (top-right)
+     → Modal opens
+
+  3. In "Title" field       → TYPE: Voice Gateway Down - All Calls Failing
+  4. In "Description" field → TYPE: The Corporate Voice Gateway is not responding. All inbound and outbound calls are failing since 09:00 AM.
+  5. In "Severity" dropdown → SELECT: Critical
+  6. In "Affected Service"  → SELECT: Corporate Voice Gateway
+  7. CLICK "Create Incident"
+     ✓ EXPECTED: Toast → "Incident created"
+     ✓ EXPECTED: Incident appears in the list with RED "CRITICAL" badge
+
+  ── Create more incidents ──
+  Title: Video Conferencing Lag | Desc: High latency in video calls | Severity: High    | Service: Video Conference Hub
+  Title: Message Delivery Delay | Desc: Messages delayed by 5 mins  | Severity: Medium  | Service: Messaging Platform
+  Title: Login Slow Response    | Desc: Login taking 10+ seconds    | Severity: Low     | Service: Corporate Voice Gateway
+
+─── TEST B: Filter Incidents ─────────────────────────────────────────────────
+
+  1. In "All severities" dropdown → SELECT: Critical
+     ✓ EXPECTED: Only critical incidents shown
+
+  2. In "All statuses" dropdown → SELECT: Open
+     ✓ EXPECTED: Only OPEN incidents shown
+
+  3. In search box → TYPE: Voice
+     ✓ EXPECTED: Only voice-related incidents shown
+
+  4. Reset all filters back to "All"
+
+─── TEST C: Incident Detail - Assign, Comment, Resolve ───────────────────────
+
+  1. CLICK "View →" on "Voice Gateway Down - All Calls Failing"
+     → URL: http://localhost:5173/incidents/1
+
+  2. CHECK page layout:
+     ✓ Title with CRITICAL (red) and OPEN (red dot) badges
+     ✓ 4 meta cards: Incident #, Service, Reported by, Assigned to (Unassigned)
+
+  3. CLICK "Assign" button
+     → Modal opens
+  4. In "Assign to user" dropdown → SELECT: Test Engineer (or any user)
+  5. CLICK "Assign"
+     ✓ EXPECTED: Toast → "Assigned"
+     ✓ EXPECTED: "Assigned to" card updates to the selected user's email
+
+  4. CLICK "Add Action" button (Resolution Actions section)
+     → Modal opens
+  5. In "Title"       → TYPE: Restart voice gateway service
+  6. In "Description" → TYPE: SSH into gateway server and restart the voice service daemon
+  7. In "Owner"       → SELECT: Test Engineer
+  8. CLICK "Create"
+     ✓ EXPECTED: Action appears in the list with status "PENDING"
+
+  9. On the action row → CHANGE status dropdown: PENDING → IN_PROGRESS
+     ✓ EXPECTED: Status updates immediately
+
+  10. CHANGE status to: COMPLETED
+      ✓ EXPECTED: Status updates to COMPLETED
+
+  11. In the Discussion section → CLICK the comment input box
+  12. TYPE: Gateway has been restarted. Monitoring for 10 minutes.
+  13. CLICK "Post" button
+      ✓ EXPECTED: Comment appears with your name and timestamp
+
+  14. Add another comment:
+      TYPE: Confirmed stable. All calls working normally.
+      CLICK "Post"
+
+  15. CLICK the green "Resolve" button (top-right)
+      ✓ EXPECTED: Toast → "Incident resolved"
+      ✓ EXPECTED: Status badge changes → RESOLVED (green)
+      ✓ EXPECTED: Resolve button disappears, "Close" button appears
+
+  16. CLICK "Close" button
+      ✓ EXPECTED: Toast → "Incident closed"
+      ✓ EXPECTED: Status badge changes → CLOSED (grey)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 6 — USAGE & SLA TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK "Usage & SLA" in the left sidebar
+     → URL: http://localhost:5173/usage
+
+─── TEST A: View Usage Chart ─────────────────────────────────────────────────
+
+  1. In the "Select a service" dropdown (top-right of chart) → SELECT: Corporate Voice Gateway
+     ✓ EXPECTED: Line chart appears (empty if no usage data recorded yet)
+     ✓ If no data: chart shows "No usage data for this service"
+
+─── TEST B: Create SLA Definition ───────────────────────────────────────────
+
+  1. In "SLA Definitions" section → CLICK "New SLA" button
+     → Modal opens
+
+  2. In "Service" dropdown    → SELECT: Corporate Voice Gateway
+  3. In "Metric Type"         → SELECT: Bandwidth
+  4. In "Operator"            → SELECT: Less Than
+  5. In "Threshold" field     → TYPE: 1000
+  6. In "Description" field   → TYPE: Bandwidth must not drop below 1000 Mbps
+  7. CLICK "Create SLA"
+     ✓ EXPECTED: Toast → "SLA created"
+     ✓ EXPECTED: SLA row appears: #ID | BANDWIDTH | LESS THAN | 1000 | ACTIVE
+
+  ── Create more SLAs ──
+  Service: Video Conference Hub | Metric: Active Connections | Operator: Greater Than | Threshold: 50  | Desc: Must support 50+ concurrent connections
+  Service: Messaging Platform   | Metric: Message Count      | Operator: Greater Than | Threshold: 100 | Desc: Minimum 100 messages per minute
+
+─── TEST C: Enable / Disable SLA ─────────────────────────────────────────────
+
+  1. On any ACTIVE SLA row → CLICK "Disable" link
+     ✓ EXPECTED: Status badge changes → INACTIVE
+
+  2. CLICK "Enable"
+     ✓ EXPECTED: Status badge changes → ACTIVE
+
+─── TEST D: Resolve SLA Breach ───────────────────────────────────────────────
+
+  1. Scroll to "SLA Breach Events" section
+     ✓ If breaches exist: CLICK "Resolve" on any unresolved breach
+     → Modal opens
+
+  2. In "Resolution notes" → TYPE: Bandwidth restored after network equipment replacement
+  3. CLICK "Mark Resolved"
+     ✓ EXPECTED: Toast → "Breach resolved"
+     ✓ EXPECTED: Breach row → "Resolved: Yes" (green badge)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 7 — ANALYTICS TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK "Analytics" in the left sidebar
+     → URL: http://localhost:5173/analytics
+
+─── TEST A: Generate a Report ────────────────────────────────────────────────
+
+  1. CLICK the blue "Generate Report" button (top-right)
+     ✓ EXPECTED: Toast → "Report generated"
+     ✓ EXPECTED: New row appears in the "Generated Reports" table
+       Example row: KPI Report – 5/12/2026 | OPERATIONS | admin@comnet360.com | date
+
+  2. CLICK "Generate Report" 2 more times
+     ✓ EXPECTED: 3 report rows in the table
+
+─── TEST B: Capture Dashboard Snapshot ───────────────────────────────────────
+
+  1. CLICK "Capture Snapshot" button (next to Generate Report)
+     ✓ EXPECTED: Toast → "Snapshot captured"
+     ✓ EXPECTED: Snapshot appears in "Dashboard Snapshots" section
+       Shows: OPERATIONS badge | capture timestamp | number of metrics
+
+─── TEST C: Delete a Report (ADMIN only) ─────────────────────────────────────
+
+  1. On any report row → CLICK the red trash icon (last column)
+     ✓ EXPECTED: Toast → "Deleted"
+     ✓ EXPECTED: Row removed from the table
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 8 — NOTIFICATIONS TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CHECK the bell icon in the top bar (top-right)
+     ✓ If unread notifications exist: red badge with number shown on bell
+
+  2. CLICK "Notifications" in the left sidebar
+     → URL: http://localhost:5173/notifications
+
+─── TEST A: Read Notifications ───────────────────────────────────────────────
+
+  1. CHECK the list of notifications:
+     ✓ Unread ones have a blue background tint + blue dot next to title
+     ✓ Each row shows: channel icon | title | message | category badge | channel badge
+
+  2. On any unread notification → CLICK "Mark read" (right side)
+     ✓ EXPECTED: Blue tint and dot disappear (marked as read)
+     ✓ EXPECTED: Bell icon count decreases by 1
+
+─── TEST B: Mark All as Read ─────────────────────────────────────────────────
+
+  1. CLICK "Mark all read" button (top-right, only visible if unread exist)
+     ✓ EXPECTED: Toast → "All marked as read"
+     ✓ EXPECTED: All blue tints removed
+     ✓ EXPECTED: Bell icon badge disappears
+
+─── TEST C: Notification Preferences ────────────────────────────────────────
+
+  1. Scroll down to "Notification Preferences" section
+
+  2. CLICK the toggle next to "Email notifications"
+     ✓ EXPECTED: Toggle slides left (grey = off)
+
+  3. CLICK it again
+     ✓ EXPECTED: Toggle slides right (blue = on)
+
+  4. CLICK toggle next to "SLA breach alerts"
+     ✓ EXPECTED: Preference saves immediately (no save button needed)
+
+  5. Test each toggle:
+     - Email notifications       → Toggle ON/OFF
+     - In-app notifications      → Toggle ON/OFF
+     - Incident alerts           → Toggle ON/OFF
+     - SLA breach alerts         → Toggle ON/OFF
+     - Service updates           → Toggle ON/OFF
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 9 — USER MANAGEMENT TESTING (ADMIN only)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK "Users" in the left sidebar
+     → URL: http://localhost:5173/admin/users
+
+  2. CHECK the user table columns:
+     ✓ Name (with avatar initial), Email, Role badge, Status badge, Joined date, Actions
+
+─── TEST A: Change User Role ─────────────────────────────────────────────────
+
+  1. Find "Test Manager" row (manager@comnet360.com)
+  2. In the role dropdown (Actions column) → SELECT: Network Engineer
+     ✓ EXPECTED: Toast → "Role updated"
+     ✓ EXPECTED: Role badge updates immediately
+
+  3. Change it back → SELECT: Service Manager
+     ✓ EXPECTED: Role restored
+
+─── TEST B: Deactivate / Activate User ───────────────────────────────────────
+
+  1. Find "Basic User" row (user@comnet360.com)
+  2. CLICK the red "Deactivate" button
+     ✓ EXPECTED: Toast → "Status updated"
+     ✓ EXPECTED: Status badge changes → INACTIVE (red)
+     ✓ EXPECTED: Button changes to green "Activate"
+
+  3. CLICK "Activate"
+     ✓ EXPECTED: Status badge changes → ACTIVE (green)
+
+  NOTE: You cannot deactivate yourself (your own row has no action buttons)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 10 — AUDIT LOGS TESTING (ADMIN / COMPLIANCE_OFFICER only)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK "Audit Logs" in the left sidebar
+     → URL: http://localhost:5173/admin/audit-logs
+
+  2. CHECK the table columns:
+     ✓ Timestamp | User (email + ID) | Action (badge) | Resource | Resource ID | IP Address
+
+  3. CHECK badge colours:
+     ✓ CREATE actions → GREEN badge
+     ✓ UPDATE actions → YELLOW badge
+     ✓ DELETE actions → RED badge
+     ✓ LOGIN/LOGOUT   → GREY badge
+
+  4. Verify entries exist for actions done in previous sections:
+     ✓ User login events
+     ✓ Service created events
+     ✓ Incident created events
+     ✓ Role updated events
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 11 — PROFILE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as: admin@comnet360.com / Admin@123
+
+  1. CLICK the user icon (top-right bar) OR click your name at bottom of sidebar
+     → URL: http://localhost:5173/profile
+
+  2. CHECK profile card:
+     ✓ Large avatar with first letter of your name
+     ✓ Full name displayed
+     ✓ Role badge (ADMIN = red)
+
+  3. CHECK info rows:
+     ✓ Full Name    → System Admin
+     ✓ Email        → admin@comnet360.com
+     ✓ Role         → ADMIN
+     ✓ Member Since → date you registered
+
+  4. CHECK account status card:
+     ✓ Shows "ACTIVE" green badge
+
+  5. CLICK the red "Sign out" button
+     ✓ EXPECTED: Toast → "Logged out"
+     ✓ EXPECTED: Redirected to /login
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 12 — ROLE-WISE ACCESS TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+── As SERVICE_MANAGER (manager@comnet360.com / Manager@123) ──────────────────
+
+  1. Login → check sidebar
+     ✓ VISIBLE  : Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Users
+     ✗ NOT VISIBLE: Audit Logs
+
+  2. CLICK "Services" → CLICK "New Service"
+     ✓ EXPECTED: New Service button IS visible, can create
+
+  3. CLICK any service → CLICK "Details →"
+     ✓ Activate / Deactivate buttons visible
+     ✗ Decommission button NOT visible
+     ✗ Trash icon on configs NOT visible
+
+  4. In browser address bar → TYPE: http://localhost:5173/admin/audit-logs → ENTER
+     ✓ EXPECTED: Redirected to /dashboard (access denied)
+
+── As NETWORK_ENGINEER (engineer@comnet360.com / Engineer@123) ───────────────
+
+  1. Login → check sidebar
+     ✓ VISIBLE  : Dashboard, Services, Incidents, Usage & SLA, Notifications
+     ✗ NOT VISIBLE: Analytics, Users, Audit Logs
+
+  2. CLICK "Services" → look for "New Service" button
+     ✗ EXPECTED: Button NOT visible
+
+  3. CLICK "Details →" on any service
+     ✗ EXPECTED: No Activate / Deactivate / Decommission buttons visible
+
+  4. CLICK "Incidents" → CLICK "New Incident"
+     ✓ EXPECTED: Button IS visible, can report incidents
+
+  5. Open any incident → look for "Assign" button
+     ✗ EXPECTED: Assign button NOT visible
+
+  6. TYPE in browser: http://localhost:5173/analytics → ENTER
+     ✓ EXPECTED: Redirected to /dashboard
+
+── As OPERATIONS_HEAD (ops@comnet360.com / OpsHead@123) ─────────────────────
+
+  1. Login → check sidebar
+     ✓ VISIBLE  : Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications
+     ✗ NOT VISIBLE: Users, Audit Logs
+
+  2. Open any incident → check buttons:
+     ✓ Assign button visible
+     ✓ Resolve / Close buttons visible
+
+  3. CLICK "Analytics"
+     ✓ Page accessible, reports visible
+     ✗ Trash icon on reports NOT visible
+
+── As COMPLIANCE_OFFICER (compliance@comnet360.com / Comply@123) ─────────────
+
+  1. Login → check sidebar
+     ✓ VISIBLE  : Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Audit Logs
+     ✗ NOT VISIBLE: Users
+
+  2. CLICK "Audit Logs"
+     ✓ EXPECTED: Full audit trail visible
+
+  3. TYPE in browser: http://localhost:5173/admin/users → ENTER
+     ✓ EXPECTED: Redirected to /dashboard
+
+── As ENTERPRISE_USER (user@comnet360.com / UserPass@123) ────────────────────
+
+  1. Login → check sidebar
+     ✓ VISIBLE  : Dashboard, Services, Incidents, Usage & SLA, Notifications
+     ✗ NOT VISIBLE: Analytics, Users, Audit Logs
+
+  2. CLICK "Services" → look for New Service button
+     ✗ NOT visible
+
+  3. CLICK "Incidents" → CLICK "New Incident"
+     ✓ CAN report an incident
+
+  4. Open any incident → look for Assign / Resolve buttons
+     ✗ NOT visible
+
+  5. TYPE in browser: http://localhost:5173/analytics → ENTER
+     ✓ EXPECTED: Redirected to /dashboard
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SECTION 13 — QUICK CHECKLIST (Print this for testing sign-off)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  AUTHENTICATION
+  [ ] Admin login works
+  [ ] Invalid password shows error
+  [ ] New user registration works
+  [ ] Redirect to /login when not authenticated
+
+  DASHBOARD
+  [ ] 4 stat cards visible
+  [ ] Bar chart renders
+  [ ] Pie chart renders
+  [ ] Recent incidents table shows
+  [ ] Services table shows
+
+  SERVICES
+  [ ] Create service works
+  [ ] Search / filter works
+  [ ] Service detail page opens
+  [ ] Activate / Deactivate works
+  [ ] Add config works
+  [ ] Delete config works (admin)
+
+  INCIDENTS
+  [ ] Create incident works
+  [ ] Filter by severity / status works
+  [ ] Assign incident works
+  [ ] Add comment works
+  [ ] Add resolution action works
+  [ ] Update action status works
+  [ ] Resolve incident works
+  [ ] Close incident works
+
+  USAGE & SLA
+  [ ] Usage chart loads for selected service
+  [ ] Create SLA works
+  [ ] Enable / Disable SLA works
+  [ ] Resolve breach works
+
+  ANALYTICS
+  [ ] Generate report works
+  [ ] Capture snapshot works
+  [ ] Delete report works (admin)
+
+  NOTIFICATIONS
+  [ ] Unread badge shows on bell icon
+  [ ] Mark single notification read
+  [ ] Mark all read
+  [ ] Preference toggles work
+
+  USER MANAGEMENT (Admin)
+  [ ] User list loads
+  [ ] Change role works
+  [ ] Deactivate user works
+  [ ] Activate user works
+
+  AUDIT LOGS
+  [ ] Logs table loads with entries
+  [ ] Colour-coded action badges correct
+
+  PROFILE
+  [ ] Profile info correct
+  [ ] Sign out works
+
+  ROLE ACCESS
+  [ ] SERVICE_MANAGER: no Audit Logs, no Decommission
+  [ ] NETWORK_ENGINEER: no Analytics, no Assign
+  [ ] OPERATIONS_HEAD: can Assign, no Users/Audit
+  [ ] COMPLIANCE_OFFICER: Audit Logs visible, no Users
+  [ ] ENTERPRISE_USER: read-only, can report incidents
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END OF GUIDE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

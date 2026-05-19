@@ -1,0 +1,1238 @@
+
+╔══════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                              ║
+║         ComNet360 — Enterprise Communications & Service Management Platform                  ║
+║                                                                                              ║
+║              COMPLETE END-TO-END TESTING GUIDE                                               ║
+║         Swagger (API) + Frontend (UI) — All 6 Microservices                                  ║
+║                                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════════════════════╝
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────────┐
+  │  URLS QUICK REFERENCE                                                                   │
+  ├─────────────────────────────────────────────────────────────────────────────────────────┤
+  │  Frontend        →  http://localhost:5173                                               │
+  │  Gateway         →  http://localhost:8001                                               │
+  │  Eureka          →  http://localhost:8761                                               │
+  │  IAM Swagger     →  http://localhost:8081/swagger-ui.html                               │
+  │  Provisioning    →  http://localhost:8082/swagger-ui.html                               │
+  │  Usage SLA       →  http://localhost:8083/swagger-ui.html                               │
+  │  Incident        →  http://localhost:8084/swagger-ui.html                               │
+  │  Analytics       →  http://localhost:8085/swagger-ui.html                               │
+  │  Notification    →  http://localhost:8086/swagger-ui.html                               │
+  └─────────────────────────────────────────────────────────────────────────────────────────┘
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SECTION 0 — SYSTEM STARTUP
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+  START IN THIS ORDER:
+  ─────────────────────
+  1. MySQL 8.0                         (port 3306)
+  2. EurekaServerApplication            (port 8761)
+  3. IamServiceApplication              (port 8081)
+  4. ProvisioningServiceApplication     (port 8082)
+  5. UsageSlaServiceApplication         (port 8083)
+  6. IncidentServiceApplication         (port 8084)
+  7. AnalyticsServiceApplication        (port 8085)
+  8. NotificationServiceApplication     (port 8086)
+  9. GatewayApplication                 (port 8001)
+  10. Frontend → npm run dev             (port 5173)
+
+  VERIFY:
+  ────────
+  Open http://localhost:8761 → All 6 services must show status UP
+  Open http://localhost:5173 → Login page must appear
+
+  DATABASE SETUP (run once in MySQL Workbench):
+  ──────────────────────────────────────────────
+  USE iam_db;
+  UPDATE users SET password_hash='$2b$12$0DEp9307JjAxi1EeOTLnLuecnF6EHbDFYmti48m9.cDIYizXxwjR6', role='ADMIN', is_active=1 WHERE email='admin@comnet360.com';
+  -- If user doesn't exist, insert:
+  INSERT INTO users (name,email,password_hash,phone,role,is_active) VALUES ('System Admin','admin@comnet360.com','$2b$12$0DEp9307JjAxi1EeOTLnLuecnF6EHbDFYmti48m9.cDIYizXxwjR6','+1000000000','ADMIN',1);
+
+  ADMIN CREDENTIALS:
+  ──────────────────
+  Email    : admin@comnet360.com
+  Password : Admin@123
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 1 — IAM SERVICE  (Port 8081)
+  Swagger : http://localhost:8081/swagger-ui.html
+  Frontend: http://localhost:5173
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1A. SWAGGER — IAM SERVICE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8081/swagger-ui.html
+  STEP 2 → You will see grouped API sections. Expand each one.
+
+  ── TEST: Register User ──────────────────────────────────────────────────
+  CLICK: POST /api/auth/register → CLICK "Try it out"
+  In Request Body → REPLACE with:
+  {
+    "name": "System Admin",
+    "email": "admin@comnet360.com",
+    "password": "Admin@123"
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Response Code 200
+  ✓ EXPECTED: Response Body contains:
+    {
+      "accessToken": "eyJ...",
+      "refreshToken": "eyJ...",
+      "tokenType": "Bearer",
+      "userId": 1,
+      "name": "System Admin",
+      "email": "admin@comnet360.com",
+      "role": "ENTERPRISE_USER"
+    }
+  → COPY the accessToken value (you need it for all protected endpoints)
+
+  ── TEST: Login ──────────────────────────────────────────────────────────
+  CLICK: POST /api/auth/login → CLICK "Try it out"
+  {
+    "email": "admin@comnet360.com",
+    "password": "Admin@123"
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Response Code 200
+  ✓ EXPECTED: accessToken and refreshToken in response
+  → COPY the accessToken
+
+  ── AUTHORIZE FOR PROTECTED ENDPOINTS ────────────────────────────────────
+  CLICK the green "Authorize" button at the top of Swagger page
+  In the "Value" box → TYPE: Bearer eyJ...  (paste your token after "Bearer ")
+  CLICK "Authorize" → CLICK "Close"
+  → All protected endpoints are now unlocked
+
+  ── TEST: Get My Profile ─────────────────────────────────────────────────
+  CLICK: GET /api/users/me → "Try it out" → "Execute"
+  ✓ EXPECTED: Code 200, returns your user object
+
+  ── TEST: Get All Users ──────────────────────────────────────────────────
+  CLICK: GET /api/users → "Try it out" → "Execute"
+  ✓ EXPECTED: Code 200, array of user objects
+  ✗ EXPECTED: Code 403 if not ADMIN or SERVICE_MANAGER
+
+  ── TEST: Update Role ────────────────────────────────────────────────────
+  First: Run MySQL → UPDATE users SET role='ADMIN' WHERE email='admin@comnet360.com';
+  Then re-login to get new token with ADMIN role
+  CLICK: PUT /api/users/{id}/role → "Try it out"
+  id → TYPE: 2  (or another user's ID)
+  Body:
+  {
+    "role": "SERVICE_MANAGER"
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Code 200, user role updated
+
+  ── TEST: Update Status ──────────────────────────────────────────────────
+  CLICK: PUT /api/users/{id}/status → "Try it out"
+  id → TYPE: 2
+  Body:
+  {
+    "isActive": false
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Code 200, user deactivated
+
+  Body:
+  {
+    "isActive": true
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Code 200, user re-activated
+
+  ── TEST: Refresh Token ──────────────────────────────────────────────────
+  CLICK: POST /api/auth/refresh → "Try it out"
+  Body:
+  {
+    "token": "paste_your_refreshToken_here"
+  }
+  CLICK "Execute"
+  ✓ EXPECTED: Code 200, new accessToken returned
+
+  ── TEST: Get Audit Logs ─────────────────────────────────────────────────
+  CLICK: GET /api/audit-logs → "Try it out" → "Execute"
+  ✓ EXPECTED: Code 200, array of audit log entries
+  ✓ EXPECTED: Login events from your tests are visible
+
+  ── TEST: Logout ─────────────────────────────────────────────────────────
+  CLICK: POST /api/auth/logout → "Try it out" → "Execute"
+  ✓ EXPECTED: Code 200, logged out
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1B. FRONTEND — IAM MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ── TEST: Register ───────────────────────────────────────────────────────
+  URL: http://localhost:5173/register
+  CLICK "Register" link on login page
+  Full name        → TYPE: System Admin
+  Email            → TYPE: admin@comnet360.com
+  Password         → TYPE: Admin@123
+  Confirm password → TYPE: Admin@123
+  CLICK "Create account"
+  ✓ Redirected to /dashboard
+
+  ── TEST: Login ──────────────────────────────────────────────────────────
+  URL: http://localhost:5173/login
+  Email    → TYPE: admin@comnet360.com
+  Password → TYPE: Admin@123
+  CLICK "Sign in"
+  ✓ Redirected to /dashboard with full sidebar visible
+
+  ── TEST: Wrong Password ─────────────────────────────────────────────────
+  Logout → Login page
+  Email    → TYPE: admin@comnet360.com
+  Password → TYPE: WrongPass999
+  CLICK "Sign in"
+  ✓ Red box → "Invalid credentials"
+
+  ── TEST: Protected Route ────────────────────────────────────────────────
+  Logout → browser address bar → TYPE: http://localhost:5173/dashboard
+  ✓ Redirected to /login
+
+  ── TEST: User Management ────────────────────────────────────────────────
+  Login as admin → CLICK "Users" in sidebar
+  URL: http://localhost:5173/admin/users
+  ✓ Table shows all users
+  Find any non-admin user → role dropdown → SELECT: Network Engineer
+  ✓ Toast "Role updated"
+  Same user → CLICK "Deactivate"
+  ✓ Status → INACTIVE (red badge)
+  CLICK "Activate"
+  ✓ Status → ACTIVE (green badge)
+
+  ── TEST: Audit Logs ─────────────────────────────────────────────────────
+  CLICK "Audit Logs" in sidebar
+  ✓ Table with Timestamp | User | Action | Resource | IP Address
+  ✓ Green badges = CREATE, Yellow = UPDATE, Red = DELETE
+
+  ── TEST: Profile ────────────────────────────────────────────────────────
+  CLICK your name at bottom of sidebar
+  ✓ Profile card: name, email, role (red ADMIN badge)
+  CLICK "Sign out"
+  ✓ Redirected to /login
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 2 — PROVISIONING SERVICE  (Port 8082)
+  Swagger : http://localhost:8082/swagger-ui.html
+  Frontend: http://localhost:5173/services
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2A. SWAGGER — PROVISIONING TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8082/swagger-ui.html
+  STEP 2 → CLICK "Authorize" → paste: Bearer <your_access_token>
+  STEP 3 → CLICK Authorize → Close
+
+  ── TEST: Create Service ─────────────────────────────────────────────────
+  CLICK: POST /api/services → "Try it out"
+  Body:
+  {
+    "name": "Corporate Voice Gateway",
+    "description": "Main voice communication hub for enterprise",
+    "type": "VOICE"
+  }
+  CLICK "Execute"
+  ✓ Code 201 or 200
+  ✓ Response: id, name, type, status="DRAFT", ownerEmail
+  → NOTE the id (e.g. 1) for next tests
+
+  ── TEST: Create More Services ───────────────────────────────────────────
+  Body:
+  { "name": "Video Conference Hub", "description": "HD video conferencing", "type": "VIDEO" }
+  CLICK "Execute" → note id (e.g. 2)
+
+  Body:
+  { "name": "Enterprise Messaging", "description": "Real-time messaging", "type": "MESSAGING" }
+  CLICK "Execute" → note id (e.g. 3)
+
+  ── TEST: Get All Services ───────────────────────────────────────────────
+  CLICK: GET /api/services → "Try it out" → "Execute"
+  ✓ Code 200, array of 3 services
+
+  ── TEST: Get Services with Filter ──────────────────────────────────────
+  CLICK: GET /api/services → "Try it out"
+  type → TYPE: VOICE
+  CLICK "Execute"
+  ✓ Only VOICE services returned
+
+  ── TEST: Get Service by ID ──────────────────────────────────────────────
+  CLICK: GET /api/services/{id} → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, single service object
+
+  ── TEST: Activate Service ───────────────────────────────────────────────
+  CLICK: PUT /api/services/{id}/activate → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, status changed to "ACTIVE"
+
+  ── TEST: Deactivate Service ─────────────────────────────────────────────
+  CLICK: PUT /api/services/{id}/deactivate → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, status changed to "INACTIVE"
+
+  ── TEST: Decommission Service ───────────────────────────────────────────
+  CLICK: PUT /api/services/{id}/decommission → "Try it out"
+  id → TYPE: 3
+  CLICK "Execute"
+  ✓ Code 200, status changed to "DECOMMISSIONED"
+
+  ── TEST: Add Configuration ──────────────────────────────────────────────
+  CLICK: POST /api/configurations/{serviceId} → "Try it out"
+  serviceId → TYPE: 2
+  Body:
+  {
+    "key": "max_participants",
+    "value": "250",
+    "description": "Maximum participants per session"
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, config created with id
+
+  ── TEST: Get Configurations ─────────────────────────────────────────────
+  CLICK: GET /api/configurations/{serviceId} → "Try it out"
+  serviceId → TYPE: 2
+  CLICK "Execute"
+  ✓ Array containing the config you just created
+
+  ── TEST: Delete Configuration ───────────────────────────────────────────
+  CLICK: DELETE /api/configurations/{configId} → "Try it out"
+  configId → TYPE: 1 (ID from created config above)
+  CLICK "Execute"
+  ✓ Code 200 or 204
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2B. FRONTEND — SERVICES MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as admin → CLICK "Services"
+  URL: http://localhost:5173/services
+
+  ── TEST: Create Services ────────────────────────────────────────────────
+  CLICK "New Service" (blue button, top-right)
+  Name        → TYPE: Corporate Voice Gateway
+  Description → TYPE: Main voice communication hub for enterprise calls
+  Type        → SELECT: Voice
+  CLICK "Create Service"
+  ✓ Toast "Service created" | Row appears in table
+
+  CLICK "New Service" again
+  Name → TYPE: Video Conference Hub | Desc → TYPE: HD video conferencing | Type → SELECT: Video
+  CLICK "Create Service" ✓
+
+  CLICK "New Service" again
+  Name → TYPE: Enterprise Messaging | Desc → TYPE: Real-time messaging | Type → SELECT: Messaging
+  CLICK "Create Service" ✓
+
+  ── TEST: Search ─────────────────────────────────────────────────────────
+  Search box → TYPE: Voice
+  ✓ Only voice services shown
+  CLEAR search box ✓
+
+  ── TEST: Filter ─────────────────────────────────────────────────────────
+  "All types" dropdown → SELECT: Video
+  ✓ Only Video Conference Hub shown
+  SELECT back to All types ✓
+
+  ── TEST: Service Detail ─────────────────────────────────────────────────
+  CLICK "Details →" on Video Conference Hub
+  ✓ Detail page: name + DRAFT badge + description + 4 info cards
+
+  CLICK "Activate"
+  ✓ Toast "Service activated" | Badge → green ACTIVE
+
+  CLICK "Deactivate"
+  ✓ Toast "Service deactivated" | Badge → red INACTIVE
+
+  CLICK "Activate" again ✓
+
+  ── TEST: Add Config ─────────────────────────────────────────────────────
+  CLICK "Add Config"
+  Key         → TYPE: max_participants
+  Value       → TYPE: 250
+  Description → TYPE: Maximum number of participants per video session
+  CLICK "Save"
+  ✓ Toast "Configuration added" | Row appears
+
+  CLICK "Add Config"
+  Key → TYPE: recording_enabled | Value → TYPE: true | Desc → TYPE: Enable call recording
+  CLICK "Save" ✓
+
+  CLICK trash icon on first config
+  ✓ Toast "Deleted" | Row removed
+
+  CLICK "← Back to services" → Activate remaining services
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 3 — INCIDENT SERVICE  (Port 8084)
+  Swagger : http://localhost:8084/swagger-ui.html
+  Frontend: http://localhost:5173/incidents
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3A. SWAGGER — INCIDENT TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8084/swagger-ui.html
+  STEP 2 → Authorize with Bearer token
+
+  ── TEST: Create Incident ────────────────────────────────────────────────
+  CLICK: POST /api/incidents → "Try it out"
+  Body:
+  {
+    "title": "Voice Gateway Complete Outage",
+    "description": "All inbound and outbound calls failing. 500+ users affected.",
+    "severity": "CRITICAL",
+    "serviceId": 1
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201
+  ✓ Response: id, title, status="OPEN", severity="CRITICAL"
+  → NOTE the incident id (e.g. 1)
+
+  Body:
+  {
+    "title": "Video Call Quality Degradation",
+    "description": "Pixelation and audio drops reported by 150 users.",
+    "severity": "HIGH",
+    "serviceId": 2
+  }
+  CLICK "Execute" → note id (e.g. 2)
+
+  Body:
+  {
+    "title": "Message Delivery Delays",
+    "description": "Messages delayed by 3-5 minutes in certain departments.",
+    "severity": "MEDIUM",
+    "serviceId": 3
+  }
+  CLICK "Execute" → note id (e.g. 3)
+
+  ── TEST: Get All Incidents ──────────────────────────────────────────────
+  CLICK: GET /api/incidents → "Try it out" → "Execute"
+  ✓ Code 200, array of 3 incidents
+
+  ── TEST: Filter by Status ───────────────────────────────────────────────
+  CLICK: GET /api/incidents → "Try it out"
+  status → TYPE: OPEN
+  CLICK "Execute"
+  ✓ Only OPEN incidents
+
+  ── TEST: Filter by Severity ─────────────────────────────────────────────
+  severity → TYPE: CRITICAL
+  CLICK "Execute"
+  ✓ Only CRITICAL incidents
+
+  ── TEST: Get by ID ──────────────────────────────────────────────────────
+  CLICK: GET /api/incidents/{id} → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Single incident with full details
+
+  ── TEST: Assign Incident ────────────────────────────────────────────────
+  CLICK: PUT /api/incidents/{id}/assign → "Try it out"
+  id → TYPE: 1
+  Body:
+  {
+    "userId": 2
+  }
+  CLICK "Execute"
+  ✓ Code 200, assignedToId updated
+
+  ── TEST: Add Comment ────────────────────────────────────────────────────
+  CLICK: POST /api/incidents/{incidentId}/comments → "Try it out"
+  incidentId → TYPE: 1
+  Body:
+  {
+    "content": "Initial investigation started. Gateway server unresponsive."
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, comment created
+
+  ── TEST: Get Comments ───────────────────────────────────────────────────
+  CLICK: GET /api/incidents/{incidentId}/comments → "Try it out"
+  incidentId → TYPE: 1
+  CLICK "Execute"
+  ✓ Array with your comment
+
+  ── TEST: Create Resolution Action ───────────────────────────────────────
+  CLICK: POST /api/actions/incident/{incidentId} → "Try it out"
+  incidentId → TYPE: 1
+  Body:
+  {
+    "title": "Restart gateway service",
+    "description": "SSH into server and run: sudo systemctl restart voice-gateway",
+    "ownerId": 1
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, action created
+  → NOTE the action id (e.g. 1)
+
+  ── TEST: Update Action Status ───────────────────────────────────────────
+  CLICK: PUT /api/actions/{actionId}/status → "Try it out"
+  actionId → TYPE: 1
+  Body:
+  {
+    "status": "IN_PROGRESS"
+  }
+  CLICK "Execute" ✓
+
+  Body: { "status": "COMPLETED" }
+  CLICK "Execute" ✓
+
+  ── TEST: Resolve Incident ───────────────────────────────────────────────
+  CLICK: PUT /api/incidents/{id}/resolve → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, status = "RESOLVED"
+
+  ── TEST: Close Incident ─────────────────────────────────────────────────
+  CLICK: PUT /api/incidents/{id}/close → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, status = "CLOSED"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3B. FRONTEND — INCIDENTS MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as admin → CLICK "Incidents"
+  URL: http://localhost:5173/incidents
+
+  ── TEST: Create Incidents ───────────────────────────────────────────────
+  CLICK "New Incident"
+  Title       → TYPE: Voice Gateway Complete Outage
+  Description → TYPE: All inbound and outbound calls failing. 500+ users affected across HQ.
+  Severity    → SELECT: Critical
+  Service     → SELECT: Corporate Voice Gateway
+  CLICK "Create Incident"
+  ✓ Toast "Incident created" | Red CRITICAL badge in table
+
+  CLICK "New Incident"
+  Title → TYPE: Video Call Quality Degradation | Desc → TYPE: Pixelation and audio drops | Severity → SELECT: High | Service → SELECT: Video Conference Hub
+  CLICK "Create Incident" ✓
+
+  CLICK "New Incident"
+  Title → TYPE: Message Delivery Delays | Desc → TYPE: Messages delayed 3-5 minutes | Severity → SELECT: Medium | Service → SELECT: Enterprise Messaging
+  CLICK "Create Incident" ✓
+
+  ── TEST: Filter & Search ────────────────────────────────────────────────
+  Search → TYPE: Voice → ✓ Only Voice incidents shown → CLEAR
+  Severity dropdown → SELECT: Critical → ✓ Only critical → SELECT back ✓
+  Status dropdown → SELECT: Open → ✓ All shown (all OPEN) → SELECT back ✓
+
+  ── TEST: Full Incident Workflow ─────────────────────────────────────────
+  CLICK "View →" on "Voice Gateway Complete Outage"
+
+  CLICK "Assign" → dropdown → SELECT: any user → CLICK "Assign"
+  ✓ "Assigned to" card updates
+
+  CLICK "Add Action"
+  Title → TYPE: Restart gateway service
+  Description → TYPE: SSH into gateway server and restart the voice service daemon
+  Owner → SELECT: any user
+  CLICK "Create"
+  ✓ Action row appears with PENDING status
+
+  Action status dropdown → SELECT: In Progress ✓
+  Action status dropdown → SELECT: Completed ✓
+
+  Comment box → TYPE: Gateway restarted. Calls are coming through normally.
+  CLICK "Post"
+  ✓ Comment appears with timestamp
+
+  CLICK "Resolve"
+  ✓ Toast "Incident resolved" | Badge → green RESOLVED
+
+  CLICK "Close"
+  ✓ Toast "Incident closed" | Badge → grey CLOSED
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 4 — USAGE & SLA SERVICE  (Port 8083)
+  Swagger : http://localhost:8083/swagger-ui.html
+  Frontend: http://localhost:5173/usage
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4A. SWAGGER — USAGE & SLA TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8083/swagger-ui.html
+  STEP 2 → Authorize with Bearer token
+
+  ── TEST: Record Usage ───────────────────────────────────────────────────
+  CLICK: POST /api/usage → "Try it out"
+  Body:
+  {
+    "serviceId": 1,
+    "userId": 1,
+    "metricType": "BANDWIDTH",
+    "value": 850,
+    "unit": "Mbps"
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, usage record created
+
+  Body:
+  { "serviceId": 2, "userId": 1, "metricType": "ACTIVE_CONNECTIONS", "value": 45, "unit": "connections" }
+  CLICK "Execute" ✓
+
+  Body:
+  { "serviceId": 3, "userId": 1, "metricType": "MESSAGE_COUNT", "value": 320, "unit": "messages" }
+  CLICK "Execute" ✓
+
+  Body:
+  { "serviceId": 1, "userId": 1, "metricType": "CALL_COUNT", "value": 125, "unit": "calls" }
+  CLICK "Execute" ✓
+
+  ── TEST: Get Usage by Service ───────────────────────────────────────────
+  CLICK: GET /api/usage/service/{serviceId} → "Try it out"
+  serviceId → TYPE: 1
+  CLICK "Execute"
+  ✓ Array of usage records for service 1
+
+  ── TEST: Get Usage by Metric ────────────────────────────────────────────
+  CLICK: GET /api/usage/service/{serviceId}/metric/{metricType} → "Try it out"
+  serviceId  → TYPE: 1
+  metricType → TYPE: BANDWIDTH
+  CLICK "Execute"
+  ✓ Only BANDWIDTH records for service 1
+
+  ── TEST: Create SLA Definition ──────────────────────────────────────────
+  CLICK: POST /api/sla → "Try it out"
+  Body:
+  {
+    "serviceId": 1,
+    "metricType": "BANDWIDTH",
+    "threshold": 500,
+    "operator": "GREATER_THAN",
+    "status": "ACTIVE",
+    "description": "Bandwidth must exceed 500 Mbps"
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, SLA created with id
+  → NOTE the SLA id (e.g. 1)
+
+  Body:
+  { "serviceId": 2, "metricType": "ACTIVE_CONNECTIONS", "threshold": 10, "operator": "GREATER_THAN", "status": "ACTIVE", "description": "Must support 10+ connections" }
+  CLICK "Execute" ✓ (id: 2)
+
+  Body:
+  { "serviceId": 3, "metricType": "MESSAGE_COUNT", "threshold": 100, "operator": "GREATER_THAN", "status": "ACTIVE", "description": "Minimum 100 messages" }
+  CLICK "Execute" ✓ (id: 3)
+
+  ── TEST: Get All SLAs ───────────────────────────────────────────────────
+  CLICK: GET /api/sla → "Try it out" → "Execute"
+  ✓ Array of 3 SLA definitions
+
+  ── TEST: Get SLAs by Service ────────────────────────────────────────────
+  CLICK: GET /api/sla/service/{serviceId} → "Try it out"
+  serviceId → TYPE: 1
+  CLICK "Execute"
+  ✓ SLAs only for service 1
+
+  ── TEST: Update SLA Status ──────────────────────────────────────────────
+  CLICK: PUT /api/sla/{id}/status → "Try it out"
+  id → TYPE: 1
+  Body: { "status": "INACTIVE" }
+  CLICK "Execute"
+  ✓ Code 200, status = INACTIVE
+
+  Body: { "status": "ACTIVE" }
+  CLICK "Execute"
+  ✓ Code 200, status = ACTIVE
+
+  ── TEST: Get All Breaches ───────────────────────────────────────────────
+  CLICK: GET /api/sla/breaches → "Try it out" → "Execute"
+  ✓ Array of breach events (may be empty if scheduler hasn't run)
+
+  ── TEST: Get Unresolved Breaches ────────────────────────────────────────
+  CLICK: GET /api/sla/breaches/unresolved → "Try it out" → "Execute"
+  ✓ Array of unresolved breach events
+
+  ── TEST: Resolve Breach ─────────────────────────────────────────────────
+  (Only if breaches exist from previous step)
+  CLICK: PUT /api/sla/breaches/{breachId}/resolve → "Try it out"
+  breachId → TYPE: 1
+  Body:
+  {
+    "notes": "Issue fixed. Bandwidth restored after replacing faulty switch."
+  }
+  CLICK "Execute"
+  ✓ Code 200, breach resolved
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4B. FRONTEND — USAGE & SLA MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as admin → CLICK "Usage & SLA"
+  URL: http://localhost:5173/usage
+
+  ── TEST: Usage Chart ────────────────────────────────────────────────────
+  "Select a service" dropdown → SELECT: Corporate Voice Gateway
+  ✓ Line chart appears (shows recorded usage from Swagger tests above)
+  SELECT: Video Conference Hub → ✓ Chart updates
+  SELECT: Enterprise Messaging → ✓ Chart updates
+
+  ── TEST: Create SLAs ────────────────────────────────────────────────────
+  CLICK "New SLA"
+  Service   → SELECT: Corporate Voice Gateway
+  Metric    → SELECT: Bandwidth
+  Operator  → SELECT: Greater Than
+  Threshold → TYPE: 500
+  Desc      → TYPE: Bandwidth must exceed 500 Mbps at all times
+  CLICK "Create SLA"
+  ✓ Toast "SLA created" | Row in table
+
+  CLICK "New SLA"
+  Service → SELECT: Video Conference Hub | Metric → Active Connections | Operator → Greater Than | Threshold → TYPE: 10 | Desc → TYPE: Minimum 10 concurrent connections
+  CLICK "Create SLA" ✓
+
+  CLICK "New SLA"
+  Service → SELECT: Enterprise Messaging | Metric → Message Count | Operator → Greater Than | Threshold → TYPE: 50 | Desc → TYPE: Minimum 50 messages per interval
+  CLICK "Create SLA" ✓
+
+  ── TEST: Enable / Disable SLA ───────────────────────────────────────────
+  On any SLA row → CLICK "Disable"
+  ✓ Badge → grey INACTIVE
+  CLICK "Enable"
+  ✓ Badge → green ACTIVE
+
+  ── TEST: Resolve Breach (if any exist) ──────────────────────────────────
+  Scroll to "SLA Breach Events" section
+  If breach row visible → CLICK "Resolve"
+  Notes → TYPE: Bandwidth restored after network equipment replacement
+  CLICK "Mark Resolved"
+  ✓ Toast "Breach resolved" | Resolved → green Yes badge
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 5 — ANALYTICS SERVICE  (Port 8085)
+  Swagger : http://localhost:8085/swagger-ui.html
+  Frontend: http://localhost:5173/analytics
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5A. SWAGGER — ANALYTICS TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8085/swagger-ui.html
+  STEP 2 → Authorize with Bearer token
+
+  ── TEST: Generate Report ────────────────────────────────────────────────
+  CLICK: POST /api/reports/generate → "Try it out"
+  Body:
+  {
+    "title": "Weekly Operations KPI Report",
+    "type": "OPERATIONS",
+    "params": {}
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, report created with id
+  → NOTE report id (e.g. 1)
+
+  Body:
+  { "title": "SLA Compliance Summary", "type": "SLA_COMPLIANCE", "params": {} }
+  CLICK "Execute" → note id (e.g. 2)
+
+  Body:
+  { "title": "Incident Analysis Report", "type": "INCIDENT_ANALYSIS", "params": {} }
+  CLICK "Execute" → note id (e.g. 3)
+
+  ── TEST: Get All Reports ────────────────────────────────────────────────
+  CLICK: GET /api/reports → "Try it out" → "Execute"
+  ✓ Array of 3 reports
+
+  ── TEST: Filter by Type ─────────────────────────────────────────────────
+  CLICK: GET /api/reports → "Try it out"
+  type → TYPE: OPERATIONS
+  CLICK "Execute"
+  ✓ Only OPERATIONS type reports
+
+  ── TEST: Get My Reports ─────────────────────────────────────────────────
+  CLICK: GET /api/reports/my → "Try it out" → "Execute"
+  ✓ Reports generated by the current user
+
+  ── TEST: SLA Compliance Report ──────────────────────────────────────────
+  CLICK: GET /api/reports/sla-compliance → "Try it out" → "Execute"
+  ✓ Code 200, compliance data returned
+
+  ── TEST: Incident Summary ───────────────────────────────────────────────
+  CLICK: GET /api/reports/incident-summary → "Try it out" → "Execute"
+  ✓ Code 200, incident summary data
+
+  ── TEST: Generate Operations Snapshot ───────────────────────────────────
+  CLICK: POST /api/reports/snapshots/operations → "Try it out" → "Execute"
+  ✓ Code 200 or 201, snapshot created
+
+  ── TEST: Get All Snapshots ──────────────────────────────────────────────
+  CLICK: GET /api/reports/snapshots → "Try it out" → "Execute"
+  ✓ Array of snapshot objects
+
+  ── TEST: Get Snapshot by Type ───────────────────────────────────────────
+  CLICK: GET /api/reports/snapshots/{type} → "Try it out"
+  type → TYPE: OPERATIONS
+  CLICK "Execute"
+  ✓ Latest OPERATIONS snapshot
+
+  ── TEST: Delete Report ──────────────────────────────────────────────────
+  CLICK: DELETE /api/reports/{id} → "Try it out"
+  id → TYPE: 3
+  CLICK "Execute"
+  ✓ Code 200 or 204, report deleted
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5B. FRONTEND — ANALYTICS MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as admin → CLICK "Analytics"
+  URL: http://localhost:5173/analytics
+
+  ✓ Page loads with "Generate Report" and "Capture Snapshot" buttons
+  ✓ Charts visible (if data from swagger tests exists)
+
+  ── TEST: Generate Reports ───────────────────────────────────────────────
+  CLICK "Generate Report"
+  ✓ Toast "Report generated" | Row in table:
+    KPI Report – [date] | OPERATIONS | admin@comnet360.com
+
+  CLICK "Generate Report" again (2nd)
+  ✓ Second row appears
+
+  CLICK "Generate Report" again (3rd)
+  ✓ Third row appears
+
+  ── TEST: Capture Snapshot ───────────────────────────────────────────────
+  CLICK "Capture Snapshot"
+  ✓ Toast "Snapshot captured" | Snapshot row in Dashboard Snapshots section
+    OPERATIONS badge | timestamp | X metrics
+
+  CLICK "Capture Snapshot" again
+  ✓ Second snapshot row
+
+  ── TEST: Delete Report ──────────────────────────────────────────────────
+  On last report row → CLICK red trash icon
+  ✓ Toast "Deleted" | Row removed
+
+  ── TEST: Charts ─────────────────────────────────────────────────────────
+  ✓ SLA Compliance pie chart renders with data
+  ✓ Incident Summary bar chart renders with data
+  ✓ Hover over any chart bar/slice → tooltip shows value
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SERVICE 6 — NOTIFICATION SERVICE  (Port 8086)
+  Swagger : http://localhost:8086/swagger-ui.html
+  Frontend: http://localhost:5173/notifications
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6A. SWAGGER — NOTIFICATION TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  STEP 1 → Open: http://localhost:8086/swagger-ui.html
+  STEP 2 → Authorize with Bearer token
+  NOTE: Replace userId with your actual user ID from IAM service (usually 1)
+
+  ── TEST: Send Notification ──────────────────────────────────────────────
+  CLICK: POST /api/notifications → "Try it out"
+  Body:
+  {
+    "userId": 1,
+    "title": "System Alert: Voice Gateway Down",
+    "message": "The Corporate Voice Gateway has gone offline. Immediate attention required.",
+    "category": "INCIDENT",
+    "channel": "IN_APP"
+  }
+  CLICK "Execute"
+  ✓ Code 200 or 201, notification created
+
+  Body:
+  { "userId": 1, "title": "SLA Breach Detected", "message": "Bandwidth dropped below threshold on Voice Gateway.", "category": "SLA", "channel": "IN_APP" }
+  CLICK "Execute" ✓
+
+  Body:
+  { "userId": 1, "title": "Service Activated", "message": "Video Conference Hub has been activated and is now live.", "category": "SERVICE", "channel": "IN_APP" }
+  CLICK "Execute" ✓
+
+  Body:
+  { "userId": 1, "title": "Incident Resolved", "message": "Voice Gateway Complete Outage has been resolved successfully.", "category": "INCIDENT", "channel": "EMAIL" }
+  CLICK "Execute" ✓
+
+  ── TEST: Get All for User ────────────────────────────────────────────────
+  CLICK: GET /api/notifications/user/{userId} → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ Array of 4 notifications
+
+  ── TEST: Get Unread ─────────────────────────────────────────────────────
+  CLICK: GET /api/notifications/user/{userId}/unread → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ All 4 (none marked read yet)
+
+  ── TEST: Get Unread Count ───────────────────────────────────────────────
+  CLICK: GET /api/notifications/user/{userId}/count → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ Returns: 4
+
+  ── TEST: Mark One as Read ───────────────────────────────────────────────
+  CLICK: PUT /api/notifications/{id}/read → "Try it out"
+  id → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, notification 1 marked read
+
+  ── TEST: Mark All as Read ───────────────────────────────────────────────
+  CLICK: PUT /api/notifications/user/{userId}/read-all → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200
+
+  ── TEST: Get Unread Count After ─────────────────────────────────────────
+  CLICK: GET /api/notifications/user/{userId}/count → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ Returns: 0 (all read)
+
+  ── TEST: Get Preferences ────────────────────────────────────────────────
+  CLICK: GET /api/notifications/preferences/{userId} → "Try it out"
+  userId → TYPE: 1
+  CLICK "Execute"
+  ✓ Code 200, preference object returned with boolean fields
+
+  ── TEST: Update Preferences ─────────────────────────────────────────────
+  CLICK: PUT /api/notifications/preferences/{userId} → "Try it out"
+  userId → TYPE: 1
+  Body:
+  {
+    "emailEnabled": false,
+    "inAppEnabled": true,
+    "incidentAlerts": true,
+    "slaAlerts": true,
+    "serviceUpdates": false
+  }
+  CLICK "Execute"
+  ✓ Code 200, preferences updated
+
+  ── TEST: Email Logs ─────────────────────────────────────────────────────
+  CLICK: GET /api/notifications/email-logs → "Try it out" → "Execute"
+  ✓ Code 200, array of email delivery logs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6B. FRONTEND — NOTIFICATIONS MODULE TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Login as admin → CLICK "Notifications"
+  URL: http://localhost:5173/notifications
+
+  ── TEST: Bell Badge ─────────────────────────────────────────────────────
+  ✓ Bell icon in top-right shows red badge with count (from Swagger-created notifications)
+  ✓ Badge shows number (e.g. 4)
+
+  ── TEST: View Notifications ─────────────────────────────────────────────
+  ✓ 4 notifications visible
+  ✓ Unread = blue background + blue dot
+  ✓ Each row: icon | title | message | date | category badge | channel badge
+  ✓ EMAIL channel = purple badge | IN_APP = blue badge
+
+  ── TEST: Mark Single Read ───────────────────────────────────────────────
+  On first notification → CLICK "Mark read"
+  ✓ Blue background disappears
+  ✓ Bell badge count decreases by 1
+
+  ── TEST: Mark All Read ──────────────────────────────────────────────────
+  CLICK "Mark all read" button (top-right)
+  ✓ Toast "All marked as read"
+  ✓ All blue tints removed
+  ✓ Bell badge disappears from top bar
+
+  ── TEST: Preferences ────────────────────────────────────────────────────
+  Scroll down → see "Notification Preferences" card
+  CLICK toggle: "Email notifications" → turns grey (OFF)
+  CLICK same toggle → turns blue (ON)
+  CLICK toggle: "SLA breach alerts" → turns grey (OFF)
+  CLICK toggle: "Incident alerts" → turns grey (OFF)
+  CLICK both grey toggles → turn back to blue (ON)
+  ✓ All 5 toggles are blue (ON)
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SECTION A — DASHBOARD TESTING (Combines all 6 services)
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+  Login as admin → CLICK "Dashboard"
+  URL: http://localhost:5173/dashboard
+
+  ✓ Greeting → "Good [morning/afternoon/evening], System Admin 👋"
+
+  ── Stat Cards ───────────────────────────────────────────────────────────
+  Card 1 "Active Services"  → number of ACTIVE services | sub-text: total count
+  Card 2 "Open Incidents"   → number of OPEN incidents  | sub-text: critical count
+  Card 3 "SLA Breaches"     → unresolved breach count   | sub-text: "Unresolved"
+  Card 4 "Total Users"      → total users (ADMIN only)  | sub-text: "Platform users"
+
+  ── Charts ───────────────────────────────────────────────────────────────
+  LEFT  → Incidents by Severity bar chart (4 coloured bars: CRITICAL/HIGH/MEDIUM/LOW)
+  RIGHT → Service Distribution pie chart (VOICE/VIDEO/MESSAGING slices)
+  ✓ Hover over any bar/slice → tooltip shows count
+
+  ── Tables ───────────────────────────────────────────────────────────────
+  Recent Incidents → up to 5 rows | CLICK any title → goes to incident detail
+  Services Overview → up to 5 rows | CLICK any name → goes to service detail
+  CLICK "View all →" → goes to /incidents
+  CLICK "Manage →" → goes to /services
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SECTION B — ROLE-WISE TESTING
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+  First register all 5 users via http://localhost:5173/register
+  Then set roles in MySQL:
+  UPDATE users SET role='SERVICE_MANAGER'  WHERE email='manager@comnet360.com';
+  UPDATE users SET role='NETWORK_ENGINEER' WHERE email='engineer@comnet360.com';
+  UPDATE users SET role='OPERATIONS_HEAD'  WHERE email='ops@comnet360.com';
+  UPDATE users SET role='COMPLIANCE_OFFICER' WHERE email='compliance@comnet360.com';
+  UPDATE users SET role='ENTERPRISE_USER'  WHERE email='user@comnet360.com';
+
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ SERVICE_MANAGER  →  manager@comnet360.com / Manager@123                              │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+  Login → check sidebar:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Users VISIBLE
+  ✗ Audit Logs NOT visible
+  CLICK Services → ✓ "New Service" button visible → CREATE one
+  CLICK service Details → ✓ Activate/Deactivate visible | ✗ Decommission NOT visible
+  CLICK Analytics → ✓ accessible | ✓ Generate Report works | ✗ trash icon NOT visible
+  CLICK Users → ✓ list visible | ✗ no role/status action buttons
+  TYPE /admin/audit-logs in browser → ✓ redirected to /dashboard
+
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ NETWORK_ENGINEER  →  engineer@comnet360.com / Engineer@123                           │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+  Login → check sidebar:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Notifications VISIBLE
+  ✗ Analytics, Users, Audit Logs NOT visible
+  CLICK Services → ✗ "New Service" NOT visible | CLICK Details → ✗ no action buttons
+  CLICK Incidents → ✓ "New Incident" visible → CREATE one
+  Open any incident → ✗ "Assign" NOT visible | ✓ "Resolve" visible
+  TYPE /analytics in browser → ✓ redirected to /dashboard
+
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ OPERATIONS_HEAD  →  ops@comnet360.com / OpsHead@123                                  │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+  Login → check sidebar:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications VISIBLE
+  ✗ Users, Audit Logs NOT visible
+  Open any incident → ✓ "Assign" visible | ✓ "Resolve" visible
+  CLICK Analytics → ✓ accessible | ✓ Generate Report | ✗ trash NOT visible
+  TYPE /admin/users in browser → ✓ redirected to /dashboard
+
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ COMPLIANCE_OFFICER  →  compliance@comnet360.com / Comply@123                         │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+  Login → check sidebar:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications, Audit Logs VISIBLE
+  ✗ Users NOT visible
+  CLICK Audit Logs → ✓ full audit trail visible with colour badges
+  Open any incident → ✗ Assign/Resolve NOT visible | ✓ can add comments
+  CLICK Incidents → ✗ "New Incident" NOT visible
+  TYPE /admin/users in browser → ✓ redirected to /dashboard
+
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ ENTERPRISE_USER  →  user@comnet360.com / UserPass@123                                │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+  Login → check sidebar:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Notifications VISIBLE
+  ✗ Analytics, Users, Audit Logs NOT visible
+  Dashboard → ✗ "Total Users" card NOT visible
+  CLICK Services → ✗ "New Service" NOT visible | Details → ✗ no action buttons
+  CLICK Incidents → ✓ "New Incident" visible → can report
+  Open any incident → ✗ Assign/Resolve NOT visible
+  TYPE /analytics in browser → ✓ redirected to /dashboard
+  TYPE /admin/users in browser → ✓ redirected to /dashboard
+  TYPE /admin/audit-logs in browser → ✓ redirected to /dashboard
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SECTION C — END-TO-END COMPLETE FLOW
+  (Run as ADMIN — simulates a full real-world scenario)
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+  Login: admin@comnet360.com / Admin@123
+
+  STEP 1  → /services → Create: "Executive Video Suite" | Video | Activate it
+  STEP 2  → /services/[id] → Add Config: priority=platinum | max_attendees=20
+  STEP 3  → /incidents → Create: "Executive Suite Audio Echo" | High | Service: Executive Video Suite
+  STEP 4  → Open incident → Assign to any user
+  STEP 5  → Add Action: "Check audio codec settings" | In Progress
+  STEP 6  → Add comment: "Investigating audio processing module"
+  STEP 7  → /usage → Create SLA: Executive Video Suite | Active Connections | Greater Than | 1
+  STEP 8  → /analytics → Generate Report → Capture Snapshot
+  STEP 9  → Back to incident → Update action → Completed
+  STEP 10 → Add comment: "Audio config reset. Issue resolved."
+  STEP 11 → CLICK Resolve → status RESOLVED
+  STEP 12 → CLICK Close → status CLOSED
+  STEP 13 → /admin/audit-logs → verify all events logged (CREATE/UPDATE entries visible)
+  STEP 14 → /dashboard → verify stats updated (Active Services count, Incidents count)
+  STEP 15 → /notifications → verify notifications exist → Mark all read
+  STEP 16 → /profile → verify account info → CLICK Sign out
+
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  SECTION D — FINAL SIGN-OFF CHECKLIST
+══════════════════════════════════════════════════════════════════════════════════════════════
+
+  IAM SERVICE — Swagger
+  [ ] POST /api/auth/register → 200
+  [ ] POST /api/auth/login → 200 with tokens
+  [ ] POST /api/auth/refresh → 200 new tokens
+  [ ] GET  /api/users → 200 list
+  [ ] GET  /api/users/me → 200 profile
+  [ ] PUT  /api/users/{id}/role → 200 role changed
+  [ ] PUT  /api/users/{id}/status → 200 status changed
+  [ ] GET  /api/audit-logs → 200 audit entries
+  [ ] POST /api/auth/logout → 200
+
+  IAM SERVICE — Frontend
+  [ ] Register works with validation
+  [ ] Login works with correct credentials
+  [ ] Wrong password shows error
+  [ ] Protected route redirects to /login
+  [ ] User Management: role dropdown works
+  [ ] User Management: deactivate/activate works
+  [ ] Audit Logs: colour-coded badges correct
+  [ ] Profile: shows correct info
+  [ ] Sign out works
+
+  PROVISIONING SERVICE — Swagger
+  [ ] POST /api/services → 201 created
+  [ ] GET  /api/services → 200 list
+  [ ] GET  /api/services/{id} → 200 single
+  [ ] PUT  /api/services/{id}/activate → 200 ACTIVE
+  [ ] PUT  /api/services/{id}/deactivate → 200 INACTIVE
+  [ ] PUT  /api/services/{id}/decommission → 200 DECOMMISSIONED
+  [ ] POST /api/configurations/{serviceId} → 201 config created
+  [ ] GET  /api/configurations/{serviceId} → 200 list
+  [ ] DELETE /api/configurations/{configId} → 200 deleted
+
+  PROVISIONING SERVICE — Frontend
+  [ ] Create service (all 3 types) works
+  [ ] Search live-filters
+  [ ] Filter by status/type works
+  [ ] Activate/Deactivate on detail page
+  [ ] Decommission works (admin)
+  [ ] Add config works
+  [ ] Delete config works (admin)
+
+  INCIDENT SERVICE — Swagger
+  [ ] POST /api/incidents → 201 created
+  [ ] GET  /api/incidents → 200 list
+  [ ] GET  /api/incidents?status=OPEN → filtered
+  [ ] GET  /api/incidents?severity=CRITICAL → filtered
+  [ ] PUT  /api/incidents/{id}/assign → 200 assigned
+  [ ] POST /api/incidents/{id}/comments → 201 comment
+  [ ] GET  /api/incidents/{id}/comments → 200 list
+  [ ] POST /api/actions/incident/{id} → 201 action
+  [ ] PUT  /api/actions/{id}/status → 200 updated
+  [ ] PUT  /api/incidents/{id}/resolve → 200 RESOLVED
+  [ ] PUT  /api/incidents/{id}/close → 200 CLOSED
+
+  INCIDENT SERVICE — Frontend
+  [ ] Create incident (all 4 severities)
+  [ ] Filter by severity/status
+  [ ] Assign incident works
+  [ ] Add resolution action + status update
+  [ ] Add comment works (multiple)
+  [ ] Resolve incident works
+  [ ] Close incident works
+
+  USAGE & SLA SERVICE — Swagger
+  [ ] POST /api/usage → 201 recorded
+  [ ] GET  /api/usage/service/{id} → 200 list
+  [ ] GET  /api/usage/service/{id}/metric/{type} → filtered
+  [ ] POST /api/sla → 201 created
+  [ ] GET  /api/sla → 200 list
+  [ ] PUT  /api/sla/{id}/status → 200 toggled
+  [ ] GET  /api/sla/breaches → 200 list
+  [ ] GET  /api/sla/breaches/unresolved → 200
+  [ ] PUT  /api/sla/breaches/{id}/resolve → 200 resolved
+
+  USAGE & SLA SERVICE — Frontend
+  [ ] Usage chart loads for selected service
+  [ ] Create SLA (all metric types) works
+  [ ] Enable/Disable SLA works
+  [ ] Breach section visible
+  [ ] Resolve breach with notes works
+
+  ANALYTICS SERVICE — Swagger
+  [ ] POST /api/reports/generate → 201 report
+  [ ] GET  /api/reports → 200 list
+  [ ] GET  /api/reports?type=OPERATIONS → filtered
+  [ ] GET  /api/reports/my → 200 own reports
+  [ ] GET  /api/reports/sla-compliance → 200 data
+  [ ] GET  /api/reports/incident-summary → 200 data
+  [ ] POST /api/reports/snapshots/operations → 201 snapshot
+  [ ] GET  /api/reports/snapshots → 200 list
+  [ ] DELETE /api/reports/{id} → 200 deleted
+
+  ANALYTICS SERVICE — Frontend
+  [ ] Generate report works
+  [ ] Capture snapshot works
+  [ ] Delete report works (admin)
+  [ ] Charts render with data
+
+  NOTIFICATION SERVICE — Swagger
+  [ ] POST /api/notifications → 201 created
+  [ ] GET  /api/notifications/user/{id} → 200 list
+  [ ] GET  /api/notifications/user/{id}/unread → 200 unread only
+  [ ] GET  /api/notifications/user/{id}/count → 200 count number
+  [ ] PUT  /api/notifications/{id}/read → 200 marked read
+  [ ] PUT  /api/notifications/user/{id}/read-all → 200 all read
+  [ ] GET  /api/notifications/preferences/{id} → 200 prefs
+  [ ] PUT  /api/notifications/preferences/{id} → 200 updated
+  [ ] GET  /api/notifications/email-logs → 200 logs
+
+  NOTIFICATION SERVICE — Frontend
+  [ ] Bell badge shows unread count
+  [ ] Mark single read works
+  [ ] Mark all read works
+  [ ] Channel badges correct (EMAIL/IN_APP)
+  [ ] All 5 preference toggles work
+
+  DASHBOARD — Frontend
+  [ ] 4 stat cards correct counts
+  [ ] Incident bar chart renders
+  [ ] Service pie chart renders
+  [ ] Recent incidents table with links
+  [ ] Services overview table with links
+
+  ROLE ACCESS — Frontend
+  [ ] SERVICE_MANAGER: no Audit Logs, no Decommission
+  [ ] NETWORK_ENGINEER: no Analytics/Users, no Assign
+  [ ] OPERATIONS_HEAD: can Assign, no Users/Audit
+  [ ] COMPLIANCE_OFFICER: Audit Logs visible, no Users
+  [ ] ENTERPRISE_USER: most restricted, can report
+
+══════════════════════════════════════════════════════════════════════════════════════════════
+  END OF GUIDE
+  Services: IAM(8081) | Provisioning(8082) | Usage-SLA(8083)
+            Incident(8084) | Analytics(8085) | Notification(8086)
+  Frontend: React 19 + TypeScript + Vite + TailwindCSS + TanStack Query
+══════════════════════════════════════════════════════════════════════════════════════════════

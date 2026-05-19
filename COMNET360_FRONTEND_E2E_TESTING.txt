@@ -1,0 +1,1708 @@
+====================================================================
+  COMNET360 — COMPLETE FRONTEND END-TO-END TESTING GUIDE
+  Uses your actual 6 registered users · All pages · All features
+====================================================================
+
+URL  : http://localhost:5173
+Admin: admin@comnet360.com / Admin@123
+
+YOUR EXISTING USERS (already in the system):
+  System Admin   — admin@comnet360.com        — ADMIN
+  Sarah Smith    — sarah@comnet360.com        — SERVICE_MANAGER
+  John Doe       — john@comnet360.com         — NETWORK_ENGINEER
+  Mike Johnson   — mike@comnet360.com         — OPERATIONS_HEAD
+  Alice Green    — alice@comnet360.com        — ENTERPRISE_USER
+  Lisa Brown     — lisa@comnet360.com         — COMPLIANCE_OFFICER
+
+NOTE: Replace [password] below with the actual passwords you set
+      when you created each user. E.g. Sarah@123, John@123, etc.
+
+Start all services before opening the browser:
+  1. MySQL (3306)
+  2. eureka-server  (8761)
+  3. api-gateway    (8001)
+  4. iam-service    (8081)
+  5. provisioning-service (8082)
+  6. usage-sla-service    (8083)
+  7. incident-service     (8084)
+  8. analytics-service    (8085)
+  9. notification-service (8086)
+  10. frontend  →  npm run dev  (5173)
+
+====================================================================
+PHASE 1 — AUTHENTICATION
+====================================================================
+
+──────────────────────────────────────────────────────────────────
+TEST 1 : Login with Wrong Credentials
+──────────────────────────────────────────────────────────────────
+1. Open http://localhost:5173
+   EXPECT : Redirected to /login page
+            Login card visible with Email + Password fields
+
+2. Enter wrong credentials:
+     Email    : wrong@email.com
+     Password : wrongpass
+   Click "Sign in"
+   EXPECT : Toast → "Invalid email or password" (red)
+            Still on /login
+
+──────────────────────────────────────────────────────────────────
+TEST 2 : Login as Admin (System Admin)
+──────────────────────────────────────────────────────────────────
+1. Enter correct credentials:
+     Email    : admin@comnet360.com
+     Password : Admin@123
+   Click "Sign in"
+   EXPECT : Redirected to /dashboard
+            Top-bar shows "System Admin" (or "S" avatar)
+            Left sidebar shows ALL navigation items including
+            the Admin section (Users + Audit Logs)
+
+──────────────────────────────────────────────────────────────────
+TEST 3 : Verify Sidebar for Admin
+──────────────────────────────────────────────────────────────────
+EXPECT full sidebar:
+  ✓ Dashboard
+  ✓ Services
+  ✓ Usage & SLA
+  ✓ Incidents
+  ✓ Analytics
+  ✓ Notifications
+  ✓ Admin
+      ↳ Users
+      ↳ Audit Logs
+  ✓ Profile (bottom)
+
+====================================================================
+PHASE 2 — USER MANAGEMENT (Your 6 Existing Users)
+====================================================================
+Navigate to: Admin → Users
+
+──────────────────────────────────────────────────────────────────
+TEST 4 : Verify Existing Users Table
+──────────────────────────────────────────────────────────────────
+EXPECT table shows all 6 users:
+  System Admin  | admin@comnet360.com  | ADMIN              | ACTIVE | [You badge]
+  Sarah Smith   | sarah@comnet360.com  | SERVICE MANAGER    | ACTIVE |
+  John Doe      | john@comnet360.com   | NETWORK ENGINEER   | ACTIVE |
+  Mike Johnson  | mike@comnet360.com   | OPERATIONS HEAD    | ACTIVE |
+  Alice Green   | alice@comnet360.com  | ENTERPRISE USER    | ACTIVE |
+  Lisa Brown    | lisa@comnet360.com   | COMPLIANCE OFFICER | ACTIVE |
+
+  - Top row shows "6 registered users"
+  - "You" blue badge appears on System Admin row
+  - System Admin row has NO actions (no dropdown, no delete button)
+  - All other 5 rows show: role dropdown + Deactivate + trash icon
+
+──────────────────────────────────────────────────────────────────
+TEST 5 : Change User Role (Alice Green)
+──────────────────────────────────────────────────────────────────
+1. Find "Alice Green" in the table
+2. In the Actions column, change role dropdown:
+   ENTERPRISE_USER → SERVICE_MANAGER
+   EXPECT : Toast → "Role updated"
+            Alice's badge changes to SERVICE MANAGER (purple)
+            (This also sends Alice an in-app notification — tested in Phase 9)
+
+3. Change Alice back:
+   SERVICE_MANAGER → ENTERPRISE_USER
+   EXPECT : Toast → "Role updated"
+            Alice's badge returns to ENTERPRISE USER (grey/slate)
+
+──────────────────────────────────────────────────────────────────
+TEST 6 : Deactivate and Reactivate User (Alice Green)
+──────────────────────────────────────────────────────────────────
+1. Find "Alice Green" — click "Deactivate"
+   EXPECT : Toast → "Status updated"
+            Status badge → INACTIVE (red dot)
+            Button changes to "Activate"
+
+2. Click "Activate"
+   EXPECT : Toast → "Status updated"
+            Status badge → ACTIVE (green dot)
+
+──────────────────────────────────────────────────────────────────
+TEST 7 : Create a Throwaway User and Delete It
+──────────────────────────────────────────────────────────────────
+Click "Create User" (top-right blue button)
+
+  Full Name  : Temp Tester
+  Email      : temp.tester@comnet360.com
+  Password   : Temp@12345
+  Phone      : (leave blank)
+  Role       : ENTERPRISE_USER
+Click "Create User"
+EXPECT : Toast → "User Temp Tester created"
+         "Temp Tester" row appears in the table
+         Total shows "7 registered users"
+
+Now delete it:
+1. Click the trash icon on the "Temp Tester" row
+2. Confirmation modal appears:
+   EXPECT : Shows "Temp Tester", temp.tester@comnet360.com, ENTERPRISE_USER
+            Red warning: "This action is permanent and cannot be undone."
+3. Click "Delete"
+EXPECT : Toast → "User Temp Tester deleted"
+         Row removed from table
+         Total back to "6 registered users"
+
+──────────────────────────────────────────────────────────────────
+TEST 8 : Cannot Delete Own Account
+──────────────────────────────────────────────────────────────────
+1. Look at the "System Admin" row (has "You" badge)
+EXPECT : NO trash icon, NO role dropdown, NO Deactivate button
+         The Actions column is completely empty for your own row
+
+──────────────────────────────────────────────────────────────────
+TEST 9 : Create User Validation
+──────────────────────────────────────────────────────────────────
+Click "Create User"
+1. Leave all fields blank → "Create User" submit button is DISABLED
+2. Type 1 character in Name → still disabled (needs min 2)
+3. Type "AB" in Name → fill valid email → "Create User" still disabled
+   (password not yet filled)
+4. Type 7 chars in password → still disabled
+5. Type 8 chars in password → button becomes ENABLED
+6. Click the eye icon → password becomes visible text
+7. Click eye icon again → password hidden
+8. Click Cancel
+EXPECT : Modal closes, no user created
+
+====================================================================
+PHASE 3 — SERVICES: CREATE ALL THREE TYPES
+====================================================================
+Still logged in as admin@comnet360.com
+Navigate to: Services (left sidebar)
+
+EXPECT : Empty services list with "New Service" button visible
+
+──────────────────────────────────────────────────────────────────
+TEST 10 : Create VOICE Service 1 (Primary)
+──────────────────────────────────────────────────────────────────
+Click "New Service"
+
+  Service Name : Corporate Voice Gateway
+  Description  : Primary voice communication service for all
+                 enterprise branches. Handles SIP trunking and
+                 call routing across 12 office locations.
+  Service Type : Voice
+
+Click "Create Service"
+EXPECT : Toast → "Service created"
+         Row in table: "Corporate Voice Gateway" | VOICE | DRAFT
+
+──────────────────────────────────────────────────────────────────
+TEST 11 : Create VIDEO Service
+──────────────────────────────────────────────────────────────────
+Click "New Service"
+
+  Service Name : Enterprise Video Conferencing
+  Description  : HD video conferencing platform supporting up to
+                 500 concurrent participants across all offices.
+                 Integrates with calendar and room booking systems.
+  Service Type : Video
+
+Click "Create Service"
+EXPECT : Toast → "Service created"
+         Row: "Enterprise Video Conferencing" | VIDEO | DRAFT
+
+──────────────────────────────────────────────────────────────────
+TEST 12 : Create MESSAGING Service (Primary)
+──────────────────────────────────────────────────────────────────
+Click "New Service"
+
+  Service Name : Unified Messaging Platform
+  Description  : Corporate instant messaging, SMS gateway, and
+                 push notification service for mobile and desktop.
+                 Supports 10,000 concurrent connections.
+  Service Type : Messaging
+
+Click "Create Service"
+EXPECT : Toast → "Service created"
+         Row: "Unified Messaging Platform" | MESSAGING | DRAFT
+
+──────────────────────────────────────────────────────────────────
+TEST 13 : Create VOICE Service 2 (Backup)
+──────────────────────────────────────────────────────────────────
+Click "New Service"
+
+  Service Name : Emergency Voice Backup
+  Description  : Failover voice service for disaster recovery.
+                 Activates automatically when primary voice
+                 service uptime drops below 95%.
+  Service Type : Voice
+
+Click "Create Service"
+EXPECT : Row: "Emergency Voice Backup" | VOICE | DRAFT
+
+──────────────────────────────────────────────────────────────────
+TEST 14 : Create MESSAGING Service 2
+──────────────────────────────────────────────────────────────────
+Click "New Service"
+
+  Service Name : SMS Broadcast Service
+  Description  : Mass SMS notification service for emergency
+                 alerts, marketing campaigns, and OTP delivery.
+                 Capacity: 500,000 messages per hour.
+  Service Type : Messaging
+
+Click "Create Service"
+EXPECT : Row: "SMS Broadcast Service" | MESSAGING | DRAFT
+
+EXPECT : 5 total services in the table, all showing DRAFT status
+
+──────────────────────────────────────────────────────────────────
+TEST 15 : Filter and Search Services
+──────────────────────────────────────────────────────────────────
+1. Type "Voice" in the search box
+   EXPECT : Only 2 rows shown:
+              Corporate Voice Gateway
+              Emergency Voice Backup
+
+2. Clear search. Select Type filter = "VIDEO"
+   EXPECT : Only "Enterprise Video Conferencing" shown
+
+3. Select Type filter = "MESSAGING"
+   EXPECT : Only 2 rows:
+              Unified Messaging Platform
+              SMS Broadcast Service
+
+4. Clear Type filter. Select Status = "DRAFT"
+   EXPECT : All 5 services shown
+
+5. Clear all filters → all 5 visible again
+
+====================================================================
+PHASE 4 — SERVICE DETAIL: ACTIVATE & CONFIGURE
+====================================================================
+
+──────────────────────────────────────────────────────────────────
+TEST 16 : Activate VOICE Service + Add Configurations
+──────────────────────────────────────────────────────────────────
+Click "Details →" on "Corporate Voice Gateway"
+
+Service detail page:
+EXPECT : Title "Corporate Voice Gateway", type VOICE, status DRAFT
+         Info cards: Service ID, Created By, Created date, Last Updated
+         Buttons: Activate + Decommission
+         Configurations table: empty
+
+Click "Activate"
+EXPECT : Toast → "Service activated"
+         Status badge: DRAFT → ACTIVE (green)
+         Button set changes to: Deactivate + Decommission
+
+---- Add Configuration 1 ----
+Click "Add Config"
+  Parameter Name : max_concurrent_calls
+  Value          : 500
+  Effective Date : 2025-01-01
+Click "Save"
+EXPECT : Toast → "Configuration added"
+         Row: max_concurrent_calls | 500 | 2025-01-01
+
+---- Add Configuration 2 ----
+Click "Add Config"
+  Parameter Name : codec_priority
+  Value          : G711,G729,G722
+  Effective Date : 2025-01-01
+Click "Save"
+EXPECT : Row: codec_priority | G711,G729,G722 | 2025-01-01
+
+---- Add Configuration 3 ----
+Click "Add Config"
+  Parameter Name : dtmf_mode
+  Value          : RFC2833
+  Effective Date : 2025-03-01
+Click "Save"
+EXPECT : 3 configuration rows in table
+
+---- Delete a Configuration ----
+Click the trash icon on the "dtmf_mode" row
+EXPECT : Toast → "Deleted"
+         dtmf_mode row removed. 2 configurations remain.
+
+──────────────────────────────────────────────────────────────────
+TEST 17 : Activate VIDEO Service + Add Configurations
+──────────────────────────────────────────────────────────────────
+Click "Back to services" (or navigate via sidebar → Services)
+Click "Details →" on "Enterprise Video Conferencing"
+
+Click "Activate"
+EXPECT : Status → ACTIVE (green)
+
+Click "Add Config"
+  Parameter Name : max_participants
+  Value          : 500
+  Effective Date : 2025-01-01
+Click "Save"
+
+Click "Add Config"
+  Parameter Name : resolution
+  Value          : 1080p
+  Effective Date : 2025-01-01
+Click "Save"
+
+Click "Add Config"
+  Parameter Name : recording_retention_days
+  Value          : 30
+  Effective Date : 2025-02-01
+Click "Save"
+
+EXPECT : 3 config rows. Service status ACTIVE.
+
+──────────────────────────────────────────────────────────────────
+TEST 18 : Activate MESSAGING Service + Add Configurations
+──────────────────────────────────────────────────────────────────
+Go back → "Details →" on "Unified Messaging Platform"
+
+Click "Activate"
+EXPECT : Status → ACTIVE
+
+Click "Add Config"
+  Parameter Name : max_message_size_kb
+  Value          : 512
+  Effective Date : 2025-01-01
+Click "Save"
+
+Click "Add Config"
+  Parameter Name : retention_days
+  Value          : 90
+  Effective Date : 2025-02-01
+Click "Save"
+
+Click "Add Config"
+  Parameter Name : max_connections
+  Value          : 10000
+  Effective Date : 2025-01-01
+Click "Save"
+
+EXPECT : 3 config rows. Service status ACTIVE.
+
+──────────────────────────────────────────────────────────────────
+TEST 19 : Activate & Decommission Backup Voice Service
+──────────────────────────────────────────────────────────────────
+Go back → "Details →" on "Emergency Voice Backup"
+
+Click "Activate"
+EXPECT : Status → ACTIVE
+
+Add one config:
+Click "Add Config"
+  Parameter Name : failover_threshold_percent
+  Value          : 95
+  Effective Date : 2025-01-01
+Click "Save"
+
+Now Decommission it:
+Click "Decommission"
+Browser confirmation dialog appears → Click OK
+EXPECT : Toast → "Service decommissioned"
+         Status badge → DECOMMISSIONED (dark grey)
+         All action buttons disappear (no Activate, no Add Config)
+
+──────────────────────────────────────────────────────────────────
+TEST 20 : SMS Broadcast Service — Leave as DRAFT
+──────────────────────────────────────────────────────────────────
+Go back → "Details →" on "SMS Broadcast Service"
+EXPECT : Status still DRAFT. No configurations.
+         "Activate" and "Decommission" buttons available.
+Do NOT activate this one — leave it as DRAFT for dashboard test.
+
+Go back to Services list:
+EXPECT :
+  Corporate Voice Gateway      — VOICE    — ACTIVE
+  Enterprise Video Conferencing — VIDEO   — ACTIVE
+  Unified Messaging Platform   — MESSAGING — ACTIVE
+  Emergency Voice Backup       — VOICE    — DECOMMISSIONED
+  SMS Broadcast Service        — MESSAGING — DRAFT
+
+====================================================================
+PHASE 5 — USAGE & SLA
+====================================================================
+Navigate to: Usage & SLA (left sidebar)
+
+──────────────────────────────────────────────────────────────────
+TEST 21 : Create SLA Definitions for VOICE Service (3 SLAs)
+──────────────────────────────────────────────────────────────────
+
+---- SLA 1: Voice Latency ----
+Click "New SLA"
+  Service     : Corporate Voice Gateway  (select from dropdown)
+  Metric Name : LATENCY_MS
+  Operator    : Less Than
+  Threshold   : 150
+  Unit        : ms
+  Description : Round-trip voice packet latency must stay below 150ms
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+         Row: LATENCY_MS | LESS THAN | 150 | ms | ACTIVE
+              Service: Corporate Voice Gateway
+
+---- SLA 2: Voice Jitter ----
+Click "New SLA"
+  Service     : Corporate Voice Gateway
+  Metric Name : JITTER_MS
+  Operator    : Less Than
+  Threshold   : 30
+  Unit        : ms
+  Description : Voice jitter must not exceed 30ms for call clarity
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+---- SLA 3: Voice Uptime ----
+Click "New SLA"
+  Service     : Corporate Voice Gateway
+  Metric Name : UPTIME_PERCENT
+  Operator    : Greater Than
+  Threshold   : 99.5
+  Unit        : %
+  Description : Voice service must maintain 99.5% monthly uptime
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+──────────────────────────────────────────────────────────────────
+TEST 22 : Create SLA Definitions for VIDEO Service (3 SLAs)
+──────────────────────────────────────────────────────────────────
+
+---- SLA 4: Video Bandwidth ----
+Click "New SLA"
+  Service     : Enterprise Video Conferencing
+  Metric Name : BANDWIDTH_MBPS
+  Operator    : Greater Than
+  Threshold   : 10
+  Unit        : Mbps
+  Description : Minimum guaranteed bandwidth per active video session
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+---- SLA 5: Video Packet Loss ----
+Click "New SLA"
+  Service     : Enterprise Video Conferencing
+  Metric Name : PACKET_LOSS_PERCENT
+  Operator    : Less Than
+  Threshold   : 1
+  Unit        : %
+  Description : Video packet loss must stay below 1% at all times
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+---- SLA 6: Video Uptime ----
+Click "New SLA"
+  Service     : Enterprise Video Conferencing
+  Metric Name : UPTIME_PERCENT
+  Operator    : Greater Than
+  Threshold   : 99
+  Unit        : %
+  Description : Video conferencing service uptime target of 99%
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+──────────────────────────────────────────────────────────────────
+TEST 23 : Create SLA Definitions for MESSAGING Service (3 SLAs)
+──────────────────────────────────────────────────────────────────
+
+---- SLA 7: Message Delivery Rate ----
+Click "New SLA"
+  Service     : Unified Messaging Platform
+  Metric Name : DELIVERY_RATE_PERCENT
+  Operator    : Greater Than
+  Threshold   : 99.9
+  Unit        : %
+  Description : SMS and IM message delivery success rate minimum 99.9%
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+---- SLA 8: Message Throughput ----
+Click "New SLA"
+  Service     : Unified Messaging Platform
+  Metric Name : THROUGHPUT_MSG_PER_SEC
+  Operator    : Greater Than
+  Threshold   : 1000
+  Unit        : msg/s
+  Description : Minimum message processing throughput of 1000 msg/sec
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+---- SLA 9: Message End-to-End Latency ----
+Click "New SLA"
+  Service     : Unified Messaging Platform
+  Metric Name : END_TO_END_LATENCY_MS
+  Operator    : Less Than
+  Threshold   : 500
+  Unit        : ms
+  Description : End-to-end message delivery time must be under 500ms
+Click "Create SLA"
+EXPECT : Toast → "SLA created"
+
+EXPECT : 9 SLA rows in the table, all status ACTIVE
+         3 rows per service type
+
+──────────────────────────────────────────────────────────────────
+TEST 24 : Edit (PATCH) an SLA — Tighten Voice Latency
+──────────────────────────────────────────────────────────────────
+1. Find the LATENCY_MS row (Corporate Voice Gateway)
+2. Click the pencil (✏) icon on the right
+3. Edit SLA modal opens pre-filled:
+   EXPECT : Threshold shows "150", unit shows "ms"
+            Note shown: "Metric and Service cannot be changed"
+            Metric and Service fields are read-only / not editable
+
+4. Change:
+     Threshold   : 120       (was 150)
+     Description : Tightened voice latency SLA to 120ms after
+                   baseline measurements confirmed achievable.
+   Leave Operator and Unit unchanged.
+5. Click "Save Changes"
+EXPECT : Toast → "SLA updated"
+         Row now shows threshold: 120 (not 150)
+
+──────────────────────────────────────────────────────────────────
+TEST 25 : Disable and Re-enable an SLA
+──────────────────────────────────────────────────────────────────
+1. Find the JITTER_MS row (Corporate Voice Gateway)
+2. Click "Disable" link/button in the row
+EXPECT : Toast (if shown) or immediate update
+         Status badge changes: ACTIVE → INACTIVE (grey/red)
+         Button text changes to "Enable"
+
+3. Click "Enable"
+EXPECT : Status badge: INACTIVE → ACTIVE (green)
+
+──────────────────────────────────────────────────────────────────
+TEST 26 : SLA Breach Section
+──────────────────────────────────────────────────────────────────
+Scroll to "SLA Breach Events" section
+EXPECT : "No SLA breaches — all good!" (green checkmark)
+         OR if breaches exist, table shows:
+           SLA #, Service #, Actual Value, Threshold, Time, Resolved
+
+If breaches exist, click "Resolve" on one breach:
+  Resolution notes : "Root cause identified. Network configuration
+                      adjusted to reduce latency below threshold."
+  Click "Mark Resolved"
+  EXPECT : Toast → "Breach resolved"
+           Breach row shows Resolved: Yes (green)
+
+──────────────────────────────────────────────────────────────────
+TEST 27 : Usage Chart
+──────────────────────────────────────────────────────────────────
+Scroll to "Usage Metrics" chart section
+Select service dropdown → "Corporate Voice Gateway"
+EXPECT : Chart renders (line chart with usage data)
+         OR "No usage data for this service" placeholder
+         (depends on whether usage data was recorded in backend)
+
+====================================================================
+PHASE 6 — INCIDENTS
+====================================================================
+Navigate to: Incidents (left sidebar)
+
+──────────────────────────────────────────────────────────────────
+TEST 28 : Create 6 Incidents Across All Service Types
+──────────────────────────────────────────────────────────────────
+
+---- Incident 1: VOICE — Critical ----
+Click "New Incident"
+  Title       : Voice Gateway Outage — Branch Office A
+  Description : Complete loss of voice service at Branch Office A.
+                All SIP trunks are down. Approximately 150 users
+                affected. Calls failing with SIP 503 errors.
+                Reported by users at 09:14 AM.
+  Severity    : Critical
+  Service     : Corporate Voice Gateway
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+         Row in table: Critical red badge | OPEN
+
+---- Incident 2: VOICE — High ----
+Click "New Incident"
+  Title       : Elevated Call Drop Rate — Region 2
+  Description : Call drop rate increased from 0.5% to 8.3% over
+                the past 2 hours in Region 2 calling zone. Affects
+                approximately 80 concurrent calls.
+  Severity    : High
+  Service     : Corporate Voice Gateway
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+
+---- Incident 3: VIDEO — Critical ----
+Click "New Incident"
+  Title       : Video Conference System Failure — HQ
+  Description : Video conferencing completely unavailable for all
+                HQ users. Sessions fail immediately after joining.
+                Error: "Unable to allocate media resources."
+                All 200 HQ users impacted.
+  Severity    : Critical
+  Service     : Enterprise Video Conferencing
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+
+---- Incident 4: VIDEO — Medium ----
+Click "New Incident"
+  Title       : Video Quality Degradation — International Calls
+  Description : International video calls experiencing high
+                pixelation and audio sync issues. Bandwidth tests
+                show 4 Mbps vs expected 10 Mbps minimum SLA.
+                Affects 15 international meeting rooms.
+  Severity    : Medium
+  Service     : Enterprise Video Conferencing
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+
+---- Incident 5: MESSAGING — High ----
+Click "New Incident"
+  Title       : SMS Gateway Delay — Bulk Notification Queue
+  Description : Bulk SMS notifications are delayed 15-30 minutes.
+                Approximately 50,000 messages stuck in processing
+                queue. Real-time direct messages are unaffected.
+  Severity    : High
+  Service     : Unified Messaging Platform
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+
+---- Incident 6: MESSAGING — Low ----
+Click "New Incident"
+  Title       : Unread Badge Count Incorrect After Message Clear
+  Description : Some users report their unread message badge shows
+                incorrect counts after marking messages as read.
+                Cosmetic issue only — no data loss or delivery
+                failures. Affects approximately 30 users.
+  Severity    : Low
+  Service     : Unified Messaging Platform
+Click "Create Incident"
+EXPECT : Toast → "Incident created"
+
+EXPECT : 6 incidents in the table
+         All show status: OPEN
+         Counter shows "6 open"
+
+──────────────────────────────────────────────────────────────────
+TEST 29 : Filter Incidents
+──────────────────────────────────────────────────────────────────
+1. Type "Voice" in search box
+   EXPECT : 2 incidents shown (Branch Office A + Call Drop Rate)
+
+2. Clear search → Filter Status = "OPEN"
+   EXPECT : All 6 shown
+
+3. Filter Severity = "CRITICAL"
+   EXPECT : 2 incidents (Voice Gateway Outage + Video Conference Failure)
+
+4. Filter Status = "RESOLVED"
+   EXPECT : 0 shown (none resolved yet)
+
+5. Clear all filters → 6 incidents shown
+
+──────────────────────────────────────────────────────────────────
+TEST 30 : Work Incident — Voice Gateway Outage (Critical)
+──────────────────────────────────────────────────────────────────
+Click "View →" on "Voice Gateway Outage — Branch Office A"
+
+Detail page loads:
+EXPECT : Title, CRITICAL badge (red), OPEN badge
+         Description text visible
+         Cards: Incident ID, Service ID, Reported By (your ID), Assigned To: Unassigned
+         Resolution Actions: empty
+         Discussion: empty
+
+---- A: Assign to John Doe ----
+Click "Assign" button
+  Select user: John Doe (NETWORK_ENGINEER)
+Click "Assign"
+EXPECT : Toast → "Assigned"
+         Assigned To card shows John Doe (or User #ID)
+
+---- B: Add First Resolution Action ----
+Click "Add Action"
+  Description : Investigate SIP trunk registration status with
+                carrier portal. Check all 4 trunk groups on
+                PBX admin console for registration failures.
+  Owner       : John Doe
+Click "Create"
+EXPECT : Toast → "Action created"
+         Action row: "Investigate SIP trunk..." | PENDING | Owner: John Doe
+
+---- C: Add Second Resolution Action ----
+Click "Add Action"
+  Description : Restore backup SIP trunk configuration from
+                last known good snapshot (dated 2025-05-10).
+                Apply to primary PBX and verify call routing.
+  Owner       : Mike Johnson
+Click "Create"
+EXPECT : Second action row: "Restore backup SIP..." | PENDING
+
+---- D: Update Action Status ----
+On the first action row, change dropdown: PENDING → IN_PROGRESS
+EXPECT : Status label updates immediately to IN_PROGRESS
+
+---- E: Add Discussion Comments ----
+In the Discussion panel, click the comment input field:
+Type:
+  "Carrier confirmed SIP trunk failure on their infrastructure.
+   Escalated to carrier T2 support team. ETA for fix: 2 hours.
+   Backup trunk activation initiated as temporary workaround."
+Click "Post" (or press Enter)
+EXPECT : Comment appears with your name and current timestamp
+
+Type second comment:
+  "Backup trunk now active. Call success rate recovering —
+   currently at 92%. Primary trunk restoration in progress.
+   Monitoring every 10 minutes."
+Click "Post"
+EXPECT : Second comment appears
+
+---- F: Mark First Action COMPLETED ----
+Change first action dropdown: IN_PROGRESS → COMPLETED
+
+---- G: Resolve the Incident ----
+Click "Resolve" button (top area)
+EXPECT : Toast → "Incident resolved"
+         Status badge: OPEN → RESOLVED (green)
+         "Resolve" button disappears, "Close" button appears
+
+---- H: Close the Incident ----
+Click "Close" button
+EXPECT : Toast → "Incident closed"
+         Status badge: RESOLVED → CLOSED (grey)
+         All action buttons disappear
+
+Go back to Incidents list
+EXPECT : "Voice Gateway Outage" shows CLOSED badge
+         Counter: "5 open · 6 total"
+
+──────────────────────────────────────────────────────────────────
+TEST 31 : Work Incident — Video Conference System Failure (Critical)
+──────────────────────────────────────────────────────────────────
+Click "View →" on "Video Conference System Failure — HQ"
+
+---- Assign to Mike Johnson ----
+Click "Assign"
+  Select: Mike Johnson (OPERATIONS_HEAD)
+Click "Assign"
+EXPECT : Toast → "Assigned"
+
+---- Add Action 1 ----
+Click "Add Action"
+  Description : Restart media server cluster nodes 1-4 and
+                verify resource allocation pool health. Check
+                CPU and memory utilization on each node.
+  Owner       : Mike Johnson
+Click "Create"
+
+---- Add Action 2 ----
+Click "Add Action"
+  Description : Review all infrastructure changes deployed in
+                the last 48 hours. Roll back most recent change
+                if linked to the failure.
+  Owner       : John Doe
+Click "Create"
+
+---- Add Comment ----
+Type:
+  "Media server resource pool at 100% utilization — root cause
+   identified. Node 3 failed silently, redistributing all load
+   to nodes 1, 2, and 4. Initiating failover to secondary cluster."
+Click "Post"
+
+Mark Action 1: PENDING → IN_PROGRESS
+Mark Action 2: PENDING → IN_PROGRESS
+
+Type second comment:
+  "Failover complete. Secondary cluster handling all sessions.
+   Video quality restored. Node 3 being repaired by infra team."
+Click "Post"
+
+Mark Action 1: IN_PROGRESS → COMPLETED
+
+Click "Resolve"
+EXPECT : Status → RESOLVED
+
+Click "Close"
+EXPECT : Status → CLOSED
+
+──────────────────────────────────────────────────────────────────
+TEST 32 : Work Incident — SMS Gateway Delay (High)
+──────────────────────────────────────────────────────────────────
+Click "View →" on "SMS Gateway Delay — Bulk Notification Queue"
+
+---- Assign to John Doe ----
+Click "Assign" → Select John Doe → Click "Assign"
+
+---- Add Action ----
+Click "Add Action"
+  Description : Identify bottleneck in SMS queue processor.
+                Analyze database connection pool exhaustion,
+                queue depth, and thread pool utilization.
+  Owner       : John Doe
+Click "Create"
+
+Mark action: PENDING → IN_PROGRESS
+
+---- Comments ----
+Type:
+  "Queue processor thread pool exhausted (50/50 threads busy).
+   Increased pool size from 50 to 200 threads. Queue depth
+   currently at 12,000 messages, draining at 800 msg/sec."
+Click "Post"
+
+Type:
+  "Queue fully cleared. All 50,000 delayed messages delivered.
+   Throughput stabilized at 1,200 msg/sec. Monitoring for
+   30 minutes before resolving."
+Click "Post"
+
+Mark action: IN_PROGRESS → COMPLETED
+
+Click "Resolve" → Status: RESOLVED
+(Leave as RESOLVED — will Close in Phase 13)
+
+Go back to Incidents list
+EXPECT : 3 incidents OPEN, 2 CLOSED, 1 RESOLVED
+
+──────────────────────────────────────────────────────────────────
+TEST 33 : Incident Filter by Status
+──────────────────────────────────────────────────────────────────
+Filter Status = "CLOSED"
+EXPECT : 2 incidents shown (Voice Gateway Outage + Video Failure)
+
+Filter Status = "RESOLVED"
+EXPECT : 1 incident shown (SMS Gateway Delay)
+
+Filter Status = "OPEN"
+EXPECT : 3 incidents shown:
+           Elevated Call Drop Rate    — High — OPEN
+           Video Quality Degradation  — Medium — OPEN
+           Unread Badge Count Error   — Low — OPEN
+
+Clear all filters
+
+====================================================================
+PHASE 7 — ANALYTICS & REPORTS
+====================================================================
+Navigate to: Analytics (left sidebar)
+
+──────────────────────────────────────────────────────────────────
+TEST 34 : Incident Summary Chart
+──────────────────────────────────────────────────────────────────
+In the "Incident Summary" section (chart area):
+1. Set From date: 2025-01-01
+2. Set To date  : 2025-12-31
+3. Click the filter / apply button if available
+
+EXPECT stats visible:
+  Total   : 6
+  Open    : 3
+  Resolved: 1
+  Closed  : 2
+  Avg MTTR: (minutes — calculated from open to resolved time)
+
+Bar chart shows incidents grouped by Severity:
+  Critical: 2 (both closed)
+  High:     2 (1 closed, 1 open)
+  Medium:   1 (open)
+  Low:      1 (open)
+
+──────────────────────────────────────────────────────────────────
+TEST 35 : Generate Operations Report
+──────────────────────────────────────────────────────────────────
+Click "Generate Report" (top-right)
+
+  Title       : Monthly Operations Overview — May 2026
+  Scope       : ALL
+  Report Type : OPERATIONS
+  From        : 2026-05-01
+  To          : 2026-05-31
+
+Click "Generate"
+EXPECT : Toast → "Report generated"
+         Modal closes
+         Report row appears:
+           Monthly Operations Overview — May 2026
+           Type: OPERATIONS | Scope: ALL
+           Period: 2026-05-01 → 2026-05-31
+           Generated by: User #1
+
+──────────────────────────────────────────────────────────────────
+TEST 36 : Generate SLA Compliance Report
+──────────────────────────────────────────────────────────────────
+Click "Generate Report"
+
+  Title       : Q2 2026 SLA Compliance — Voice Services
+  Scope       : VOICE
+  Report Type : SLA_COMPLIANCE
+  From        : 2026-04-01
+  To          : 2026-06-30
+
+Click "Generate"
+EXPECT : Toast → "Report generated"
+         New row: SLA_COMPLIANCE | VOICE
+
+──────────────────────────────────────────────────────────────────
+TEST 37 : Generate Incident Summary Report
+──────────────────────────────────────────────────────────────────
+Click "Generate Report"
+
+  Title       : May 2026 Incident Summary Report
+  Scope       : ALL
+  Report Type : INCIDENT_SUMMARY
+  From        : 2026-05-01
+  To          : 2026-05-31
+
+Click "Generate"
+EXPECT : Toast → "Report generated"
+
+──────────────────────────────────────────────────────────────────
+TEST 38 : Generate Usage Analytics Report
+──────────────────────────────────────────────────────────────────
+Click "Generate Report"
+
+  Title       : May 2026 Messaging Usage Analytics
+  Scope       : MESSAGING
+  Report Type : USAGE_ANALYTICS
+  From        : 2026-05-01
+  To          : 2026-05-31
+
+Click "Generate"
+EXPECT : Toast → "Report generated"
+         4 reports total in the table
+
+──────────────────────────────────────────────────────────────────
+TEST 39 : Capture Dashboard Snapshot
+──────────────────────────────────────────────────────────────────
+Click "Capture Snapshot" button (near Generate Report)
+EXPECT : Toast → "Snapshot captured"
+         "Dashboard Snapshots" section appears:
+           One entry with: snapshot type, timestamp, metric count
+           Snapshot captured at current date/time
+
+──────────────────────────────────────────────────────────────────
+TEST 40 : Delete a Report (Admin Only)
+──────────────────────────────────────────────────────────────────
+1. Find "May 2026 Messaging Usage Analytics" in the reports table
+2. Click the trash icon on that row
+EXPECT : Toast → "Deleted"
+         Row removed. 3 reports remain.
+
+NOTE : Non-admin users cannot see the delete trash icon on reports.
+       We verify this in Phase 12.
+
+====================================================================
+PHASE 8 — AUDIT LOGS
+====================================================================
+Navigate to: Admin → Audit Logs
+
+──────────────────────────────────────────────────────────────────
+TEST 41 : View All Audit Log Entries
+──────────────────────────────────────────────────────────────────
+EXPECT : Table shows all logged admin actions:
+  USER_CREATED_BY_ADMIN — Temp Tester (created then deleted)
+  USER_DELETED          — Temp Tester
+  USER_ROLE_UPDATED     — Alice Green (ENTERPRISE_USER → SERVICE_MANAGER)
+  USER_ROLE_UPDATED     — Alice Green (SERVICE_MANAGER → ENTERPRISE_USER)
+  USER_ACTIVATED        — Alice Green (after deactivation)
+  USER_DEACTIVATED      — Alice Green
+  USER_PROFILE_UPDATED  — (if admin edited their profile)
+
+Columns:
+  User ID | Action | Entity Type | Entity ID | Details | IP Address | Timestamp
+
+EXPECT : Each row populated with actual values (no "null" or "undefined")
+
+──────────────────────────────────────────────────────────────────
+TEST 42 : Filter Audit Logs by Date Range
+──────────────────────────────────────────────────────────────────
+1. Set "From" date to today (2026-05-12)
+2. Set "To" date to today  (2026-05-12)
+3. Click "Filter" or "Apply"
+EXPECT : Only today's entries shown — all entries since we just created them today
+
+4. Set "From" to next month (2026-06-01)
+5. Click "Filter"
+EXPECT : Empty table or "No logs found" message (no future entries)
+
+6. Clear filters → all entries return
+
+====================================================================
+PHASE 9 — NOTIFICATIONS
+====================================================================
+
+──────────────────────────────────────────────────────────────────
+TEST 43 : Check Admin's Notification Bell
+──────────────────────────────────────────────────────────────────
+(Still logged in as admin)
+Look at the top-right bell icon in the header/top-bar
+
+EXPECT : No unread notifications for admin
+         (Admin changed others' roles, not their own)
+         Bell icon shows 0 or no red badge
+
+──────────────────────────────────────────────────────────────────
+TEST 44 : Check Alice Green's Role-Change Notification
+──────────────────────────────────────────────────────────────────
+Alice received 2 role-change notifications in TEST 5.
+
+1. Logout (Profile → Sign out or top-right)
+   EXPECT : Redirected to /login
+
+2. Login as: alice@comnet360.com / [Alice's password]
+
+3. Look at bell icon in top-bar
+EXPECT : Red badge with number (2 unread notifications)
+
+4. Click the bell icon or navigate to Notifications
+EXPECT : Notification 1:
+           Title   : "Your role has been updated"
+           Message : "An administrator has changed your role from
+                      ENTERPRISE USER to SERVICE MANAGER.
+                      Please log out and log back in..."
+           Status  : UNREAD
+           Type/Category: SYSTEM_ALERT
+
+         Notification 2:
+           Title   : "Your role has been updated"
+           Message : "An administrator has changed your role from
+                      SERVICE MANAGER to ENTERPRISE USER.
+                      Please log out and log back in..."
+           Status  : UNREAD
+
+5. Click on Notification 1
+EXPECT : Status changes to READ
+         Badge count decreases by 1
+
+──────────────────────────────────────────────────────────────────
+TEST 45 : Notifications Page — Full View (as Alice)
+──────────────────────────────────────────────────────────────────
+Navigate to: Notifications (left sidebar)
+
+EXPECT : Full notifications page shows both entries
+         Each notification:
+           - Title text
+           - Full message body
+           - Category badge (SYSTEM_ALERT)
+           - Channel (IN_APP or EMAIL or BOTH)
+           - Timestamp
+           - Status: READ / UNREAD
+
+If "Mark all read" button exists → click it
+EXPECT : All badges clear, all notifications show READ status
+         Bell icon badge disappears
+
+──────────────────────────────────────────────────────────────────
+TEST 46 : Alice's Limited Sidebar
+──────────────────────────────────────────────────────────────────
+(Still logged in as Alice Green — ENTERPRISE_USER)
+EXPECT sidebar:
+  ✓ Dashboard
+  ✓ Services   (view only)
+  ✓ Incidents  (may be view only depending on role rules)
+  ✓ Notifications
+  ✗ Admin section NOT visible (no Users, no Audit Logs)
+  ✗ No "New Service" button on Services page
+  ✗ Analytics may be limited or not accessible
+
+Logout → Login back as admin@comnet360.com / Admin@123
+
+====================================================================
+PHASE 10 — PROFILE MANAGEMENT
+====================================================================
+Navigate to: Profile (bottom-left of sidebar or user icon)
+
+──────────────────────────────────────────────────────────────────
+TEST 47 : View Admin Profile
+──────────────────────────────────────────────────────────────────
+EXPECT profile card shows:
+  Avatar   : "S" (first letter of "System Admin")
+  Name     : System Admin
+  Role     : ADMIN (red badge)
+
+Info fields:
+  Full Name    : System Admin
+  Email        : admin@comnet360.com   (read-only — not editable)
+  Phone        : —  (none set)
+  Role         : ADMIN                  (read-only)
+  Member Since : 5/12/2026
+
+Account Status card: ACTIVE (green dot)
+
+──────────────────────────────────────────────────────────────────
+TEST 48 : Edit Profile — Update Name and Phone
+──────────────────────────────────────────────────────────────────
+Click "Edit Profile" button (top-right of profile card)
+
+EXPECT : Form opens with:
+           Name field: pre-filled with "System Admin"
+           Phone field: pre-filled with "" (empty)
+           Below form (read-only): Email, Role
+
+1. Change name : System Admin 2026
+2. Add phone   : +1 555 999 0000
+3. Click "Save Changes"
+EXPECT : Toast → "Profile updated"
+         Edit form closes, view mode shows:
+           Name  : System Admin 2026
+           Phone : +1 555 999 0000
+         Top-bar/header name ALSO updates immediately to "System Admin 2026"
+
+──────────────────────────────────────────────────────────────────
+TEST 49 : Revert Profile Back
+──────────────────────────────────────────────────────────────────
+Click "Edit Profile" again
+1. Change name back to : System Admin
+2. Clear phone field   : (delete all text)
+3. Click "Save Changes"
+EXPECT : Toast → "Profile updated"
+         Name restored to "System Admin"
+         Phone shows "—"
+         Top-bar shows "System Admin" again
+
+──────────────────────────────────────────────────────────────────
+TEST 50 : Cancel Profile Edit
+──────────────────────────────────────────────────────────────────
+1. Click "Edit Profile"
+2. Change name to "DONT SAVE THIS"
+3. Click "Cancel"
+EXPECT : Modal/form closes
+         Name still shows "System Admin" (change discarded)
+         No toast shown
+
+====================================================================
+PHASE 11 — DASHBOARD VERIFICATION
+====================================================================
+Navigate to: Dashboard
+
+──────────────────────────────────────────────────────────────────
+TEST 51 : Verify Stats Cards
+──────────────────────────────────────────────────────────────────
+EXPECT four stat cards:
+
+  Active Services : 3
+    (Corporate Voice Gateway, Enterprise Video Conferencing,
+     Unified Messaging Platform — all ACTIVE)
+    (Emergency Voice Backup is DECOMMISSIONED — not counted)
+    (SMS Broadcast Service is DRAFT — not counted)
+
+  Open Incidents  : 3
+    (Elevated Call Drop Rate / Video Quality Degradation /
+     Unread Badge Count)
+    (SMS Gateway Delay = RESOLVED, not OPEN)
+
+  SLA Breaches    : 0 (or actual count if any breaches recorded)
+
+  Total Users     : 6
+
+──────────────────────────────────────────────────────────────────
+TEST 52 : Verify Incidents by Severity Chart
+──────────────────────────────────────────────────────────────────
+EXPECT bar chart with bars for each severity:
+  Critical : 2  (Voice Outage CLOSED + Video Failure CLOSED)
+  High     : 2  (Call Drop Rate OPEN + SMS Delay RESOLVED)
+  Medium   : 1  (Video Quality Degradation OPEN)
+  Low      : 1  (Badge Count OPEN)
+
+──────────────────────────────────────────────────────────────────
+TEST 53 : Verify Service Distribution Chart
+──────────────────────────────────────────────────────────────────
+EXPECT pie/donut chart showing service type breakdown:
+  VOICE     : 2 services
+  VIDEO     : 1 service
+  MESSAGING : 2 services
+  (All 5 services, or ACTIVE-only depending on implementation)
+
+──────────────────────────────────────────────────────────────────
+TEST 54 : Recent Incidents on Dashboard
+──────────────────────────────────────────────────────────────────
+EXPECT recent incidents table (latest 5):
+  Unread Badge Count Error      — Low    — OPEN
+  SMS Gateway Delay             — High   — RESOLVED
+  Video Quality Degradation     — Medium — OPEN
+  Video Conference Failure      — Critical — CLOSED
+  SMS Gateway Delay / or other
+
+Click on any incident title → EXPECT navigation to that incident detail page
+Go back to Dashboard
+Click "View all →" → EXPECT navigation to /incidents page
+
+──────────────────────────────────────────────────────────────────
+TEST 55 : Services Overview on Dashboard
+──────────────────────────────────────────────────────────────────
+EXPECT services panel (latest 5):
+  Corporate Voice Gateway       — VOICE    — ACTIVE
+  Enterprise Video Conferencing — VIDEO    — ACTIVE
+  Unified Messaging Platform    — MESSAGING — ACTIVE
+  Emergency Voice Backup        — VOICE    — DECOMMISSIONED
+  SMS Broadcast Service         — MESSAGING — DRAFT
+
+Click a service name → EXPECT navigation to that service detail page
+Go back → Click "Manage →" → EXPECT navigation to /services
+
+====================================================================
+PHASE 12 — MULTI-ROLE TESTING
+====================================================================
+
+──────────────────────────────────────────────────────────────────
+TEST 56 : Login as Sarah Smith — SERVICE_MANAGER
+──────────────────────────────────────────────────────────────────
+Logout → Login:
+  Email    : sarah@comnet360.com
+  Password : [Sarah's password]
+
+EXPECT dashboard loads for SERVICE_MANAGER
+
+Sidebar check:
+  ✓ Dashboard
+  ✓ Services
+  ✓ Usage & SLA
+  ✓ Incidents
+  ✓ Analytics
+  ✓ Notifications
+  ✗ Admin section NOT visible (no Users, no Audit Logs)
+
+Services page:
+  EXPECT : "New Service" button IS visible (SM can create services)
+           Can see all 5 services
+           Detail page: "Add Config" and config delete are available
+
+Usage & SLA page:
+  EXPECT : "New SLA" button visible (SM can create SLAs)
+           Edit SLA pencil icon visible
+           All 9 SLAs visible
+
+Incidents page:
+  EXPECT : "New Incident" button visible
+           Can create incidents
+           "Assign" button visible on incident details
+
+Analytics page:
+  EXPECT : Can see reports table
+           "Generate Report" button visible
+           Delete trash icon NOT visible (admin-only)
+           "Capture Snapshot" may or may not be visible
+
+──────────────────────────────────────────────────────────────────
+TEST 57 : Login as John Doe — NETWORK_ENGINEER
+──────────────────────────────────────────────────────────────────
+Logout → Login:
+  Email    : john@comnet360.com
+  Password : [John's password]
+
+Dashboard loads for NETWORK_ENGINEER
+
+Sidebar check:
+  ✓ Dashboard
+  ✓ Services   (view only)
+  ✓ Incidents  (can work incidents)
+  ✓ Notifications
+  ✗ Usage & SLA might be view-only or hidden
+  ✗ Analytics may be hidden
+  ✗ Admin section NOT visible
+
+Services page:
+  EXPECT : "New Service" button NOT visible
+           Can view service details
+           "Activate" / "Add Config" NOT available (view only)
+
+Incidents page:
+  EXPECT : "New Incident" button visible (can create incidents)
+           Can open incident details
+           "Assign" button NOT visible (network engineer cannot assign)
+           "Resolve" and "Close" buttons visible on assigned incidents
+
+Click "View →" on any OPEN incident (e.g., "Elevated Call Drop Rate")
+  EXPECT : Can add comments
+           Can update action statuses if actions exist
+           Cannot assign the incident
+           Can resolve (if assigned to them or based on role rules)
+
+──────────────────────────────────────────────────────────────────
+TEST 58 : Login as Mike Johnson — OPERATIONS_HEAD
+──────────────────────────────────────────────────────────────────
+Logout → Login:
+  Email    : mike@comnet360.com
+  Password : [Mike's password]
+
+Sidebar check:
+  ✓ Dashboard, Services, Incidents, Usage & SLA, Analytics, Notifications
+  ✗ Admin section NOT visible
+
+Services page:
+  EXPECT : "New Service" button visible (OPERATIONS_HEAD can manage services)
+
+Incidents:
+  EXPECT : Can create, assign, and resolve incidents
+           Full incident lifecycle access
+
+Analytics:
+  EXPECT : Can generate reports
+           Cannot delete reports (admin only)
+
+──────────────────────────────────────────────────────────────────
+TEST 59 : Login as Lisa Brown — COMPLIANCE_OFFICER
+──────────────────────────────────────────────────────────────────
+Logout → Login:
+  Email    : lisa@comnet360.com
+  Password : [Lisa's password]
+
+Sidebar check:
+  ✓ Dashboard
+  ✓ Analytics  (compliance focus)
+  ✓ Usage & SLA (view/read SLA compliance data)
+  ✓ Notifications
+  ✗ Services   (may be view-only or hidden)
+  ✗ Incidents  (may be view-only or hidden)
+  ✗ Admin section NOT visible
+
+Analytics page:
+  EXPECT : Can view all reports
+           "Generate Report" may or may not be visible (role-dependent)
+           Delete icon NOT visible
+
+Usage & SLA page:
+  EXPECT : Can view all SLAs and breaches (compliance review)
+           "New SLA" button may not be visible
+
+──────────────────────────────────────────────────────────────────
+TEST 60 : Login as Alice Green — ENTERPRISE_USER
+──────────────────────────────────────────────────────────────────
+Logout → Login:
+  Email    : alice@comnet360.com
+  Password : [Alice's password]
+
+Sidebar check (most restricted role):
+  ✓ Dashboard
+  ✓ Notifications
+  ✗ Admin section NOT visible
+  Limited or no access to Services, Incidents, SLA creation
+
+Dashboard:
+  EXPECT : Stats cards visible (read-only view)
+           Charts visible
+
+Attempt to access /admin/users directly in URL:
+  EXPECT : Redirected or shown "Access Denied" / 403 error
+           Cannot see user management even by direct URL
+
+Logout → Login back as admin@comnet360.com / Admin@123
+
+====================================================================
+PHASE 13 — CLOSE ALL INCIDENTS + FINAL CLEANUP
+====================================================================
+
+──────────────────────────────────────────────────────────────────
+TEST 61 : Close the RESOLVED SMS Gateway Incident
+──────────────────────────────────────────────────────────────────
+Navigate to Incidents
+Click "View →" on "SMS Gateway Delay — Bulk Notification Queue"
+EXPECT : Status shows RESOLVED
+
+Click "Close"
+EXPECT : Toast → "Incident closed"
+         Status: RESOLVED → CLOSED
+
+──────────────────────────────────────────────────────────────────
+TEST 62 : Resolve and Close "Elevated Call Drop Rate"
+──────────────────────────────────────────────────────────────────
+Click "View →" on "Elevated Call Drop Rate — Region 2"
+
+Click "Assign" → Select John Doe → Click "Assign"
+
+Click "Add Action"
+  Description : Reroute Region 2 traffic through backup switching
+                node. Verify call success rates return to baseline.
+  Owner       : John Doe
+Click "Create"
+
+Type comment:
+  "Network team identified routing loop in Region 2 edge router.
+   Traffic rerouted. Call drop rate normalized to 0.4%.
+   Monitoring for 1 hour."
+Click "Post"
+
+Mark action: PENDING → COMPLETED
+
+Click "Resolve" → EXPECT : Status → RESOLVED
+Click "Close"   → EXPECT : Status → CLOSED
+
+──────────────────────────────────────────────────────────────────
+TEST 63 : Resolve and Close "Video Quality Degradation"
+──────────────────────────────────────────────────────────────────
+Click "View →" on "Video Quality Degradation — International Calls"
+
+Click "Assign" → Select Mike Johnson → Click "Assign"
+
+Click "Add Action"
+  Description : Escalate to ISP for bandwidth guarantee enforcement.
+                Request traffic prioritization for video conference ports.
+  Owner       : Mike Johnson
+Click "Create"
+
+Type comment:
+  "ISP confirmed bandwidth throttling during peak hours. Emergency
+   SLA ticket raised with provider. Interim fix: moved video traffic
+   to dedicated MPLS circuit. Quality restored to expected levels."
+Click "Post"
+
+Mark action: PENDING → COMPLETED
+
+Click "Resolve" → EXPECT : Status → RESOLVED
+Click "Close"   → EXPECT : Status → CLOSED
+
+──────────────────────────────────────────────────────────────────
+TEST 64 : Resolve and Close "Unread Badge Count Incorrect"
+──────────────────────────────────────────────────────────────────
+Click "View →" on "Unread Badge Count Incorrect After Message Clear"
+
+Click "Assign" → Select Sarah Smith → Click "Assign"
+
+Click "Add Action"
+  Description : Identify and fix frontend cache invalidation bug
+                in badge count calculation after message clear events.
+  Owner       : Sarah Smith
+Click "Create"
+
+Type comment:
+  "Frontend bug confirmed: badge count cached aggressively without
+   invalidation on 'mark all read' action. Fix deployed in v2.1.1.
+   Cleared browser cache for affected users. Issue resolved."
+Click "Post"
+
+Mark action: PENDING → COMPLETED
+
+Click "Resolve" → Status → RESOLVED
+Click "Close"   → Status → CLOSED
+
+──────────────────────────────────────────────────────────────────
+TEST 65 : Verify All Incidents Closed
+──────────────────────────────────────────────────────────────────
+Go back to Incidents list
+EXPECT :
+  Counter: "0 open · 6 total"
+  All 6 rows show CLOSED badge (grey)
+
+Filter Status = "OPEN" → EXPECT : Empty list / "No incidents found"
+Filter Status = "CLOSED" → EXPECT : All 6 incidents shown
+Clear filters
+
+──────────────────────────────────────────────────────────────────
+TEST 66 : Final Report Generation (Full Year)
+──────────────────────────────────────────────────────────────────
+Navigate to Analytics
+
+Generate 4 final annual reports:
+
+Report 1:
+  Title       : 2026 Annual Operations Report
+  Scope       : ALL
+  Report Type : OPERATIONS
+  From        : 2026-01-01
+  To          : 2026-12-31
+Click "Generate"
+
+Report 2:
+  Title       : 2026 Annual SLA Compliance — All Services
+  Scope       : ALL
+  Report Type : SLA_COMPLIANCE
+  From        : 2026-01-01
+  To          : 2026-12-31
+Click "Generate"
+
+Report 3:
+  Title       : 2026 Annual Incident Summary
+  Scope       : ALL
+  Report Type : INCIDENT_SUMMARY
+  From        : 2026-01-01
+  To          : 2026-12-31
+Click "Generate"
+
+Report 4:
+  Title       : 2026 Annual Usage Analytics — All Services
+  Scope       : ALL
+  Report Type : USAGE_ANALYTICS
+  From        : 2026-01-01
+  To          : 2026-12-31
+Click "Generate"
+
+EXPECT : 7 total reports in the table (3 from Phase 7 + 4 new)
+
+──────────────────────────────────────────────────────────────────
+TEST 67 : Final Dashboard Verification
+──────────────────────────────────────────────────────────────────
+Navigate to Dashboard
+
+EXPECT stat cards:
+  Active Services : 3   (Voice, Video, Messaging — ACTIVE)
+  Open Incidents  : 0   (all CLOSED)
+  SLA Breaches    : 0   (or actual unresolved count)
+  Total Users     : 6
+
+Services panel:
+  Corporate Voice Gateway       — VOICE    — ACTIVE
+  Enterprise Video Conferencing — VIDEO    — ACTIVE
+  Unified Messaging Platform    — MESSAGING — ACTIVE
+  Emergency Voice Backup        — VOICE    — DECOMMISSIONED
+  SMS Broadcast Service         — MESSAGING — DRAFT
+
+Recent Incidents:
+  All rows should show CLOSED badge
+
+──────────────────────────────────────────────────────────────────
+TEST 68 : Sign Out
+──────────────────────────────────────────────────────────────────
+Navigate to Profile → Click "Sign out"
+  OR click "Sign out" / logout button in sidebar
+
+EXPECT : Redirected to /login page
+
+Attempt to navigate directly to /dashboard
+EXPECT : Redirected back to /login (protected route)
+
+Attempt to navigate to /admin/users
+EXPECT : Redirected back to /login
+
+====================================================================
+COMPLETE DATA SUMMARY — END STATE AFTER ALL TESTS
+====================================================================
+
+USERS (6 — your existing users, unchanged roles):
+  admin@comnet360.com  — ADMIN             — ACTIVE
+  sarah@comnet360.com  — SERVICE_MANAGER   — ACTIVE
+  john@comnet360.com   — NETWORK_ENGINEER  — ACTIVE
+  mike@comnet360.com   — OPERATIONS_HEAD   — ACTIVE
+  alice@comnet360.com  — ENTERPRISE_USER   — ACTIVE
+  lisa@comnet360.com   — COMPLIANCE_OFFICER — ACTIVE
+
+SERVICES (5 total):
+  Corporate Voice Gateway       — VOICE    — ACTIVE
+    Configs: max_concurrent_calls=500, codec_priority=G711,G729,G722
+  Enterprise Video Conferencing — VIDEO    — ACTIVE
+    Configs: max_participants=500, resolution=1080p,
+             recording_retention_days=30
+  Unified Messaging Platform    — MESSAGING — ACTIVE
+    Configs: max_message_size_kb=512, retention_days=90,
+             max_connections=10000
+  Emergency Voice Backup        — VOICE    — DECOMMISSIONED
+    Configs: failover_threshold_percent=95
+  SMS Broadcast Service         — MESSAGING — DRAFT
+    Configs: none
+
+SLA DEFINITIONS (9 total — all ACTIVE):
+  Corporate Voice Gateway:
+    LATENCY_MS        < 120 ms     (edited from 150 → 120)
+    JITTER_MS         < 30 ms
+    UPTIME_PERCENT    > 99.5 %
+  Enterprise Video Conferencing:
+    BANDWIDTH_MBPS    > 10 Mbps
+    PACKET_LOSS_PERCENT < 1 %
+    UPTIME_PERCENT    > 99 %
+  Unified Messaging Platform:
+    DELIVERY_RATE_PERCENT > 99.9 %
+    THROUGHPUT_MSG_PER_SEC > 1000 msg/s
+    END_TO_END_LATENCY_MS < 500 ms
+
+INCIDENTS (6 total — all CLOSED):
+  Voice Gateway Outage           — CRITICAL — CLOSED — Assigned: John Doe
+  Elevated Call Drop Rate        — HIGH     — CLOSED — Assigned: John Doe
+  Video Conference System Failure — CRITICAL — CLOSED — Assigned: Mike Johnson
+  Video Quality Degradation      — MEDIUM   — CLOSED — Assigned: Mike Johnson
+  SMS Gateway Delay              — HIGH     — CLOSED — Assigned: John Doe
+  Unread Badge Count Incorrect   — LOW      — CLOSED — Assigned: Sarah Smith
+
+REPORTS (7 total):
+  Monthly Operations Overview — May 2026     — OPERATIONS
+  Q2 2026 SLA Compliance — Voice Services    — SLA_COMPLIANCE
+  May 2026 Incident Summary Report           — INCIDENT_SUMMARY
+  [May 2026 Usage Analytics — DELETED]
+  2026 Annual Operations Report              — OPERATIONS
+  2026 Annual SLA Compliance — All Services  — SLA_COMPLIANCE
+  2026 Annual Incident Summary               — INCIDENT_SUMMARY
+  2026 Annual Usage Analytics — All Services — USAGE_ANALYTICS
+
+NOTIFICATIONS:
+  Alice Green: 2 role-change notifications (ENTERPRISE→SERVICE_MANAGER
+               then SERVICE_MANAGER→ENTERPRISE_USER)
+
+====================================================================
+PASS / FAIL CRITERIA
+====================================================================
+
+✅ PASS — All stat cards show correct numbers
+✅ PASS — Every action produces a toast (success or error)
+✅ PASS — No "undefined" or "null" in any table cell
+✅ PASS — Role badges display correct colors:
+           ADMIN=red, SERVICE_MANAGER=purple, OPERATIONS_HEAD=blue,
+           COMPLIANCE_OFFICER=cyan, NETWORK_ENGINEER=orange,
+           ENTERPRISE_USER=grey
+✅ PASS — ACTIVE=green dot, INACTIVE=red dot on status badges
+✅ PASS — Create User button disabled until name≥2, valid email, pw≥8
+✅ PASS — Password show/hide toggle (eye icon) works
+✅ PASS — Role change sends notification to affected user
+✅ PASS — Notifications show correct from/to role text
+✅ PASS — Profile edit updates top-bar name immediately (no page reload)
+✅ PASS — SLA edit pre-fills current values in modal
+✅ PASS — Metric/Service locked in SLA edit modal
+✅ PASS — Incident detail: assign → action → comment → resolve → close
+✅ PASS — Dashboard stats update after all incidents are closed
+✅ PASS — "You" badge appears on admin's own row (user management)
+✅ PASS — No actions column for admin's own row (cannot self-delete)
+✅ PASS — Admin cannot delete own account (no trash icon)
+✅ PASS — Non-admin users cannot see Admin section in sidebar
+✅ PASS — ENTERPRISE_USER cannot access /admin/users by direct URL
+✅ PASS — Report delete icon only visible to ADMIN
+✅ PASS — Logout redirects to /login
+✅ PASS — Protected routes redirect unauthenticated user to /login
+
+❌ FAIL — Any 400 / 403 / 404 / 500 in browser console during operations
+❌ FAIL — Any table shows "undefined" values
+❌ FAIL — Modal stays open after successful submit
+❌ FAIL — Dashboard stats unchanged after data changes
+❌ FAIL — Charts blank/empty when data clearly exists
+❌ FAIL — Create User button stays disabled with valid form input
+❌ FAIL — Sidebar shows admin items to non-admin user
+❌ FAIL — Profile save does not update top-bar name
+
+====================================================================
+BROWSER CONSOLE CHECKS (F12 → Console + Network tabs)
+====================================================================
+
+During all tests, watch for:
+
+Console tab — EXPECT ZERO of:
+  ❌ "Cannot read properties of undefined"
+  ❌ React key warnings
+  ❌ CORS errors (blocked by CORS policy)
+     → Fix: restart api-gateway after updating application.yml
+  ❌ "AxiosError" 400/401/403/404/500
+
+Network tab — Expected HTTP status codes:
+  POST   /api/auth/login           → 200 OK
+  POST   /api/users                → 201 Created    (create user)
+  GET    /api/users                → 200 OK          (list users)
+  PATCH  /api/users/{id}/role      → 200 OK          (role change)
+  PATCH  /api/users/{id}/status    → 200 OK          (activate/deactivate)
+  DELETE /api/users/{id}           → 200 OK          (delete user)
+  PATCH  /api/users/{id}/profile   → 200 OK          (profile update)
+  POST   /api/services             → 201 Created     (create service)
+  PUT    /api/services/{id}/activate → 200 OK        (activate service)
+  POST   /api/configurations       → 201 Created     (add config)
+  DELETE /api/configurations/{id}  → 200 or 204      (delete config)
+  POST   /api/sla                  → 201 Created     (create SLA)
+  PATCH  /api/sla/{id}             → 200 OK          (edit SLA)
+  PATCH  /api/sla/{id}/status      → 200 OK          (enable/disable SLA)
+  POST   /api/incidents            → 201 Created     (create incident)
+  PATCH  /api/incidents/{id}/assign → 200 OK         (assign incident)
+  POST   /api/actions              → 201 Created     (add action)
+  POST   /api/incidents/{id}/comments → 200 OK       (add comment)
+  PATCH  /api/incidents/{id}/resolve → 200 OK        (resolve)
+  PATCH  /api/incidents/{id}/close   → 200 OK        (close)
+  POST   /api/reports              → 201 Created     (generate report)
+  DELETE /api/reports/{id}         → 200 or 204      (delete report)
+  GET    /api/audit-logs           → 200 OK          (admin only)
+  GET    /api/notifications        → 200 OK          (per user)
+  PATCH  /api/notifications/{id}/read → 200 OK       (mark read)
+
+====================================================================
+END OF COMNET360 FRONTEND END-TO-END TESTING GUIDE
+  Users: 6 real users · Services: 5 · SLAs: 9 · Incidents: 6
+  Reports: 7 · Tests: 68
+====================================================================

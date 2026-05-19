@@ -1,0 +1,29 @@
+server:
+  port: 8761   # Standard Eureka port ? do not change this
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # Eureka server does not register itself with itself
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  server:
+    # Disable self-preservation mode for local development
+    # In production set this to true
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000
+
+# Reduce noisy logs from Eureka internals
+logging:
+  level:
+    com.netflix.eureka: WARN
+    com.netflix.discovery: WARN
+    org.springframework.cloud.netflix.eureka: INFO
+    com.comnet360.eurekaserver: DEBUG
