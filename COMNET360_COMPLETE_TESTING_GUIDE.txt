@@ -1,0 +1,2104 @@
+================================================================================
+  COMNET360 — COMPLETE END-TO-END TESTING GUIDE
+  Enterprise Communication & Service Management Platform
+  Updated: 2026-05-27
+================================================================================
+
+  WHAT THIS GUIDE COVERS
+  ──────────────────────
+  Phase 0  — Landing Page & UI Design Verification         (Steps 1–5)
+  Phase 1  — Admin: Initial Login & Create 6 Users         (Steps 6–15)
+  Phase 2  — Admin: Create & Activate 5 Services           (Steps 16–28)
+  Phase 3  — Admin: Add Configurations to Active Services  (Steps 29–34)
+  Phase 4  — Admin: Create SLA Definitions                 (Steps 35–43)
+  Phase 5  — Enterprise User Y Devi Saranaya: Log Usage    (Steps 49–57)
+  Phase 6  — Enterprise User Sania Agarwal: Log Usage      (Steps 58–64)
+  Phase 7  — Admin: Create & Assign Incidents              (Steps 65–74)
+  Phase 8  — Service Manager Piyush Ranjan: Incident Mgmt & SLA (Steps 75–83)
+  Phase 9  — Operations Head Rahul Patnal: Notifications & Analytics (Steps 84–88)
+  Phase 10 — Network Engineer Prateek Bora: Notifications & Resolve(Steps 90–97)
+  Phase 11 — Compliance Officer Nadupuru Aditi: Audit & Analytics (Steps 100–107)
+  Phase 12 — Admin: Final Checks & Close Incidents              (Steps 108–117)
+  Phase 13 — Role-Based Access Control (RBAC) Verification
+  Phase 14 — Notification Content Verification
+
+  USER ACCOUNTS
+  ─────────────
+  Role                Email                                   Password    Full Name
+  ──────────────────────────────────────────────────────────────────────────────────
+  ADMIN               snehithapriscillaganta7890@gmail.com    Comnet@360  Snehitha
+  SERVICE_MANAGER     itspsr2407@gmail.com                   Comnet@360  Piyush Ranjan
+  OPERATIONS_HEAD     patnalarahul2004@gmail.com             Comnet@360  Rahul Patnal
+  NETWORK_ENGINEER    prateekbora71@gmail.com                Comnet@360  Prateek Bora
+  COMPLIANCE_OFFICER  nadupuruaditi@gmail.com                Comnet@360  Nadupuru Aditi
+  ENTERPRISE_USER     ydevisaranya@gmail.com                 Comnet@360  Y Devi Saranaya
+  ENTERPRISE_USER     agarwalsania2004@gmail.com             Comnet@360  Sania Agarwal
+
+  SERVICES (created from scratch — none pre-exist)
+  ─────────────────────────────────────────────────
+  Corporate Voice Gateway         VOICE      → ACTIVE
+  Enterprise Video Conferencing   VIDEO      → ACTIVE
+  Unified Messaging Platform      MESSAGING  → ACTIVE
+  SMS Broadcast Service           MESSAGING  → ACTIVE
+  Emergency Voice Backup          VOICE      → DECOMMISSIONED
+
+  BEFORE YOU START
+  ────────────────
+  Start ALL backend services. Verify all show UP in Eureka:
+    http://localhost:8761
+  Services: api-gateway (8001), iam-service (8081), service-mgmt (8082),
+            incident-service (8083), sla-service (8084), analytics-service (8085),
+            notification-service (8086), audit-service (8087), usage-service (8088)
+  Frontend: npm run dev → http://localhost:5173
+  Database: MySQL running — all service schemas initialised.
+
+================================================================================
+  PHASE 0 — LANDING PAGE & UI DESIGN VERIFICATION
+  No login required — this tests the public-facing pages
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 1 — VISIT THE LANDING PAGE
+  Open browser → http://localhost:5173
+  EXPECTED: Dark navy hero section loads (background #060C18 near-black).
+
+  VERIFY BRANDING:
+  ✓ Logo / heading reads exactly: "ComNet360"
+    (the "360" portion renders in sky-blue / cyan colour, not white)
+  ✓ Tagline reads: "Enterprise Communication & Service Management Platform"
+  ✓ Hero sub-text references enterprise communication services
+
+  VERIFY HERO SECTION ELEMENTS:
+  ✓ Two CTA buttons visible: "Get Started" (sky/cyan gradient) and "Sign In"
+  ✓ Live-stats ticker in the hero (Active Services, Uptime %, Incidents resolved)
+    — numbers change automatically every ~2.5 seconds (real-time simulation)
+  ✓ At least one floating card (notification or health bar) with CSS animation
+    — card gently floats up and down in a loop
+
+  VERIFY ANIMATED LIVE FEED:
+  ✓ A "Live Activity" or operational-events feed panel is visible
+  ✓ New feed items appear automatically every ~3 seconds
+  ✓ Feed items include service names, event types, and coloured severity badges
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 2 — VERIFY LANDING PAGE SECTIONS (SCROLL)
+  Scroll down the landing page.
+  EXPECTED: Each section reveals smoothly (fade-in / slide-up animation as it
+            enters the viewport — IntersectionObserver scroll-reveal).
+
+  CHECK THE FOLLOWING SECTIONS EXIST:
+  ✓ Features / Capabilities section (cards describing key platform features)
+  ✓ Statistics or "Why ComNet360" section
+  ✓ Footer with brand name and tagline
+
+  CHECK COLOUR PALETTE THROUGHOUT:
+  ✓ Dominant background: dark navy (#060C18 / #080F1E range)
+  ✓ Accent colours: sky-blue (#0EA5E9) and cyan (#06B6D4) on highlights,
+    icons, buttons, and badges
+  ✓ NO blue (old brand blue) — all primary accents are sky/cyan only
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 3 — TEST LANDING PAGE CTA NAVIGATION
+  Click "Get Started" button.
+  EXPECTED: Navigates to /register page.
+  Click browser back arrow.
+
+  Click "Sign In" button.
+  EXPECTED: Navigates to /login page.
+  Click browser back arrow.
+
+  VERIFY: Logged-out users can access / (landing), /login, and /register.
+  VERIFY: Navigating to /dashboard while logged out redirects to /login.
+    → Try: http://localhost:5173/dashboard in address bar
+    EXPECTED: Redirected to /login page.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 4 — VERIFY LOGIN PAGE DESIGN
+  Navigate: http://localhost:5173/login
+
+  VERIFY ICON / LOGO:
+  ✓ Shield icon at the top of the card uses sky→cyan gradient background
+    (linear-gradient(135deg, #0EA5E9, #06B6D4))
+  ✓ A subtle glow / box-shadow is visible around the icon (sky-blue glow)
+  ✓ Heading reads: "ComNet360"  (the "360" in sky-blue / cyan colour)
+  ✓ Tagline reads: "Enterprise Communication & Service Management Platform"
+  ✓ "← Back to homepage" link at the bottom navigates back to /
+
+  VERIFY INPUT FIELDS:
+  ✓ Email and Password fields have sky-blue focus ring on click
+    (border turns sky-400, subtle ring appears)
+  ✓ Labels are small, bold, uppercase, wide-tracked ("EMAIL ADDRESS")
+  ✓ Fields have rounded-xl corners
+  ✓ "Sign in" button has sky→cyan gradient (not plain blue)
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 5 — VERIFY REGISTER PAGE DESIGN
+  Navigate: http://localhost:5173/register
+
+  VERIFY (same design as login page):
+  ✓ Shield icon: sky→cyan gradient with glow
+  ✓ Heading: "ComNet360" with sky-coloured "360"
+  ✓ Tagline: "Enterprise Communication & Service Management Platform"
+  ✓ Four input fields: Full name, Email, Password, Confirm password
+  ✓ All inputs use sky focus ring and rounded-xl style
+  ✓ "Create account" button: sky→cyan gradient
+  ✓ "← Back to homepage" link present
+
+================================================================================
+  PHASE 1 — ADMIN: INITIAL LOGIN & CREATE ALL 6 USERS
+  Login: snehithapriscillaganta7890@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 6 — LOGIN AS ADMIN & VERIFY AUTHENTICATED APP DESIGN
+  Navigate: http://localhost:5173/login
+  Email    : snehithapriscillaganta7890@gmail.com
+  Password : Comnet@360
+  → Click "Sign In"
+  EXPECTED: Redirected to /dashboard.
+
+  VERIFY SIDEBAR DESIGN:
+  ✓ Background: very dark navy (near-black, #060C18 gradient)
+  ✓ Logo area at top: Shield icon (sky/cyan gradient), "ComNet360" text
+    with "360" in sky-blue colour, subtitle "Service Management"
+  ✓ "NAVIGATION" section label in small muted uppercase
+  ✓ Active nav item ("Dashboard") has:
+    — Left blue/sky border accent (2px solid #0EA5E9)
+    — Faint sky gradient pill background
+    — Icon colour: sky-400 (light blue)
+  ✓ Inactive nav items: muted slate colour, hover lightens them
+  ✓ User footer at the bottom of sidebar: shows admin name + role,
+    pulsing green dot (online indicator)
+
+  VERIFY TOPBAR (header bar):
+  ✓ Shows current page title ("Dashboard")
+  ✓ Live indicator: pulsing green dot + "Live" text in emerald/green colour
+    (this means the real-time polling is active)
+  ✓ "Updated HH:MM:SS" timestamp visible (shows last data refresh time)
+  ✓ Bell icon (notifications) and user icon present on the right
+  ✓ Logout / Sign-out button or icon present
+
+  VERIFY BUTTON STYLE:
+  ✓ Primary action buttons use sky→cyan gradient (not plain blue)
+  ✓ Buttons have rounded-xl (not square corners)
+  ✓ Danger buttons (if any) use rose/red gradient
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 7 — VERIFY INITIAL DASHBOARD STATE
+  EXPECTED DASHBOARD CARDS:
+    Active Services  : 0
+    Open Incidents   : 0
+    SLA Breaches     : 0
+    Total Users      : 1   (only Snehitha auto-created by AdminSeeder)
+
+  VERIFY: Dashboard cards have rounded-2xl corners.
+  VERIFY: Service Distribution chart shows empty state (no services yet).
+  VERIFY: Recent Incidents table shows placeholder / empty state.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 8 — NAVIGATE TO USERS PAGE
+  Navigate: Sidebar → "Users"
+  EXPECTED: Users table shows 1 row — Snehitha (snehithapriscillaganta7890@gmail.com),
+            role ADMIN, status Active.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 9 — CREATE USER 1: SERVICE MANAGER (PIYUSH RANJAN)
+  → Click "New User"
+    Full Name : Piyush Ranjan
+    Email     : itspsr2407@gmail.com
+    Password  : Comnet@360
+    Role      : SERVICE_MANAGER
+  → Click "Create User"
+  EXPECTED: Toast "User created". Row appears in table.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 10 — CREATE USER 2: OPERATIONS HEAD (RAHUL PATNAL)
+  → Click "New User"
+    Full Name : Rahul Patnal
+    Email     : patnalarahul2004@gmail.com
+    Password  : Comnet@360
+    Role      : OPERATIONS_HEAD
+  → Click "Create User"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 11 — CREATE USER 3: NETWORK ENGINEER (PRATEEK BORA)
+  → Click "New User"
+    Full Name : Prateek Bora
+    Email     : prateekbora71@gmail.com
+    Password  : Comnet@360
+    Role      : NETWORK_ENGINEER
+  → Click "Create User"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 12 — CREATE USER 4: COMPLIANCE OFFICER (NADUPURU ADITI)
+  → Click "New User"
+    Full Name : Nadupuru Aditi
+    Email     : nadupuruaditi@gmail.com
+    Password  : Comnet@360
+    Role      : COMPLIANCE_OFFICER
+  → Click "Create User"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 13 — CREATE USER 5: ENTERPRISE USER (Y DEVI SARANAYA)
+  → Click "New User"
+    Full Name : Y Devi Saranaya
+    Email     : ydevisaranya@gmail.com
+    Password  : Comnet@360
+    Role      : ENTERPRISE_USER
+  → Click "Create User"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 14 — CREATE USER 6: ENTERPRISE USER (SANIA AGARWAL)
+  → Click "New User"
+    Full Name : Sania Agarwal
+    Email     : agarwalsania2004@gmail.com
+    Password  : Comnet@360
+    Role      : ENTERPRISE_USER
+  → Click "Create User"
+
+  VERIFY: Users table now shows 7 rows:
+    Snehitha         snehithapriscillaganta7890@gmail.com  ADMIN              Active
+    Piyush Ranjan    itspsr2407@gmail.com                  SERVICE_MANAGER    Active
+    Rahul Patnal     patnalarahul2004@gmail.com            OPERATIONS_HEAD    Active
+    Prateek Bora     prateekbora71@gmail.com               NETWORK_ENGINEER   Active
+    Nadupuru Aditi   nadupuruaditi@gmail.com               COMPLIANCE_OFFICER Active
+    Y Devi Saranaya  ydevisaranya@gmail.com               ENTERPRISE_USER    Active
+    Sania Agarwal    agarwalsania2004@gmail.com            ENTERPRISE_USER    Active
+
+  VERIFY: Role badges use correct colours:
+    ADMIN              → red badge
+    SERVICE_MANAGER    → purple badge
+    OPERATIONS_HEAD    → sky badge
+    COMPLIANCE_OFFICER → yellow badge
+    NETWORK_ENGINEER   → green badge
+    ENTERPRISE_USER    → cyan badge
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 15 — VERIFY DASHBOARD TOTAL USERS
+  Navigate: Sidebar → "Dashboard"
+  EXPECTED: "Total Users" card = 7
+
+  VERIFY: Live indicator in TopBar is still green "Live" (real-time polling
+          continues in background while you work).
+
+================================================================================
+  PHASE 2 — ADMIN: CREATE & ACTIVATE 5 SERVICES
+  Still logged in as snehithapriscillaganta7890@gmail.com
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 16 — NAVIGATE TO SERVICES
+  Navigate: Sidebar → "Services"
+  EXPECTED: Services list is empty. "New Service" button visible.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 17 — CREATE SERVICE: CORPORATE VOICE GATEWAY
+  → Click "New Service"
+    Service Name : Corporate Voice Gateway
+    Type         : VOICE
+    Description  : The main phone system for the company. It handles all
+                   incoming and outgoing phone calls across all office
+                   locations and keeps voice communication running.
+    Owner        : (auto-filled)
+  → Click "Create Service"
+  EXPECTED: Service listed with DRAFT (grey) status badge.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 18 — CREATE SERVICE: ENTERPRISE VIDEO CONFERENCING
+  → Click "New Service"
+    Service Name : Enterprise Video Conferencing
+    Type         : VIDEO
+    Description  : The company's video calling and online meeting platform.
+                   Teams can meet over video, share their screens, and
+                   record sessions for later review.
+    Owner        : (auto-filled)
+  → Click "Create Service"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 19 — CREATE SERVICE: UNIFIED MESSAGING PLATFORM
+  → Click "New Service"
+    Service Name : Unified Messaging Platform
+    Type         : MESSAGING
+    Description  : A central platform that brings together all company
+                   messaging — emails, text messages, and instant messages
+                   — into one place so everything is managed together.
+    Owner        : (auto-filled)
+  → Click "Create Service"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 20 — CREATE SERVICE: EMERGENCY VOICE BACKUP
+  → Click "New Service"
+    Service Name : Emergency Voice Backup
+    Type         : VOICE
+    Description  : A backup phone system that automatically takes over if
+                   the main phone service goes down. Kept on standby at
+                   all times so calls are never fully lost.
+    Owner        : (auto-filled)
+  → Click "Create Service"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 21 — CREATE SERVICE: SMS BROADCAST SERVICE
+  → Click "New Service"
+    Service Name : SMS Broadcast Service
+    Type         : MESSAGING
+    Description  : A service for sending large numbers of text messages
+                   to customers or staff all at once. Used for alerts,
+                   announcements, and emergency notifications.
+    Owner        : (auto-filled)
+  → Click "Create Service"
+
+  VERIFY: Services list shows 5 services, all DRAFT (grey badge).
+  VERIFY: Dashboard → "Active Services" = 0.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 22 — ACTIVATE CORPORATE VOICE GATEWAY
+  Click "Corporate Voice Gateway" → Click "Details →"
+  EXPECTED: Status badge: DRAFT.
+  → Click "Activate"
+  EXPECTED: Status DRAFT → PENDING → ACTIVE (green badge).
+            If stuck at PENDING, click "Activate" again.
+  ← Back to Services list.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 23 — ACTIVATE ENTERPRISE VIDEO CONFERENCING
+  Click "Enterprise Video Conferencing" → "Details →"
+  → Click "Activate" (twice if needed)
+  EXPECTED: Status → ACTIVE.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 24 — ACTIVATE UNIFIED MESSAGING PLATFORM
+  Click "Unified Messaging Platform" → "Details →"
+  → Click "Activate" (twice if needed)
+  EXPECTED: Status → ACTIVE.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 25 — DECOMMISSION EMERGENCY VOICE BACKUP
+  Click "Emergency Voice Backup" → "Details →"
+  → Click "Activate" to move it out of DRAFT first.
+  EXPECTED: Status → PENDING or ACTIVE.
+  → Click "Decommission"
+  EXPECTED: Status → DECOMMISSIONED (grey badge).
+  NOTE: This service has no SLA and no incidents in the normal flow.
+        It demonstrates how a decommissioned service appears.
+  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 26 — ACTIVATE SMS BROADCAST SERVICE
+  Click "SMS Broadcast Service" → "Details →"
+  → Click "Activate" (twice if needed)
+  EXPECTED: Status → ACTIVE.  ← Back.
+
+  VERIFY: Services list now shows:
+    Corporate Voice Gateway         VOICE      Active         Snehitha
+    Enterprise Video Conferencing   VIDEO      Active         Snehitha
+    Unified Messaging Platform      MESSAGING  Active         Snehitha
+    Emergency Voice Backup          VOICE      Decommissioned Snehitha
+    SMS Broadcast Service           MESSAGING  Active         Snehitha
+
+  VERIFY: Dashboard → "Active Services" = 4.
+
+  VERIFY STATUS BADGE COLOURS:
+    Active         → green dot
+    Decommissioned → grey dot
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 27 — VERIFY SERVICE DISTRIBUTION ON DASHBOARD
+  Navigate: Sidebar → "Dashboard"
+  EXPECTED: Service Distribution pie/donut chart shows:
+    VOICE     : 2  (Corporate Voice Gateway + Emergency Voice Backup)
+    VIDEO     : 1  (Enterprise Video Conferencing)
+    MESSAGING : 2  (Unified Messaging Platform + SMS Broadcast)
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 28 — LOGOUT CHECKPOINT
+  NOTE: Do NOT logout yet — continue to Phase 3 as admin.
+  This step is a checkpoint. Confirm you are still logged in as admin.
+
+================================================================================
+  PHASE 3 — ADMIN: ADD CONFIGURATIONS TO ALL ACTIVE SERVICES
+  Still logged in as snehithapriscillaganta7890@gmail.com
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 29 — CONFIGURE: CORPORATE VOICE GATEWAY
+  Navigate: "Services" → Click "Corporate Voice Gateway" → "Details →"
+
+  Click "Add Configuration":
+    Parameter      : MAX_CONCURRENT_CALLS
+    Value          : 1000
+    Effective Date : 2026-05-13
+  → Save.  EXPECTED: Row appears.
+  (Max number of phone calls allowed at the same time)
+
+  Click "Add Configuration":
+    Parameter      : AUDIO_QUALITY
+    Value          : HIGH
+    Effective Date : 2026-05-13
+  → Save.
+  (Audio quality setting for all calls)
+
+  Click "Add Configuration":
+    Parameter      : PHONE_LINE_COUNT
+    Value          : 50
+    Effective Date : 2026-05-13
+  → Save.
+  (Number of phone lines available)
+
+  Click "Add Configuration":
+    Parameter      : KEYPAD_TONES
+    Value          : ENABLED
+    Effective Date : 2026-05-13
+  → Save.
+  (Enables dial-tone sounds when pressing keypad buttons during a call)
+
+  EXPECTED: 4 configurations listed.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 30 — CONFIGURE: ENTERPRISE VIDEO CONFERENCING
+  Click "Enterprise Video Conferencing" → "Details →"
+  Add 4 configurations:
+    MAX_PARTICIPANTS        : 500        (2026-05-13)
+    (Max number of people allowed in one video meeting)
+
+    VIDEO_QUALITY           : 1080p      (2026-05-13)
+    (Video picture quality for all meetings)
+
+    RECORDING_ENABLED       : true       (2026-05-13)
+    (Allow meetings to be recorded)
+
+    MAX_RECORDING_HOURS     : 8          (2026-05-13)
+    (Maximum hours a single meeting recording can last)
+
+  EXPECTED: 4 configurations listed.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 31 — CONFIGURE: UNIFIED MESSAGING PLATFORM
+  Click "Unified Messaging Platform" → "Details →"
+  Add 3 configurations:
+    MESSAGE_RETENTION_DAYS  : 365        (2026-05-13)
+    (How many days messages are kept before being removed)
+
+    MAX_ATTACHMENT_SIZE_MB  : 50         (2026-05-13)
+    (Largest file size allowed to be sent as an attachment)
+
+    SPAM_FILTER_ENABLED     : true       (2026-05-13)
+    (Automatically block unwanted or junk messages)
+
+  EXPECTED: 3 configurations listed.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 32 — CONFIGURE: SMS BROADCAST SERVICE
+  Click "SMS Broadcast Service" → "Details →"
+  Add 3 configurations:
+    MAX_SMS_PER_MINUTE      : 500        (2026-05-13)
+    (Maximum number of text messages that can be sent per minute)
+
+    RETRY_ATTEMPTS          : 3          (2026-05-13)
+    (How many times to retry sending a message if it fails)
+
+    DEFAULT_SENDER_ID       : COMNET360  (2026-05-13)
+    (The name shown as the sender when a text message is received)
+
+  EXPECTED: 3 configurations listed.  ← Back.
+
+  NOTE: Emergency Voice Backup is Decommissioned — no configurations added.
+
+  VERIFY: Each active service detail page shows its configurations:
+    Corporate Voice Gateway        → 4 configs
+    Enterprise Video Conferencing  → 4 configs
+    Unified Messaging Platform     → 3 configs
+    SMS Broadcast Service          → 3 configs
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 33 — GENERATE INITIAL ANALYTICS REPORT
+  Navigate: Sidebar → "Analytics"
+  → Click "Generate Report":
+    Title      : Platform Baseline — Services Created
+    Scope      : ALL
+    Report Type: OPERATIONS
+    From/To    : default dates
+  → Click "Generate"
+  EXPECTED: Toast "Report generated". Row appears in Generated Reports table.
+
+  → Click "Capture Snapshot"
+  EXPECTED: Toast "Snapshot captured". Entry appears in Snapshots section.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 34 — CHECK INITIAL AUDIT LOG
+  Navigate: Sidebar → "Audit Logs"
+  EXPECTED: Entries for:
+    USER_REGISTERED × 6  (one per created user)
+    USER_LOGIN            (admin login)
+    Service creates × 5, activations × 5
+    Configurations × 14+
+  VERIFY: Each row shows userId, action type, timestamp, IP address.
+
+================================================================================
+  PHASE 4 — ADMIN: CREATE ALL SLA DEFINITIONS
+  Still logged in as snehithapriscillaganta7890@gmail.com
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 35 — NAVIGATE TO SLA PAGE
+  Navigate: Sidebar → "Usage & SLA"
+  EXPECTED: SLA Definitions table is empty. Breach Events table is empty.
+            Usage Metrics chart shows: "Select a service to view usage".
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 36 — CREATE SLA 1: CALL_DURATION (WILL BREACH)
+  Click "New SLA"
+    Service     : Corporate Voice Gateway
+    Metric      : CALL_DURATION
+    Operator    : Greater Than
+    Threshold   : 600
+    Unit        : minutes
+    Description : The phone system must log at least 600 minutes of calls
+                  every day. If total call time falls below this, it means
+                  the service is not being used properly or something is broken.
+  → Click "Create SLA"
+  EXPECTED: SLA row appears. ACTIVE badge (green).
+  NOTE: Will breach instantly when Y Devi Saranaya logs 280 min (below 600 min minimum) in Phase 5.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 37 — CREATE SLA 2: VIDEO_MINUTES MINIMUM (WILL BREACH)
+  Click "New SLA"
+    Service     : Enterprise Video Conferencing
+    Metric      : VIDEO_MINUTES
+    Operator    : Greater Than
+    Threshold   : 300
+    Unit        : minutes
+    Description : The video conferencing service must be used for at least
+                  300 minutes every day. If usage drops below this, the
+                  service is not being used enough.
+  → Click "Create SLA"
+  NOTE: Will breach instantly when Y Devi Saranaya logs 150 min (below 300 min minimum) in Phase 5.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 38 — CREATE SLA 3: MESSAGE_COUNT MINIMUM (WILL NOT BREACH)
+  Click "New SLA"
+    Service     : Unified Messaging Platform
+    Metric      : MESSAGE_COUNT
+    Operator    : Greater Than
+    Threshold   : 500
+    Unit        : messages
+    Description : The messaging platform must handle at least 500 messages
+                  every day to confirm the service is working normally.
+  → Click "Create SLA"
+  NOTE: Will NOT breach — Y Devi Saranaya logs 2500 messages (exceeds 500 minimum).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 39 — CREATE SLA 4: SMS MESSAGE_COUNT MINIMUM (WILL BREACH)
+  Click "New SLA"
+    Service     : SMS Broadcast Service
+    Metric      : MESSAGE_COUNT
+    Operator    : Greater Than
+    Threshold   : 1000
+    Unit        : messages
+    Description : The SMS service must send at least 1000 messages every
+                  day. Falling below this means the service is not meeting
+                  the agreed level of activity.
+  → Click "Create SLA"
+  NOTE: Will breach instantly when Sania Agarwal logs 350 messages (below 1000 minimum) in Phase 6.
+
+  VERIFY: SLA Definitions table shows 5 rows, all ACTIVE (green badges).
+  VERIFY: Emergency Voice Backup has no SLAs — correctly skipped.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 40 — EDIT AN SLA (test patch feature)
+  In the SLA Definitions table, find:
+    CALL_DURATION | Corporate Voice Gateway | threshold: 600
+  → Click the pencil ✏ icon on that row.
+  EXPECTED: Edit SLA modal opens pre-filled. Note: "Metric and Service
+            cannot be changed. Only threshold, operator, unit, description."
+  Change:
+    Description : Call volume SLA set at 600 minutes after capacity review
+  → Click "Save Changes"
+  EXPECTED: Toast "SLA updated". Row reflects the change.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 41 — TEST SLA DISABLE / ENABLE
+  Find row: MESSAGE_COUNT | SMS Broadcast Service | threshold: 1000.
+  → Click "Disable"
+  EXPECTED: Badge ACTIVE (green) → INACTIVE (grey). Button → "Enable".
+  → Click "Enable"
+  EXPECTED: Badge → ACTIVE (green) again.
+  VERIFY: Toggle works without page refresh.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 42 — VERIFY DASHBOARD BEFORE USAGE LOGGING
+  Navigate: Sidebar → "Dashboard"
+  EXPECTED:
+    Active Services  : 4
+    Open Incidents   : 0
+    SLA Breaches     : 0  (no usage logged yet — no breaches)
+    Total Users      : 7
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 43 — LOGOUT
+  Profile footer / Logout → Confirm.
+  EXPECTED: Redirected to landing page (/).
+
+================================================================================
+  PHASE 5 — ENTERPRISE USER Y DEVI SARANAYA: LOG SERVICE USAGE
+  Login: ydevisaranya@gmail.com / Comnet@360
+  Y Devi Saranaya logs usage for: Corporate Voice Gateway, Enterprise Video
+  Conferencing, and Unified Messaging Platform.
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 49 — LOGIN AS Y DEVI SARANAYA & VERIFY UI ACCESS
+  Email    : ydevisaranya@gmail.com
+  Password : Comnet@360
+  → Click "Sign In"
+  EXPECTED: Dashboard loads.
+    Greeting: "Welcome back, Y Devi Saranaya 👋"
+    Active Services: 4 | Open Incidents: 0
+
+  SIDEBAR CHECK — these links must NOT appear:
+  ✗ Users       ✗ Audit Logs       ✗ Analytics
+
+  SIDEBAR CHECK — these links MUST appear:
+  ✓ Dashboard   ✓ Services   ✓ Usage & SLA
+  ✓ Incidents   ✓ Notifications   ✓ Profile
+
+  VERIFY PROFILE FOOTER (bottom of sidebar):
+  ✓ Shows "Y Devi Saranaya" name
+  ✓ Shows "ENTERPRISE USER" role text
+  ✓ Pulsing green online dot is visible
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 50 — Y DEVI SARANAYA REVIEWS SERVICES (READ-ONLY)
+  Navigate: Sidebar → "Services"
+  EXPECTED: All 5 services visible. "New Service" button NOT visible.
+
+  Click "Corporate Voice Gateway" → "Details →"
+  EXPECTED: Name, type, status, description, owner visible.
+            Configurations: 4 rows (read-only — no Add Configuration button).
+            NO lifecycle buttons (Activate / Deactivate / Decommission).
+  ← Back.
+
+  Click "Emergency Voice Backup" → "Details →"
+  EXPECTED: Status: DECOMMISSIONED (grey badge). Configurations empty.
+  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 51 — Y DEVI SARANAYA NAVIGATES TO USAGE & SLA PAGE
+  Navigate: Sidebar → "Usage & SLA"
+  EXPECTED:
+    Usage Metrics: dropdown to select service, "Log Usage" button visible.
+    SLA Definitions: 5 rows, all ACTIVE, no edit/create buttons.
+    SLA Breach Events: unresolved auto-breaches from Phase 4.
+    "New SLA" button NOT visible — Y Devi Saranaya cannot create SLAs.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 52 — Y DEVI SARANAYA LOGS USAGE: CORPORATE VOICE GATEWAY
+  NOTE: CALL_DURATION: 280 min is below the 600 min minimum → breach fires instantly.
+
+  Click "Log Usage":
+    Service     : Corporate Voice Gateway
+    Metric Type : CALL_DURATION
+    Value       : 280
+    Unit        : minutes
+  → Click "Log Usage"
+  EXPECTED: Toast "Usage record logged." Breach created instantly.
+            Scroll to SLA Breach Events — CALL_DURATION breach row appears immediately.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 53 — Y DEVI SARANAYA LOGS USAGE: ENTERPRISE VIDEO CONFERENCING
+  NOTE: VIDEO_MINUTES: 150 min is below the 300 min minimum → breach fires instantly.
+
+  Click "Log Usage":
+    Service     : Enterprise Video Conferencing
+    Metric Type : VIDEO_MINUTES
+    Value       : 150
+    Unit        : minutes
+  → Click "Log Usage"
+  EXPECTED: Breach fires instantly. VIDEO_MINUTES breach row appears immediately.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 54 — Y DEVI SARANAYA LOGS USAGE: UNIFIED MESSAGING PLATFORM
+  NOTE: This service will have ZERO breaches.
+        MESSAGE_COUNT: 2500 messages is above the 500 minimum — rule met,
+        no breach.
+
+  Click "Log Usage":
+    Service     : Unified Messaging Platform
+    Metric Type : MESSAGE_COUNT
+    Value       : 2500
+    Unit        : messages
+  → Click "Log Usage"
+  EXPECTED: No breach. 2500 messages is above the 500 minimum — SLA satisfied.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 55 — Y DEVI SARANAYA VIEWS USAGE CHARTS
+  Select "Corporate Voice Gateway" from dropdown:
+  EXPECTED: Chart shows CALL_DURATION (280) data point.
+
+  Select "Enterprise Video Conferencing":
+  EXPECTED: Chart shows VIDEO_MINUTES (150).
+
+  Select "Unified Messaging Platform":
+  EXPECTED: Chart shows MESSAGE_COUNT (2500).
+
+  Select "SMS Broadcast Service":
+  EXPECTED: "No usage data for this service" (Sania Agarwal logs this in Phase 6).
+
+  Select "Emergency Voice Backup":
+  EXPECTED: "No usage data for this service" (decommissioned, none logged).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 56 — Y DEVI SARANAYA CHECKS NOTIFICATIONS
+  Navigate: Sidebar → "Notifications"
+  EXPECTED: Empty list — "No notifications" or equivalent placeholder.
+  NOTE: Enterprise users do not get assigned to incidents, so no notifications.
+  Bell badge in TopBar: 0.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 57 — Y DEVI SARANAYA UPDATES HER PROFILE
+  Navigate: Sidebar → "Profile" (or click user footer in sidebar)
+  EXPECTED: Profile card is centred (max-width, horizontally centred on page).
+
+  VERIFY PROFILE PAGE DESIGN:
+  ✓ Dark navy banner strip at the top of the card
+  ✓ Cyan-coloured avatar (ENTERPRISE_USER = cyan gradient) overlapping the banner
+    with a white border (LinkedIn-style card layout)
+  ✓ Avatar shows initials "YD" (first initial of Y, first initial of Devi Saranaya)
+  ✓ Role badge "ENTERPRISE USER" below the name
+  ✓ NO duplicate "My Profile" heading inside the card
+    (the page title in the TopBar already says "My Profile")
+  ✓ "Edit Profile" button visible (sky/cyan style)
+  ✓ Info rows: Full Name, Email Address, Phone, Role, Member Since
+
+  → Click "Edit Profile"
+  ✓ Name and Phone fields become editable inputs
+  ✓ Email row shows "Email — cannot be changed" (read-only)
+  ✓ Role row shows "Role — set by admin" (read-only)
+
+  Change Phone : +1234567005
+  → Click "Save"
+  EXPECTED: Toast "Profile updated". Phone number saved. View mode returns.
+
+  → Click "Logout" / "Sign out of ComNet360" (danger red button at bottom)
+  EXPECTED: Toast "Logged out". Redirected to / (landing page).
+
+================================================================================
+  PHASE 6 — ENTERPRISE USER SANIA AGARWAL: LOG SERVICE USAGE
+  Login: agarwalsania2004@gmail.com / Comnet@360
+  Sania Agarwal logs usage for: SMS Broadcast Service only.
+  Her usage triggers the final SLA breach on SMS Broadcast.
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 58 — LOGIN AS SANIA AGARWAL & VERIFY UI ACCESS
+  Email    : agarwalsania2004@gmail.com
+  Password : Comnet@360
+  → Click "Sign In"
+  EXPECTED: Dashboard loads.
+    Greeting: "Welcome back, Sania Agarwal 👋"
+    Active Services: 4 | Open Incidents: 0
+
+  SIDEBAR CHECK (same restrictions as Y Devi Saranaya):
+  ✗ Users  ✗ Audit Logs  ✗ Analytics
+
+  VERIFY PROFILE FOOTER (bottom of sidebar):
+  ✓ Shows "Sania Agarwal" name
+  ✓ Shows "ENTERPRISE USER" role text
+  ✓ Pulsing green online dot visible
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 59 — SANIA AGARWAL NAVIGATES TO USAGE & SLA PAGE
+  Navigate: Sidebar → "Usage & SLA"
+  EXPECTED: Same view as Y Devi Saranaya — SLA table visible (read-only), 5 SLAs,
+            "Log Usage" button visible, "New SLA" button NOT visible.
+  NOTE: SLA Breach Events table shows the auto-breaches and Y Devi Saranaya's breach.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 60 — SANIA AGARWAL LOGS USAGE: SMS BROADCAST SERVICE
+  NOTE: MESSAGE_COUNT: 350 messages is below the 1000 minimum → breach fires instantly.
+
+  Click "Log Usage":
+    Service     : SMS Broadcast Service
+    Metric Type : MESSAGE_COUNT
+    Value       : 350
+    Unit        : messages
+  → Click "Log Usage"
+  EXPECTED: Toast "Usage record logged." Breach fires instantly.
+            MESSAGE_COUNT breach row appears immediately in SLA Breach Events.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 61 — SANIA AGARWAL VERIFIES BREACH TABLE
+  Scroll down to "SLA Breach Events".
+
+  EXPECTED FINAL BREACH TABLE (3 rows total):
+  ┌───┬────────────────────────────────┬──────────────┬─────────┬───────────┬─────────────┬──────────┐
+  │ # │ Service                        │ Metric       │ Actual  │ Threshold │ Operator    │ Resolved │
+  ├───┼────────────────────────────────┼──────────────┼─────────┼───────────┼─────────────┼──────────┤
+  │ 1 │ Corporate Voice Gateway        │ CALL_DURATION│ 280.0   │ 600       │ GREATER_THAN│ No  ✗    │
+  │ 2 │ Enterprise Video Conferencing  │ VIDEO_MINUTES│ 150.0   │ 300       │ GREATER_THAN│ No  ✗    │
+  │ 3 │ SMS Broadcast Service          │ MESSAGE_COUNT│ 350.0   │ 1000      │ GREATER_THAN│ No  ✗    │
+  └───┴────────────────────────────────┴──────────────┴─────────┴───────────┴─────────────┴──────────┘
+
+  HOW TO READ THE OPERATOR COLUMN:
+    GREATER_THAN = minimum-usage rule (actual value must be MORE than threshold)
+    LESS_THAN    = maximum-usage cap (actual value must be LESS than threshold)
+    A breach means the rule was broken — either too low or too high.
+
+  SLAs that are HEALTHY — must NOT appear as breach rows:
+    Unified Messaging Platform     MESSAGE_COUNT   2500.0 > 500 minimum   → CLEAN ✓
+
+  VERIFY: Badge shows "2 unresolved" (red dot).
+  VERIFY: Unified Messaging Platform has ZERO rows in the breach table.
+  VERIFY: Enterprise Video Conferencing has exactly 1 breach row (VIDEO_MINUTES only).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 62 — SANIA AGARWAL VIEWS USAGE CHART FOR SMS BROADCAST
+  In the Usage Metrics section, select "SMS Broadcast Service":
+  EXPECTED: Chart shows MESSAGE_COUNT (350) data point.
+
+  Select "Corporate Voice Gateway":
+  EXPECTED: Chart shows Y Devi Saranaya's data — CALL_DURATION (280).
+  NOTE: Usage records from both enterprise users are visible in the charts.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 63 — SANIA AGARWAL CHECKS NOTIFICATIONS
+  Navigate: Sidebar → "Notifications"
+  EXPECTED: Empty list — no notifications.
+  NOTE: Sania Agarwal is an enterprise user and cannot be assigned to incidents.
+  Bell badge: 0.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 64 — SANIA AGARWAL UPDATES HER PROFILE
+  Navigate: Sidebar → "Profile"
+  EXPECTED: Profile card centred, dark navy banner, cyan avatar ("SA" initials),
+            "ENTERPRISE USER" badge.
+
+  → Click "Edit Profile"
+  Change Phone : +1234567008
+  → Click "Save"
+  EXPECTED: Toast "Profile updated". Phone saved.
+
+  → Click "Sign out of ComNet360"
+  EXPECTED: Redirected to / (landing page).
+
+================================================================================
+  PHASE 7 — ADMIN: CREATE & ASSIGN INCIDENTS
+  Login: snehithapriscillaganta7890@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 65 — LOGIN AS ADMIN
+  EXPECTED: Dashboard:
+    Active Services  : 4
+    Open Incidents   : 0
+    SLA Breaches     : 3  (red badge — 2 from Phase 5 Y Devi, 1 from Phase 6 Sania)
+    Total Users      : 7
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 66 — CONFIRM BREACH TABLE BEFORE CREATING INCIDENTS
+  Navigate: "Usage & SLA" → scroll to "SLA Breach Events"
+  CONFIRM:
+  ✗ Corporate Voice Gateway       → 1 breach row
+  ✗ Enterprise Video Conferencing → 1 breach row (VIDEO_MINUTES only)
+  ✓ Unified Messaging Platform    → ZERO breach rows (completely clean)
+  ✗ SMS Broadcast Service         → 1 breach row
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 67 — CREATE INCIDENT 1: VOICE CALL VOLUME (CRITICAL)
+  Navigate: Sidebar → "Incidents" → Click "New Incident"
+    Title       : Corporate Voice Gateway — Call Volume Below SLA Minimum
+    Description : Call volume dropped to 280 min today against a minimum of
+                  600 min. Calls are failing across all offices.
+    Severity    : CRITICAL
+    Service     : Corporate Voice Gateway
+  → Click "Create Incident"
+  EXPECTED: Listed with OPEN (red) and CRITICAL (red badge).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 68 — CREATE INCIDENT 2: VIDEO USAGE (CRITICAL)
+  Click "New Incident"
+    Title       : Enterprise Video Conferencing — Daily Usage Below Minimum
+    Description : Video usage is at 150 min against a minimum of 300 min.
+                  Users cannot join meetings due to a notification issue.
+    Severity    : CRITICAL
+    Service     : Enterprise Video Conferencing
+  → Click "Create Incident"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 69 — CREATE INCIDENT 3: MESSAGING DELAYS (HIGH, NO SLA BREACH)
+  Click "New Incident"
+    Title       : Unified Messaging Platform — Intermittent Message Delays
+    Description : Users are seeing 3–5 second delays since 08:30. SLA metrics
+                  are all within limits — this is a performance issue only.
+    Severity    : HIGH
+    Service     : Unified Messaging Platform
+  → Click "Create Incident"
+  NOTE: Key test — incidents and SLA breaches are independent systems.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 70 — CREATE INCIDENT 4: SMS QUEUE BACKLOG (CRITICAL)
+  Click "New Incident"
+    Title       : SMS Broadcast — Message Queue Backlog
+    Description : Only 350 messages sent today against a minimum of 1000.
+                  The SMS queue is stuck and not processing messages.
+    Severity    : CRITICAL
+    Service     : SMS Broadcast Service
+  → Click "Create Incident"
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 71 — CREATE INCIDENT 5: VIDEO TLS CERTIFICATE (MEDIUM, PROACTIVE)
+  Click "New Incident"
+    Title       : Enterprise Video Conferencing — TLS Certificate Expiring in 72h
+    Description : The TLS certificate expires in 72 hours and is not set to
+                  auto-renew. Must be renewed before 2026-05-16 09:00.
+    Severity    : MEDIUM
+    Service     : Enterprise Video Conferencing
+  → Click "Create Incident"
+
+  VERIFY: Incidents list shows 5 incidents, all OPEN.
+  VERIFY: Dashboard "Open Incidents" = 5.
+
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 73 — ASSIGN INCIDENTS
+  Navigate: "Incidents"
+
+  Assign Incident 1 — "Call Volume Below SLA Minimum":
+  → Click incident → Click "Assign" → Select: Prateek Bora → Click "Assign"
+  EXPECTED: Status OPEN → IN_PROGRESS (blue). Prateek receives notification #1.
+  ← Back.
+
+  Assign Incident 2 — "Daily Usage Below Minimum":
+  → Click incident → Click "Assign" → Select: Prateek Bora → Click "Assign"
+  EXPECTED: Status → IN_PROGRESS. Prateek receives notification #2.
+  ← Back.
+
+  Assign Incident 3 — "Intermittent Message Delays":
+  → Click incident → Click "Assign" → Select: Prateek Bora → Click "Assign"
+  EXPECTED: Status → IN_PROGRESS. Prateek receives notification #3.
+  ← Back.
+
+  Assign Incident 4 — "Message Queue Backlog":
+  → Click incident → Click "Assign" → Select: Prateek Bora → Click "Assign"
+  EXPECTED: Status → IN_PROGRESS. Prateek receives notification #4.
+  ← Back.
+
+  Leave Incident 5 "TLS Certificate Expiring" UNASSIGNED — Piyush Ranjan assigns in Phase 8.
+
+  VERIFY: 4 incidents IN_PROGRESS (blue). 1 incident OPEN (red).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 74 — ADD RESOLUTION ACTIONS AND COMMENTS  [ADMIN ONLY — only Admin can add actions]
+  ── Incident 1: Call Volume Below SLA Minimum ──────────────────────────────
+  Click "Corporate Voice Gateway — Call Volume Below SLA Minimum"
+  → Add Action: "Check phone connections and identify failed offices"
+    Owner: Prateek Bora → Create
+  → Add Action: "Investigate ISP changes that may have blocked calls"
+    Owner: Prateek Bora → Create
+  Add comment: "Calls started failing at 07:43. Investigating ISP routing."
+  → Post ← Back.
+
+  ── Incident 4: SMS Queue Backlog ──────────────────────────────────────────
+  Click "SMS Broadcast — Message Queue Backlog"
+  → Add Action: "Clear stuck messages and restart the SMS queue processor"
+    Owner: Prateek Bora → Create
+  Add comment: "Queue is stuck since morning. Investigating now."
+  → Post ← Back.
+
+  ── Incident 3: Unified Messaging Delays ───────────────────────────────────
+  Click "Unified Messaging Platform — Intermittent Message Delays"
+  → Add Action: "Review last night's update and fix slow message delivery"
+    Owner: Prateek Bora → Create
+  Add comment: "Last night's update caused slow message lookups. Fixing now."
+  → Post ← Back.
+
+  ── Incident 2: Video Daily Usage Below Minimum ────────────────────────────
+  Click "Enterprise Video Conferencing — Daily Usage Below Minimum"
+  → Add Action: "Fix notification issue so users receive meeting invitations"
+    Owner: Prateek Bora → Create
+  → Add Action: "Reschedule cancelled meetings and inform all teams"
+    Owner: Prateek Bora → Create
+  ← Back.
+
+  ── Incident 5: TLS Certificate Expiring ───────────────────────────────────
+  Click "Enterprise Video Conferencing — TLS Certificate Expiring in 72h"
+  → Add Action: "Renew the TLS certificate before the expiry deadline"
+    Owner: Prateek Bora → Create
+  ← Back.
+
+  → Click Logout (Sign out of ComNet360).
+
+================================================================================
+  PHASE 8 — SERVICE MANAGER PIYUSH RANJAN: INCIDENT MANAGEMENT & NEW SLA
+  Login: itspsr2407@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 75 — LOGIN AS PIYUSH RANJAN
+  EXPECTED: Dashboard:
+    Greeting: "Welcome back, Piyush Ranjan 👋"
+    Active Services: 4 | Incidents: 5 | SLA Breaches: 3
+  VERIFY: "Analytics" NOT in sidebar — SERVICE_MANAGER cannot access analytics.
+  NOTE: Wait, SERVICE_MANAGER can see analytics. Check sidebar:
+        ✓ Analytics IS visible for SERVICE_MANAGER.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 76 — PIYUSH RANJAN ADDS A CONFIGURATION TO VOICE GATEWAY
+  Navigate: "Services" → Click "Corporate Voice Gateway" → "Details →"
+  VERIFY: "Add Configuration" button IS visible (SERVICE_MANAGER can configure).
+  → Click "Add Configuration":
+    Parameter     : EMERGENCY_FAILOVER_ENABLED
+    Value         : false
+    Effective Date: 2026-05-13
+  → Save
+  EXPECTED: 5th configuration added.  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 77 — PIYUSH RANJAN FILTERS AND REVIEWS INCIDENTS
+  Navigate: "Incidents"
+  EXPECTED: All 5 incidents visible with correct services and assignees.
+
+  Test Filter: Severity = CRITICAL
+  EXPECTED: 2 rows — Call Volume, SMS Message Queue Backlog.
+
+  Test Filter: Status = OPEN
+  EXPECTED: 1 row — TLS Certificate Expiring (unassigned).
+
+  Test Filter: Status = IN_PROGRESS
+  EXPECTED: 4 rows.
+
+  Test Filter: Service = Corporate Voice Gateway
+  EXPECTED: 1 row.
+
+  Clear all filters.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 78 — PIYUSH RANJAN ASSIGNS THE REMAINING UNASSIGNED INCIDENT
+  Filter: Status = OPEN
+  Click "Enterprise Video Conferencing — TLS Certificate Expiring in 72h"
+  → Click "Assign" → Select: Prateek Bora → Click "Assign"
+  EXPECTED: Status → IN_PROGRESS. Prateek receives notification #5.
+  Add comment: "Certificate expires 2026-05-16 at 09:00. Assigned to Prateek Bora for urgent renewal."
+  → Post
+  VERIFY: All 5 incidents are now IN_PROGRESS. No OPEN incidents remain.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 79 — PIYUSH RANJAN ADDS A NEW SLA
+  Navigate: "Usage & SLA" → Click "New SLA"
+    Service     : Enterprise Video Conferencing
+    Metric      : VIDEO_MINUTES
+    Operator    : Less Than
+    Threshold   : 2000
+    Unit        : minutes
+    Description : The video platform must not be used for more than 2000
+                  minutes per day. Going over this could overload the system.
+  → Click "Create SLA"
+  EXPECTED: SLA row added. Total SLAs = 6.
+  NOTE: With 150 min logged today (well below 2000 cap), this SLA is clean.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 80 — PIYUSH RANJAN CREATES A PREVENTIVE INCIDENT
+  Navigate: "Incidents" → Click "New Incident"
+    Title       : Corporate Voice Gateway — No Standby Failover Available
+    Description : No backup system exists for voice calls. Recommend bringing
+                  the Emergency Voice Backup online in Q3 2026.
+    Severity    : MEDIUM
+    Service     : Emergency Voice Backup
+  → Click "Create Incident"
+  Add comment: "Hardware is in place. Estimated 2 weeks to restore. Escalating for approval."
+  → Post
+  VERIFY: Incident 6 created with status OPEN.
+  NOTE: Admin will assign and add resolution action in Phase 12.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 81 — VERIFY: SERVICE_MANAGER CANNOT GENERATE REPORTS
+  Navigate: "Analytics"
+  ✗ VERIFY: "Generate Report" button is NOT visible for SERVICE_MANAGER (Piyush Ranjan).
+  ✓ VERIFY: Analytics page loads — existing reports and snapshots are visible (read access).
+
+  NOTE: Generating reports is Admin-only. SERVICE_MANAGER can VIEW reports but cannot create them.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 82 — PIYUSH RANJAN AUDITS SLA BREACH TABLE
+  Navigate: "Usage & SLA" → "SLA Breach Events"
+  CONFIRM BREACHED:
+  ✗ Corporate Voice Gateway       → 1 breach row
+  ✗ Enterprise Video Conferencing → 1 breach row (VIDEO_MINUTES only)
+  ✗ SMS Broadcast Service         → 1 breach row
+
+  CONFIRM CLEAN:
+  ✓ Unified Messaging Platform    → ZERO rows (fully compliant)
+
+  VERIFY: Badge = "3 unresolved" (red).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 83 — LOGOUT
+  Sign out of ComNet360 → Redirected to /login.
+
+================================================================================
+  PHASE 9 — OPERATIONS HEAD RAHUL PATNAL: VIEW-ONLY RBAC VERIFICATION
+  Login: patnalarahul2004@gmail.com / Comnet@360
+================================================================================
+
+NOTE: OPERATIONS_HEAD can VIEW incidents but cannot assign, resolve, or close
+      them. Incidents are assigned to Network Engineers who do the actual work.
+      Rahul has no incidents assigned to him, so he has 0 notifications.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 84 — LOGIN AS RAHUL PATNAL
+  EXPECTED: Dashboard. Bell badge = 0.
+    Greeting: "Welcome back, Rahul Patnal 👋"
+    Sidebar: NO "Users" or "Audit Logs" links. "Analytics" IS visible.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 85 — RAHUL PATNAL CHECKS NOTIFICATIONS
+  Navigate: Sidebar → "Notifications"
+  EXPECTED: 0 notifications — empty state placeholder visible.
+  Bell badge: 0. No incident assignment notifications.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 86 — RAHUL PATNAL VERIFIES INCIDENT VIEW-ONLY ACCESS
+  Navigate: "Incidents"
+  EXPECTED: All 5 incidents visible (Rahul can view but not act).
+
+  Click any incident (e.g. "Unified Messaging Platform — Intermittent Message
+  Delays"):
+  ✓ Incident detail IS visible (title, status, severity, actions, comments)
+  ✗ "Assign" button → NOT visible (only ADMIN / SERVICE_MANAGER can assign)
+  ✗ "Resolve" button → NOT visible (only ADMIN / NETWORK_ENGINEER / SM can resolve)
+  ✗ "Close" button → NOT visible
+  ← Back.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 87 — RAHUL PATNAL VIEWS ANALYTICS
+  Navigate: "Analytics"
+  EXPECTED: Analytics dashboard visible (OPERATIONS_HEAD has read access).
+  ✗ "Generate Report" button → NOT visible (Admin only — OPERATIONS_HEAD can view but not generate).
+  VERIFY: Existing reports and chart snapshots are visible (read-only access).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 88 — LOGOUT
+  Sign out → Redirected to /login.
+
+================================================================================
+  PHASE 10 — NETWORK ENGINEER PRATEEK BORA: NOTIFICATIONS & RESOLVE INCIDENTS
+  Login: prateekbora71@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 90 — LOGIN AS PRATEEK BORA
+  EXPECTED: Dashboard. Bell badge = 5.
+    Sidebar: NO "Users", "Audit Logs", "Analytics" links.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 91 — PRATEEK BORA READS ALL NOTIFICATIONS
+  Navigate: "Notifications"
+  EXPECTED: 5 notifications (all unread):
+
+  Notification 1: Incident #1 — Corporate Voice Gateway — Call Volume Below
+    SLA Minimum (Severity: CRITICAL)
+  Notification 2: Incident #2 — Enterprise Video Conferencing — Daily Usage
+    Below Minimum (Severity: CRITICAL)
+  Notification 3: Incident #3 — Unified Messaging Platform — Intermittent
+    Message Delays (Severity: HIGH)
+  Notification 4: Incident #4 — SMS Broadcast — Message Queue Backlog
+    (Severity: CRITICAL)
+  Notification 5: Incident #5 — Enterprise Video Conferencing — TLS Certificate
+    Expiring in 72h (Severity: MEDIUM)
+
+  VERIFY: All 5 present with correct incident numbers and severity levels.
+  → Click "Mark All as Read"
+  EXPECTED: Bell badge = 0.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 92 — PRATEEK BORA RESOLVES: VOICE CALL VOLUME BELOW MINIMUM
+  ← Back. Click "Corporate Voice Gateway — Call Volume Below SLA Minimum"
+  Add comment: "ISP made a routing change that blocked calls. Connections restored."
+  → Post
+  Add comment: "All phone lines are back. Call volume recovering. Resolved."
+  → Post
+  → Click "Resolve"   EXPECTED: Status → RESOLVED.
+
+  → Resolve the SLA breach:
+  Navigate: "Usage & SLA" → scroll to "SLA Breach Events"
+  → Click "Resolve" on the CALL_DURATION row (Corporate Voice Gateway).
+  Notes: "Calls stopped at 07:43 because the ISP made a routing change that
+  disrupted the phone system. All connections restored by 09:15. Daily call
+  volume recovered to 520 minutes. Incident #1 resolved by Prateek Bora."
+  → Click "Mark Resolved"
+  EXPECTED: Row badge → green "Yes".
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 93 — PRATEEK BORA RESOLVES: VIDEO TLS CERTIFICATE EXPIRY
+  Navigate: "Incidents"
+  Click "Enterprise Video Conferencing — TLS Certificate Expiring in 72h"
+  Add comment: "Renewal request submitted. Installing tonight at 23:00."
+  → Post
+  Add comment: "Certificate installed. Valid until 2027-05-12. Confirmed working."
+  → Post
+  → Click "Resolve"   EXPECTED: Status → RESOLVED.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 94 — PRATEEK BORA RESOLVES: VIDEO CONFERENCING USAGE BELOW MINIMUM
+  ← Back. Click "Enterprise Video Conferencing — Daily Usage Below Minimum"
+  Add comment: "Notification certificate renewed. Meeting invites are working."
+  → Post
+  Add comment: "Meetings rescheduled. Video usage recovering. Resolved."
+  → Post
+  → Click "Resolve"   EXPECTED: Status → RESOLVED.
+
+  → Resolve the SLA breach:
+  Navigate: "Usage & SLA" → scroll to "SLA Breach Events"
+  → Click "Resolve" on the VIDEO_MINUTES row (Enterprise Video Conferencing).
+  Notes: "An expired notification certificate stopped iPhone and iPad users from
+  receiving meeting invitations, causing video usage to fall to 150 minutes.
+  Certificate renewed and notifications working. Video usage expected to recover
+  above 400 min/day. Incident #2 resolved by Prateek Bora."
+  → Click "Mark Resolved"
+  EXPECTED: Row badge → green "Yes".
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 95 — PRATEEK BORA RESOLVES: UNIFIED MESSAGING DELAYS (NO SLA BREACH)
+  Navigate: "Incidents"
+  Click "Unified Messaging Platform — Intermittent Message Delays"
+  Add comment: "Database index restored. Message delivery back to normal."
+  → Post
+  → Click "Resolve"
+  EXPECTED: Status → RESOLVED (green badge).
+  NOTE: No SLA breach to resolve — Unified Messaging was fully compliant.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 96 — PRATEEK BORA RESOLVES: SMS MESSAGE QUEUE BACKLOG
+  ← Back. Click "SMS Broadcast — Message Queue Backlog"
+  Add comment: "Queue cleared and SMS system restarted. Working normally."
+  → Post
+  → Click "Resolve"
+  EXPECTED: Status → RESOLVED.
+
+  → Resolve the SLA breach:
+  Navigate: "Usage & SLA" → scroll to "SLA Breach Events"
+  → Click "Resolve" on the MESSAGE_COUNT row (SMS Broadcast Service).
+  Notes: "650 queued messages were cleared and the SMS service was restarted.
+  Daily message volume is back above the 1000-message minimum.
+  Incident #4 resolved by Prateek Bora."
+  → Click "Mark Resolved"
+  EXPECTED: Row badge → green "Yes".
+
+  VERIFY after all 3 breach resolutions:
+  ✓ Badge: "0 unresolved" (GREEN dot)
+  ✓ Dashboard "SLA Breaches" card = 0 (GREEN card)
+  ✓ All 3 breach rows show green "Yes" in Resolved column
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 97 — LOGOUT PRATEEK BORA
+  → Logout. Redirected to /login.
+
+NOTE: Phase 10 steps: STEP 90 (login), STEP 91 (notifications),
+      STEP 92–96 (resolve incidents + SLA breaches), STEP 97 (logout).
+      Network Engineers can RESOLVE incidents and UPDATE action status (PENDING→IN_PROGRESS→COMPLETED).
+      They cannot CREATE incidents, CLOSE incidents, or ADD new resolution actions.
+
+================================================================================
+  PHASE 11 — COMPLIANCE OFFICER NADUPURU ADITI: AUDIT, ANALYTICS & COMPLIANCE
+  Login: nadupuruaditi@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 100 — LOGIN AS NADUPURU ADITI
+  EXPECTED: Dashboard:
+    Greeting: "Welcome back, Nadupuru Aditi 👋"
+    SLA Breaches: 0 (green — Prateek resolved all 3 in Phase 10)
+    Open Incidents: 1 (Emergency Backup — OPEN, unassigned)
+    Sidebar: "Audit Logs" and "Analytics" visible. "Users" NOT visible.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 101 — NADUPURU ADITI REVIEWS INCIDENT ANALYTICS
+  Navigate: "Analytics"
+  Incident Summary (default 30-day range):
+  EXPECTED:
+    Total             : 6  (5 Admin + 1 Prateek Bora)
+    Resolved          : 5  (Prateek Bora: 5)
+    Open / In-Progress: 1  (Emergency Backup — OPEN, unassigned)
+  Bar chart: incidents by severity (CRITICAL: 2, HIGH: 1, MEDIUM: 3).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 102 — NADUPURU ADITI CHECKS FULL AUDIT LOG
+  Navigate: "Audit Logs"
+  EXPECTED: Complete trail. Verify the following entries exist:
+    USER_REGISTERED   × 6  (all 6 created users)
+    USER_LOGIN        × multiple (once per phase)
+    Service creates   × 5
+    Service activations × 5
+    Config adds       × 15+
+    SLA creates       × 6
+    SLA edit          × 1
+    Incident creates  × 6
+    Incident assigns  × 7+
+    Incident resolves × 5
+    Profile updates   × 2  (Y Devi Saranaya + Sania Agarwal)
+  VERIFY: Each row shows userId, action, timestamp, IP address.
+  VERIFY: Nadupuru Aditi can only READ — no buttons available.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 103 — NADUPURU ADITI REVIEWS SLA STATUS
+  Navigate: "Usage & SLA"
+  SLA DEFINITIONS (6 total — 5 Admin + 1 Piyush Ranjan):
+    Corporate Voice Gateway        : CALL_DURATION (GT 600)
+    Enterprise Video Conferencing  : VIDEO_MINUTES (GT 300),
+                                     VIDEO_MINUTES (LT 2000) ← Piyush Ranjan's addition
+    Unified Messaging Platform     : MESSAGE_COUNT (GT 500)
+    SMS Broadcast Service          : MESSAGE_COUNT (GT 1000)
+
+  BREACH TABLE — Nadupuru Aditi's compliance snapshot (all resolved by Prateek in Phase 10):
+  ┌──────────────────────────────────┬──────────────┬─────────┬──────────┬──────────────┐
+  │ Service                          │ Metric       │ Actual  │ Threshold│ Resolved     │
+  ├──────────────────────────────────┼──────────────┼─────────┼──────────┼──────────────┤
+  │ Corporate Voice Gateway          │ CALL_DURATION│ 280     │ 600      │ Yes ✓ (green)│
+  │ Enterprise Video Conferencing    │ VIDEO_MINUTES│ 150     │ 300      │ Yes ✓ (green)│
+  │ SMS Broadcast Service            │ MESSAGE_COUNT│ 350     │ 1000     │ Yes ✓ (green)│
+  └──────────────────────────────────┴──────────────┴─────────┴──────────┴──────────────┘
+
+  VERIFY: Badge: "0 unresolved" (green dot).
+  VERIFY: Unified Messaging Platform — ZERO breach rows (fully compliant, no breach ever).
+  NOTE: All 3 breaches were resolved by Prateek Bora (Network Engineer) in Phase 10.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 104 — VERIFY: COMPLIANCE_OFFICER CANNOT GENERATE REPORTS
+  Navigate: "Analytics"
+  ✗ VERIFY: "Generate Report" button is NOT visible for COMPLIANCE_OFFICER (Nadupuru Aditi).
+  ✓ VERIFY: All existing reports are visible (read access) — SLA Compliance, Incident Summary.
+  ✓ VERIFY: Snapshots section is visible and readable.
+
+  NOTE: Generating reports is Admin-only. Compliance Officer can VIEW but not create reports.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 105 — NADUPURU ADITI UPDATES HER PROFILE
+  Navigate: "Profile"
+  VERIFY: Profile card centred, yellow/amber avatar (COMPLIANCE_OFFICER role
+          = amber gradient), initials "NA".
+  → Edit Profile → Phone: +1234567099 → Save
+  EXPECTED: Toast "Profile updated".
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 106 — VERIFY TOPBAR ELEMENTS
+  While still on any page as Nadupuru Aditi:
+  ✓ TopBar shows the page title, theme toggle (sun/moon), notification bell,
+    profile icon, and logout button
+  ✓ Bell badge shows correct unread count (0 for Nadupuru Aditi)
+  NOTE: Navigate to a different page — the TopBar title should update to
+        match the current page name.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 107 — LOGOUT
+  Sign out → Redirected to /login.
+
+================================================================================
+  PHASE 12 — ADMIN: RESOLVE ALL SLA BREACHES & CLOSE ALL INCIDENTS
+  Login: snehithapriscillaganta7890@gmail.com / Comnet@360
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 108 — LOGIN AS ADMIN
+  EXPECTED: Dashboard:
+    SLA Breaches   : 0 (green — all resolved by Prateek in Phase 10)
+    Open Incidents : 1 (Emergency Backup — unassigned, OPEN)
+    Total Users    : 7
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 109 — ASSIGN AND RESOLVE THE REMAINING OPEN INCIDENT
+  Navigate: "Incidents" → Filter: Status = OPEN
+  Click "Corporate Voice Gateway — No Standby Failover Available"
+  → Click "Assign" → Select: Prateek Bora → "Assign"
+  EXPECTED: Status → IN_PROGRESS. Prateek receives notification #6.
+  → Add Action: "Prepare a plan to bring the Emergency Voice Backup back online"
+    Owner: Prateek Bora → Create
+  NOTE: Only Admin can add resolution actions — "Add Action" button is visible here.
+  Update action status: PENDING → IN_PROGRESS → COMPLETED
+  Add comment: "Budget approved for Q3 2026 re-activation of Emergency Voice
+  Backup. Infrastructure project INF-4821 created. Closing this incident —
+  tracked in project tracker."
+  → Post
+  → Click "Resolve"
+  EXPECTED: Status → RESOLVED.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 110 — VERIFY SLA BREACHES ARE ALREADY RESOLVED
+  Navigate: "Usage & SLA" → scroll to "SLA Breach Events"
+  VERIFY: Badge = "0 unresolved" (green dot — Prateek resolved all 3 in Phase 10).
+  VERIFY: All 3 breach rows show green "Yes" in Resolved column.
+  VERIFY: Unified Messaging Platform — ZERO breach rows.
+  VERIFY: Dashboard "SLA Breaches" card = 0 (GREEN card).
+
+  NOTE: Prateek Bora (Network Engineer) resolved the breaches immediately after
+        resolving each incident in Phase 10. No action needed here by Admin.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 111 — CLOSE ALL 6 RESOLVED INCIDENTS
+  Navigate: "Incidents" → Filter: Status = RESOLVED
+  EXPECTED: All 6 incidents listed.
+
+  Click each and click "Close":
+  1. Corporate Voice Gateway — Call Volume Below SLA Minimum        → Close
+  2. Enterprise Video Conferencing — Daily Usage Below Minimum      → Close
+  3. Unified Messaging Platform — Intermittent Message Delays       → Close
+  4. SMS Broadcast — Message Queue Backlog                          → Close
+  5. Enterprise Video Conferencing — TLS Certificate Expiring       → Close
+  6. Corporate Voice Gateway — No Standby Failover Available        → Close
+
+  EXPECTED: Each changes RESOLVED (green) → CLOSED (grey).
+  VERIFY: Filter by Status = CLOSED → all 6 listed.
+  VERIFY: Dashboard "Open Incidents" = 0 (GREEN card).
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 112 — SERVICE LIFECYCLE TESTS
+  Navigate: "Services"
+
+  TEST A — Deactivate and reactivate SMS Broadcast:
+  Click "SMS Broadcast Service" → "Details →"
+  → Click "Deactivate"  EXPECTED: Status → INACTIVE (red badge).
+  → Click "Activate"    EXPECTED: Status → ACTIVE (green badge).
+
+  TEST B — View decommissioned service:
+  ← Back → Click "Emergency Voice Backup" → "Details →"
+  EXPECTED: Status: DECOMMISSIONED (grey). No lifecycle action buttons.
+
+  TEST C — Add config to Unified Messaging:
+  ← Back → Click "Unified Messaging Platform" → "Details →"
+  → Add Configuration:
+    Parameter: ENCRYPTION_AT_REST   Value: AES_256   Date: 2026-05-13
+  → Save.   EXPECTED: 4th configuration appears.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 113 — USER MANAGEMENT TESTS
+  Navigate: "Users"
+
+  TEST A — Deactivate and reactivate Y Devi Saranaya:
+  Find Y Devi Saranaya → Click "Deactivate"
+  EXPECTED: Status → Inactive (grey dot).
+  → Click "Activate"
+  EXPECTED: Status → Active (green dot).
+
+  TEST B — Deactivate and reactivate Sania Agarwal:
+  Find Sania Agarwal → Click "Deactivate"
+  EXPECTED: Status → Inactive (grey dot).
+  → Click "Activate"
+  EXPECTED: Status → Active (green dot).
+
+  TEST C — Change Y Devi Saranaya's role temporarily:
+  Find Y Devi Saranaya → Change Role to SERVICE_MANAGER
+  EXPECTED: Role badge → SERVICE_MANAGER (purple).
+  → Change back to ENTERPRISE_USER
+  EXPECTED: Role badge → ENTERPRISE_USER (cyan).
+
+  TEST D — Self-deletion prevention:
+  Find Snehitha (admin) row → Try to click Delete.
+  EXPECTED: Error or button disabled — cannot delete own account.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 114 — GENERATE FINAL REPORTS
+  Navigate: "Analytics"
+
+  Report A:
+    Title: All Clear — End of Incident Cycle May 2026
+    Scope: ALL   Type: INCIDENT_SUMMARY
+  → Generate.
+
+  Report B:
+    Title: Full Platform SLA Performance Summary May 2026
+    Scope: ALL   Type: SLA_COMPLIANCE
+  → Generate.
+
+  → Click "Capture Snapshot"  EXPECTED: Second snapshot captured.
+
+  DELETE A REPORT (Admin-only):
+  → Click red trash icon on the very first report (from Step 33).
+  EXPECTED: Row removed. Toast "Deleted".
+  VERIFY: Reports table shows 5+ remaining reports.
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 115 — FINAL AUDIT LOG REVIEW
+  Navigate: "Audit Logs"
+  Complete audit trail should include:
+    USER_REGISTERED × 6         USER_LOGIN × 7+
+    Service creates × 5         Service activations × 5
+    Config adds × 17+           SLA creates × 7
+    SLA edits × 1               Incident creates × 7
+    Incident assigns × 8+       Incident resolves × 7
+    Incident closures × 7       Breach resolutions × 3
+    Profile updates × 3+        Report generates × 7+
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 116 — FINAL DASHBOARD VERIFICATION
+  Navigate: "Dashboard"
+  EXPECTED FINAL STATE:
+    Active Services  : 4   (Corp Voice, Video, Unified Messaging, SMS Broadcast)
+    Open Incidents   : 0   (all closed — GREEN card)
+    SLA Breaches     : 0   (all resolved — GREEN card)
+    Total Users      : 7
+
+  Service Distribution pie:
+    VOICE     : 2  (Corporate Voice Gateway + Emergency Voice Backup)
+    VIDEO     : 1  (Enterprise Video Conferencing)
+    MESSAGING : 2  (Unified Messaging Platform + SMS Broadcast)
+
+  Recent Incidents table: last 5 entries all show CLOSED (grey badges).
+  Services Overview: 4 services with green dots, Owner = "Snehitha".
+
+──────────────────────────────────────────────────────────────────────────────
+STEP 117 — LOGOUT
+  Sign out → Redirected to /login.
+
+================================================================================
+  PHASE 13 — ROLE-BASED ACCESS CONTROL (RBAC) VERIFICATION
+================================================================================
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 1 — ENTERPRISE_USER (Y Devi Saranaya)
+  Login: ydevisaranya@gmail.com / Comnet@360
+
+  Sidebar:
+  ✗ Users  ✗ Audit Logs  ✗ Analytics
+  ✓ Dashboard  ✓ Services  ✓ Usage & SLA  ✓ Incidents  ✓ Notifications  ✓ Profile
+
+  Profile page:
+  ✓ Centred card layout (max-width, horizontally centred)
+  ✓ Cyan avatar (ENTERPRISE_USER role = cyan gradient) with white border
+  ✓ Initials "YD" in avatar
+  ✓ "ENTERPRISE USER" role badge (cyan)
+  ✓ Dark navy banner strip at top of card
+  ✓ No duplicate "My Profile" heading inside the car
+  ✓ TopBar still shows "My Profile" as the page title
+
+  Services page:
+  ✗ "New Service" button → NOT visible
+  → Service detail: ✗ No "Add Configuration" button, ✗ no lifecycle buttons
+  ✓ "Log Usage" button → IS visible
+
+  Incidents page:
+  ✗ "New Incident" button → NOT visible
+  ✓ Can VIEW all incidents and read comments
+
+  Try direct URL: http://localhost:5173/admin/users
+  EXPECTED: Redirected to dashboard or 403 error.
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 2 — ENTERPRISE_USER (Sania Agarwal)
+  Login: agarwalsania2004@gmail.com / Comnet@360
+
+  Sidebar: Same restrictions as Y Devi Saranaya.
+  ✗ Users  ✗ Audit Logs  ✗ Analytics
+
+  Profile page:
+  ✓ Centred card layout
+  ✓ Cyan avatar (ENTERPRISE_USER role = cyan gradient)
+  ✓ Initials "SA" in avatar
+  ✓ Phone "+1234567008" saved from Phase 6
+
+  Services page:
+  ✓ "Log Usage" button IS visible
+  ✗ "New Service" NOT visible
+  ✗ "Add Configuration" NOT visible
+  ✗ No lifecycle buttons
+
+  Incidents page:
+  ✗ "New Incident" NOT visible
+  ✓ Can view incidents and comments
+
+  Try direct URL: http://localhost:5173/admin/users
+  EXPECTED: Redirected or error.
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 3 — NETWORK_ENGINEER (Prateek Bora)
+  Login: prateekbora71@gmail.com / Comnet@360
+
+  Sidebar:
+  ✗ Users  ✗ Audit Logs  ✗ Analytics
+  ✓ All others visible
+
+  Profile page:
+  ✓ Green avatar (NETWORK_ENGINEER = emerald gradient), initials "PB"
+
+  Incidents list:
+  ✗ "New Incident" button → NOT visible (Admin / Service Manager only)
+
+  Incidents — click any incident:
+  ✗ "Assign" button → NOT visible (Admin / Service Manager only)
+  ✗ "Close" button  → NOT visible (Admin / Service Manager only)
+  ✓ "Resolve" button → IS visible (NE can resolve)
+  ✓ Can add comments
+  ✗ "Add Action" button → NOT visible (Admin only)
+  ✓ Action status dropdown IS visible for PENDING/IN_PROGRESS actions (NE can update)
+  ✓ Status flows one-way: PENDING → IN_PROGRESS → COMPLETED (cannot go backwards)
+  ✗ COMPLETED actions show static badge only — no dropdown
+
+  Services:
+  ✗ "New Service" → NOT visible
+  ✗ "Add Configuration" NOT visible
+  ✗ No lifecycle buttons
+
+  Usage & SLA:
+  ✗ "New SLA" → NOT visible
+  ✓ "Log Usage" button → IS visible
+  ✓ "Resolve" button on SLA breaches → IS visible (NE can resolve breaches)
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 4 — OPERATIONS_HEAD (Rahul Patnal)
+  Login: patnalarahul2004@gmail.com / Comnet@360
+
+  Sidebar:
+  ✗ Users  ✗ Audit Logs
+  ✓ Analytics IS visible
+
+  Profile page:
+  ✓ Sky/blue avatar (OPERATIONS_HEAD = sky gradient), initials "RP"
+
+  Incidents — click any incident:
+  ✗ "Assign" button  → NOT visible (only ADMIN / SERVICE_MANAGER can assign)
+  ✗ "Resolve" button → NOT visible (only ADMIN / NETWORK_ENGINEER / SM can resolve)
+  ✗ "Close" button   → NOT visible
+
+  Services:
+  ✗ "New Service" → NOT visible
+  ✗ "Add Configuration" → NOT visible
+
+  Usage & SLA:
+  ✗ "New SLA" → NOT visible
+  ✗ Cannot resolve SLA breaches (only Admin / Service Manager / Network Engineer)
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 5 — SERVICE_MANAGER (Piyush Ranjan)
+  Login: itspsr2407@gmail.com / Comnet@360
+
+  Profile page:
+  ✓ Violet/purple avatar (SERVICE_MANAGER = violet gradient), initials "PR"
+
+  Incidents:
+  ✓ "New Incident" → IS visible
+  ✓ "Assign" → IS visible on any incident
+  ✓ "Resolve" → IS visible on OPEN / IN_PROGRESS incidents
+  ✓ "Close" → IS visible on RESOLVED incidents
+  ✗ "Add Action" button → NOT visible (Admin only)
+
+  Services:
+  ✓ "New Service" → IS visible
+  ✓ "Add Configuration" → IS visible in service detail
+
+  Usage & SLA:
+  ✓ "New SLA" → IS visible
+  ✓ Can edit SLAs (pencil icon works)
+  ✓ Can resolve SLA breaches ("Resolve" button IS visible on open breaches)
+
+  Analytics:
+  ✗ "Generate Report" button → NOT visible (Admin only)
+
+  Sidebar:
+  ✗ Users      → NOT visible
+  ✗ Audit Logs → NOT visible
+  ✓ Analytics  → IS visible
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 6 — COMPLIANCE_OFFICER (Nadupuru Aditi)
+  Login: nadupuruaditi@gmail.com / Comnet@360
+
+  Profile page:
+  ✓ Amber/yellow avatar (COMPLIANCE_OFFICER = amber gradient), initials "NA"
+
+  Sidebar:
+  ✓ Audit Logs → IS visible
+  ✓ Analytics  → IS visible
+  ✗ Users      → NOT visible
+
+  Incidents:
+  ✓ Can VIEW incidents
+  ✗ "New Incident" → NOT visible
+  ✗ "Assign" → NOT visible
+
+  Services:
+  ✓ Can view services and details
+  ✗ "New Service" → NOT visible
+  ✗ "Add Configuration" → NOT visible
+
+  Usage & SLA:
+  ✓ Can view all SLAs and breach events
+  ✗ "New SLA" → NOT visible
+  ✗ Cannot resolve SLA breaches (only Admin / Service Manager / Network Engineer)
+
+  Analytics:
+  ✗ "Generate Report" button → NOT visible (Admin only)
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+RBAC TEST 7 — ADMIN (Snehitha)
+  Login: snehithapriscillaganta7890@gmail.com / Comnet@360
+
+  Profile page:
+  ✓ Slate/grey avatar (ADMIN role = slate gradient), initials "S"
+  ✓ "ADMIN" role badge (red)
+
+  ALL features accessible:
+  ✓ Users, Audit Logs, all sidebar items
+  ✓ Create/edit/delete in all sections
+  ✓ Assign, Resolve, Close incidents
+  ✓ Create services, add configurations, change lifecycle
+  ✓ Create, edit, disable/enable SLAs
+  ✓ Resolve SLA breaches
+  ✓ Generate analytics reports (Admin-only button visible)
+  ✓ Add incident resolution actions (Admin-only "Add Action" button visible)
+  ✓ Update action status (PENDING → IN_PROGRESS → COMPLETED)
+  ✓ Delete analytics reports
+  Logout.
+
+================================================================================
+  PHASE 14 — NOTIFICATION CONTENT VERIFICATION
+================================================================================
+
+  NOTIFICATION FORMAT NOTES:
+  • Incident assignment:  title = "Incident Assigned to You"
+  • Incident resolution:  title = "Incident Resolved: <incident title>"
+                          body  = "Incident #N: "<title>" (Severity: X) has been
+                                   marked as RESOLVED by <resolver name>."
+  • SLA breach (auto):    title = "SLA Alert: <Service Name>"
+                          body  = "Your service '<Name>' has exceeded its SLA threshold.
+                                   Metric: X | Actual: Y | Threshold: Z"
+  • SLA breach resolved:  title = "SLA Breach Resolved: <Service Name>"
+                          body  = "The SLA breach for '<Name>' has been manually resolved.
+                                   Actual: X | Threshold: Y."
+  NOTE: No em-dashes ( — ) in notification titles. No "User #N" or "SLA #N" anywhere.
+        Resolver is shown by full name (e.g. "Prateek Bora"), not a user ID.
+
+──────────────────────────────────────────────────────────────────────────────
+VERIFY PRATEEK BORA'S NOTIFICATIONS
+  Login: prateekbora71@gmail.com / Comnet@360
+  Navigate: "Notifications"
+
+  EXPECTED: 6 notifications (all previously read — bell badge = 0):
+
+  #1  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #1: "Corporate Voice Gateway —
+              Call Volume Below SLA Minimum" (Severity: CRITICAL).
+              Please review and take action."
+
+  #2  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #2: "Enterprise Video Conferencing —
+              Daily Usage Below Minimum" (Severity: CRITICAL).
+              Please review and take action."
+
+  #3  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #3: "Unified Messaging Platform —
+              Intermittent Message Delays" (Severity: HIGH).
+              Please review and take action."
+
+  #4  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #4: "SMS Broadcast — Message Queue
+              Backlog and API Rate SLA Breached" (Severity: CRITICAL).
+              Please review and take action."
+
+  #5  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #5: "Enterprise Video Conferencing —
+              TLS Certificate Expiring in 72h" (Severity: MEDIUM).
+              Please review and take action."
+
+  #6  Title: "Incident Assigned to You"
+      Body:  "You have been assigned to incident #6: "Corporate Voice Gateway —
+              No Standby Failover Available" (Severity: MEDIUM).
+              Please review and take action."
+      NOTE: This notification arrives in Phase 12 (Step 109) when Admin assigns
+            Incident #6 to Prateek. Bell badge resets to 1 when Prateek next logs in.
+
+  VERIFY: All 6 present. Correct incident number, title, severity in each.
+  VERIFY: Bell badge = 0 after Prateek reads all notifications in Phase 10.
+  VERIFY: "Mark All as Read" button works even when all read.
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+VERIFY SNEHITHA'S (ADMIN) NOTIFICATIONS
+  Login: snehithapriscillaganta7890@gmail.com / Comnet@360
+  Navigate: "Notifications"
+
+  EXPECTED: Multiple in-app notifications received during testing (all read).
+  Admin receives notifications when incidents are resolved and SLA breaches are resolved.
+
+  Incident resolved notifications (one per resolved incident, from Phase 10):
+  Example format:
+    Title: "Incident Resolved: Corporate Voice Gateway — Call Volume Below SLA Minimum"
+    Body:  "Incident #1: "Corporate Voice Gateway — Call Volume Below SLA Minimum"
+            (Severity: CRITICAL) has been marked as RESOLVED by Prateek Bora."
+
+  SLA breach resolved notifications (one per resolved breach, from Phase 10):
+  Example format:
+    Title: "SLA Breach Resolved: Corporate Voice Gateway"
+    Body:  "The SLA breach for 'Corporate Voice Gateway' has been manually resolved.
+            Actual: 280 | Threshold: 600."
+
+  VERIFY:
+  ✓ No "User #N" text anywhere — resolver shows full name (e.g. "Prateek Bora")
+  ✓ No "SLA #N" text — service name is used instead
+  ✓ Titles use colon format: "Incident Resolved: ..." not "Incident Resolved — ..."
+  ✓ Titles use colon format: "SLA Breach Resolved: ..." not "SLA Breach Resolved — ..."
+  ✓ Bell badge count reflects unread notifications
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+VERIFY RAHUL PATNAL'S NOTIFICATIONS
+  Login: patnalarahul2004@gmail.com / Comnet@360
+  Navigate: "Notifications"
+
+  EXPECTED: 0 notifications — empty state placeholder visible.
+  NOTE: OPERATIONS_HEAD cannot be assigned incidents. Rahul has no assignment
+        notifications. Bell badge = 0.
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+VERIFY Y DEVI SARANAYA'S NOTIFICATIONS
+  Login: ydevisaranya@gmail.com / Comnet@360
+  Navigate: "Notifications"
+
+  EXPECTED: May have SLA breach alert notifications if she is the assigned enterprise
+  contact for Corporate Voice Gateway or Enterprise Video Conferencing.
+  Example format if present:
+    Title: "SLA Alert: Corporate Voice Gateway"
+    Body:  "Your service 'Corporate Voice Gateway' has exceeded its SLA threshold.
+            Metric: CALL_DURATION | Actual: 280 | Threshold: 600
+            Our team has been notified and is investigating."
+  NOTE: No "SLA #N" in title. Service name shown, not SLA ID.
+  Logout.
+
+──────────────────────────────────────────────────────────────────────────────
+VERIFY SANIA AGARWAL'S NOTIFICATIONS
+  Login: agarwalsania2004@gmail.com / Comnet@360
+  Navigate: "Notifications"
+
+  EXPECTED: May have SLA breach alert notification if she is the assigned enterprise
+  contact for SMS Broadcast Service.
+  Example format if present:
+    Title: "SLA Alert: SMS Broadcast Service"
+    Body:  "Your service 'SMS Broadcast Service' has exceeded its SLA threshold.
+            Metric: MESSAGE_COUNT | Actual: 350 | Threshold: 1000
+            Our team has been notified and is investigating."
+  NOTE: No "SLA #N" in title. Service name shown, not SLA ID.
+  Logout.
+
+================================================================================
+  COMPLETE SLA BREACH OUTCOME REFERENCE
+================================================================================
+
+  Rule Types:
+    GREATER_THAN = Minimum-usage rule  (actual must be MORE than the limit — too low = breach)
+    LESS_THAN    = Maximum-usage cap   (actual must be LESS than the limit — too high = breach)
+
+  Service                        Metric        Who Logged       Value    Limit     Rule         Outcome
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Corporate Voice Gateway        CALL_DURATION  Y Devi Saranaya  280 min  600 min   Min rule     BREACH ✗
+  Enterprise Video Conferencing  VIDEO_MINUTES  Y Devi Saranaya  150 min  300 min   Min rule     BREACH ✗
+  Unified Messaging Platform     MESSAGE_COUNT  Y Devi Saranaya  2500 msg 500 msg   Min rule     CLEAN  ✓
+  SMS Broadcast Service          MESSAGE_COUNT  Sania Agarwal    350 msg  1000 msg  Min rule     BREACH ✗
+  Emergency Voice Backup         (no SLA)       —                —        —         —            SKIP
+
+  Services with breaches    : Corporate Voice Gateway (1), Video (1), SMS (1) = 3 total
+  Services completely clean : Unified Messaging Platform (0 breaches)
+
+================================================================================
+  INCIDENT SUMMARY
+================================================================================
+
+  #  Title                                              Sev      Who Resolved      Outcome
+  ─────────────────────────────────────────────────────────────────────────────────────────────
+  1  Corp Voice — Call Volume Below SLA Minimum         CRITICAL  Prateek Bora     CLOSED
+  2  Video — Daily Usage Below Minimum                  CRITICAL  Prateek Bora     CLOSED
+  3  Messaging — Intermittent Delays ← NO SLA breach    HIGH      Prateek Bora     CLOSED
+  4  SMS — Queue Backlog and API Rate Breach            CRITICAL  Prateek Bora     CLOSED
+  5  Video — TLS Certificate Expiring in 72h            MEDIUM    Prateek Bora     CLOSED
+  6  Corp Voice — No Standby Failover Available         MEDIUM    Admin (Snehitha)  CLOSED
+
+  Created by: Incidents #1–5 created by Admin (Phase 7).
+              Incident #6 created by Piyush Ranjan / Service Manager (Phase 8, Step 80).
+  Resolved by: Incidents #1–5 resolved by Prateek Bora / Network Engineer (Phase 10).
+               Incident #6 resolved by Admin (Snehitha) in Phase 12, Step 109.
+
+  Key point: Incident #3 (Unified Messaging Delays) = HIGH severity, zero SLA breaches.
+             Incidents and SLA breaches are independent tracking systems.
+
+================================================================================
+  STATUS BADGE COLOUR REFERENCE
+================================================================================
+
+  INCIDENT STATUS:
+    OPEN         → Red dot      "Open"
+    IN_PROGRESS  → Blue dot     "In Progress"   (auto-set when assigned)
+    RESOLVED     → Green dot    "Resolved"
+    CLOSED       → Grey dot     "Closed"
+
+  SERVICE STATUS:
+    DRAFT         → Grey dot
+    PENDING       → Yellow dot
+    ACTIVE        → Green dot
+    INACTIVE      → Red dot
+    DECOMMISSIONED→ Grey dot
+
+  SEVERITY:
+    CRITICAL → Red badge       HIGH   → Orange badge
+    MEDIUM   → Yellow badge    LOW    → Blue badge
+
+  SLA STATUS: ACTIVE → Green   INACTIVE → Grey
+  BREACH RESOLVED: Yes → Green   No → Red (with "Resolve" link)
+
+  ROLE AVATAR GRADIENTS (Profile Page):
+    ADMIN              → Slate grey  (#64748b → #475569)   initials e.g. "S"
+    SERVICE_MANAGER    → Violet      (#8B5CF6 → #6D28D9)   initials e.g. "PR"
+    OPERATIONS_HEAD    → Sky blue    (#0EA5E9 → #0284C7)   initials e.g. "RP"
+    COMPLIANCE_OFFICER → Amber       (#F59E0B → #D97706)   initials e.g. "NA"
+    NETWORK_ENGINEER   → Emerald     (#10B981 → #059669)   initials e.g. "PB"
+    ENTERPRISE_USER    → Cyan        (#06B6D4 → #0891B2)   initials e.g. "YD" / "SA"
+
+================================================================================
+  PAGE ACCESS BY ROLE
+================================================================================
+
+  PAGE                      ADMIN  SM    OPS   NE    COMP  ENT
+  ──────────────────────────────────────────────────────────────
+  Dashboard                   ✓     ✓     ✓     ✓     ✓     ✓
+  Services — View             ✓     ✓     ✓     ✓     ✓     ✓
+  Services — Create           ✓     ✓     ✗     ✗     ✗     ✗
+  Services — Configure        ✓     ✓     ✗     ✗     ✗     ✗
+  Services — Lifecycle        ✓     ✓     ✗     ✗     ✗     ✗
+  Usage & SLA — View          ✓     ✓     ✓     ✓     ✓     ✓
+  Usage — Log Record          ✓     ✓     ✓     ✓     ✓     ✓
+  SLA — Create / Edit         ✓     ✓     ✗     ✗     ✗     ✗
+  SLA Breach — Resolve        ✓     ✓     ✗     ✓     ✗     ✗
+  Incidents — View            ✓     ✓     ✓     ✓     ✓     ✓
+  Incidents — Create          ✓     ✓     ✗     ✗     ✗     ✗
+  Incidents — Assign          ✓     ✓     ✗     ✗     ✗     ✗
+  Incidents — Resolve         ✓     ✓     ✗     ✓     ✗     ✗
+  Incidents — Close           ✓     ✓     ✗     ✗     ✗     ✗
+  Resolution Actions — Add    ✓     ✗     ✗     ✗     ✗     ✗
+  Resolution Actions — Update ✓     ✗     ✗     ✓     ✗     ✗
+  Analytics — View            ✓     ✓     ✓     ✗     ✓     ✗
+  Analytics — Generate Report ✓     ✗     ✗     ✗     ✗     ✗
+  Analytics — Delete Report   ✓     ✗     ✗     ✗     ✗     ✗
+  Notifications               ✓     ✓     ✓     ✓     ✓     ✓
+  Users Admin                 ✓     ✗     ✗     ✗     ✗     ✗
+  Audit Logs                  ✓     ✗     ✗     ✗     ✓     ✗
+  Profile                     ✓     ✓     ✓     ✓     ✓     ✓
+
+================================================================================
+  TROUBLESHOOTING
+================================================================================
+
+"Cannot reach the server" on login
+  → All 9 backend services must be running and showing UP in Eureka.
+  → Eureka dashboard: http://localhost:8761
+
+"Service unavailable" / 502 on login
+  → IAM service not registered in Eureka. Restart IAM and wait 15 seconds.
+
+"Invalid email or password"
+  → Use Comnet@360 exactly (capital C, @, 360).
+  → Wait 15–20 s after IAM start — AdminInitializer runs on boot.
+
+"Assign dropdown is empty"
+  → Only ADMIN, SERVICE_MANAGER, OPERATIONS_HEAD can fetch the users list.
+  → Check IAM service running on port 8081.
+
+"No SLA breach events appear after logging usage"
+  → Breach fires instantly when usage is logged that violates the threshold.
+  → Refresh the SLA Breach Events table immediately after logging usage.
+  → SLAs must use ONLY: CALL_DURATION | MESSAGE_COUNT | VIDEO_MINUTES | BANDWIDTH
+  → All other metric names are silently ignored.
+  → Verify the SLA is ACTIVE (not INACTIVE/Disabled).
+
+"Breach fires but I already resolved it — why a new one?"
+  → A new breach is only created when new usage is logged that violates the threshold.
+  → Resolve a breach → stay resolved until bad usage is logged again.
+  → No automatic re-breach occurs on a timer.
+
+"Minimum-usage rule not triggering"
+  → Log a value clearly below the threshold (e.g. if the minimum is 600, log 280).
+  → Breach fires the moment you click "Log Usage" — no waiting needed.
+
+"Generate Report button not visible for a non-Admin user"
+  → Only the ADMIN role can generate analytics reports.
+  → SERVICE_MANAGER, OPERATIONS_HEAD, COMPLIANCE_OFFICER can VIEW reports but not generate.
+  → This is by design — re-check hasRole('ADMIN') guard in AnalyticsPage.jsx.
+
+"Add Action button not visible on Incident Detail"
+  → Only ADMIN can add new resolution actions to incidents.
+  → NETWORK_ENGINEER can UPDATE action status (PENDING → IN_PROGRESS → COMPLETED) only.
+  → This is by design — re-check hasRole('ADMIN') guard in IncidentDetailPage.jsx.
+
+"NE sees Create Incident button"
+  → Network Engineers should NOT see "New Incident". Only ADMIN and SERVICE_MANAGER can create.
+  → Check IncidentsPage.jsx — button guard should be hasRole('ADMIN', 'SERVICE_MANAGER').
+
+"Notification says 'User #7' instead of user name"
+  → IAM service must be running and the /api/users/{id}/name endpoint must be accessible.
+  → Restart IAM service and incident-service / usage-sla-service.
+  → Check SecurityConfig.java — "/api/users/*/name" must be in permitAll list.
+
+"SLA breach notification title shows em-dash ( — ) or 'SLA #N'"
+  → SlaScheduler.java and SlaService.java have been updated to use service names and colons.
+  → Restart usage-sla-service to pick up changes.
+  → Title format: "SLA Alert: <Service Name>" and "SLA Breach Resolved: <Service Name>".
+
+"IN_PROGRESS badge missing after assignment"
+  → Backend auto-sets IN_PROGRESS when an OPEN incident is assigned.
+  → Refresh the page after assignment if the badge does not update instantly.
+
+"Notifications not appearing after assignment"
+  → Restart incident-service — NotificationClient must be compiled in.
+  → Verify notification-service running on port 8086.
+  → Check notification_db exists in MySQL.
+
+"Chart shows no data after logging usage"
+  → Select the correct service from the dropdown after logging.
+  → Different metric types appear as separate data points on the same service.
+
+"Landing page stats not animating"
+  → Ensure JavaScript is enabled in the browser.
+  → Hard-refresh (Ctrl+Shift+R) to clear any cached build.
+
+"TopBar shows Offline instead of Live"
+  → The real-time polling hook failed to fetch from the backend.
+  → Ensure all backend services are running. Refresh the browser.
+
+"Profile page avatar is blue instead of role-specific colour"
+  → The avatar gradient is driven by user.role. Ensure the user was created
+    with the correct role in Phase 1. Re-check /admin/users to confirm.
+
+"Redirected to landing page instead of login when accessing /dashboard"
+  → This is CORRECT behaviour. Unauthenticated users are redirected to /
+    (the landing page), not to /login.
+
+================================================================================
+  COMPLETE SESSION TOTALS
+================================================================================
+
+  Users                  : 7   (1 Admin + 6 created in Phase 1)
+                               (2 enterprise users: Y Devi Saranaya + Sania Agarwal)
+  Services created       : 5   (all created from scratch in Phase 2)
+  Services activated     : 4   (1 decommissioned)
+  Configurations         : 15+ (4+4+3+3 across 4 active services, +1 by Piyush Ranjan, +1 final)
+  SLA Definitions        : 7   (6 Admin + 1 Piyush Ranjan)
+  SLA Breaches triggered : 2   (Corp Voice ×1, Video ×1)
+    Y Devi Saranaya caused : 2   (Voice CALL_DURATION, Video VIDEO_MINUTES)
+    Sania Agarwal caused   : 1   (SMS MESSAGE_COUNT only)
+  SLA Clean services     : 1   (Unified Messaging — 0 breach rows)
+  Incidents              : 7   (5 Admin + 1 Piyush Ranjan + 1 Prateek Bora)
+  Resolution Actions     : 15+
+  Comments posted        : 20+
+  Reports generated      : 7+
+  Snapshots captured     : 2
+  Notifications sent     : 7   (Prateek Bora ×7, Rahul ×0)
+  Breaches resolved      : 2   (all in Phase 12 with detailed notes)
+
+  VALID MetricType VALUES — only these trigger breach events on usage log:
+  CALL_DURATION | MESSAGE_COUNT | VIDEO_MINUTES | BANDWIDTH
+
+  FRONTEND URL   : http://localhost:5173
+  EUREKA DASHBOARD: http://localhost:8761
+  API GATEWAY    : http://localhost:8001
+
+================================================================================

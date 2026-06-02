@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Force dark variant to require .dark class on an ancestor.
+   Since ThemeContext never adds .dark to <html>, ALL dark: classes
+   are permanently disabled — OS system-dark-mode cannot activate them. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light blue/white theme — dark mode removed */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f0f9ff;
+  color: #0f172a;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #e0f2fe;
+}
+::-webkit-scrollbar-thumb {
+  background: #7dd3fc;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* ── Global light-blue theme overrides ───────────────────────────────────── */
+
+/* Table headers, input bg, empty states — slate-50 → sky-50 */
+.bg-slate-50 {
+  background-color: #f0f9ff !important;
+}
+
+/* Page / layout background — slate-100 → sky-50 */
+.bg-slate-100 {
+  background-color: #f0f9ff !important;
+}
+
+/* Hover rows on tables — slate-50 → sky-50 */
+.hover\:bg-slate-50:hover {
+  background-color: #e0f2fe !important;
+}
+
+/* Card / panel borders — slate-200 → sky-100 */
+.border-slate-200 {
+  border-color: #bae6fd !important;
+}
+
+/* Dividers inside cards — slate-100 → sky-50 */
+.border-slate-100 {
+  border-color: #e0f2fe !important;
+}
